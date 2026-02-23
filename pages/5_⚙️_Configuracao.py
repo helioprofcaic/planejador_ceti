@@ -92,15 +92,15 @@ for turma in turmas_selecionadas:
                 st.write("")
                 if st.button("Adicionar", key=f"btn_{turma}"):
                     if novo_comp:
-                        # Adiciona ao escola_db.json para persistência global
                         if turma in turmas_db:
-                            if novo_comp not in turmas_db[turma]["componentes"]:
+                            # Faz a verificação case-insensitive para evitar duplicatas
+                            if novo_comp.upper() not in [c.upper() for c in turmas_db[turma]["componentes"]]:
                                 turmas_db[turma]["componentes"].append(novo_comp)
                                 utils.salvar_escola_db(escola_db)
-                            st.success(f"'{novo_comp}' adicionado!")
-                            st.rerun()
-                        else:
-                            st.warning("Componente já existe.")
+                                st.success(f"Componente '{novo_comp}' adicionado com sucesso!")
+                                st.rerun()
+                            else:
+                                st.warning(f"O componente '{novo_comp}' já existe para esta turma.")
 st.divider()
 if st.button("💾 Salvar Minha Configuração"):
     perfil = {
