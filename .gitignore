@@ -12,6 +12,7 @@ data/alunos.json
 data/professor_config.json
 data/backup_sistema.db
 data/backups/
+!data/.gitkeep
 
 
 # Arquivos Gerados pelo Usuário (Rascunhos)
