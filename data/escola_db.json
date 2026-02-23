@@ -1,0 +1,37 @@
+﻿{
+    "professores":  [
+                        "Helio Lima",
+                        "Maria Souza",
+                        "Carlos Andrade"
+                    ],
+    "turmas":  {
+                   "1ª Série A - Ensino Médio":  {
+                                                     "componentes":  [
+                                                                         "Língua Portuguesa",
+                                                                         "Matemática",
+                                                                         "História",
+                                                                         "Geografia",
+                                                                         "Biologia",
+                                                                         "Física",
+                                                                         "Química"
+                                                                     ]
+                                                 },
+                   "3º Ano C - Administração":  {
+                                                    "componentes":  [
+                                                                        "Língua Portuguesa",
+                                                                        "Matemática",
+                                                                        "Gestão de Projetos",
+                                                                        "Contabilidade Básica"
+                                                                    ]
+                                                },
+                   "2º Ano B - T.I.":  {
+                                           "componentes":  [
+                                                               "Língua Portuguesa",
+                                                               "Matemática",
+                                                               "PROGRAMAÇÃO ORIENTADA À OBJETOS - POO",
+                                                               "PROGRAMAÇÃO WEB FRONT-END",
+                                                               "MENTORIAS TEC II"
+                                                           ]
+                                       }
+               }
+}

@@ -1,0 +1,25 @@
+# Arquivos de Sistema e Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.streamlit/secrets.toml
+
+# Dados Sensíveis (LGPD e Configurações Pessoais)
+data/alunos.json
+data/professor_config.json
+data/backup_sistema.db
+data/backups/
+
+
+# Arquivos Gerados pelo Usuário (Rascunhos)
+data/planejamentos.json
+data/frequencia_*.json
+data/qualitativo_*.json
+
+# Logs e outros
+*.log
+.DS_Store
+docs/rascunhos/

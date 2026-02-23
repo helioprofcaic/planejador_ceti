@@ -1,0 +1,22 @@
+﻿{
+    "trimestres":  {
+                       "3º":  {
+                                  "inicio":  "2026-08-31",
+                                  "fim":  "2026-12-18",
+                                  "semana_fim":  40,
+                                  "semana_inicio":  26
+                              },
+                       "2º":  {
+                                  "inicio":  "2026-05-25",
+                                  "fim":  "2026-08-28",
+                                  "semana_fim":  26,
+                                  "semana_inicio":  13
+                              },
+                       "1º":  {
+                                  "inicio":  "2026-02-19",
+                                  "fim":  "2026-05-22",
+                                  "semana_fim":  13,
+                                  "semana_inicio":  0
+                              }
+                   }
+}

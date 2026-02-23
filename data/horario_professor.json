@@ -1,0 +1,101 @@
+﻿[
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "1ª Aula",
+        "Quarta":  "",
+        "Segunda":  "2ºB-T.I./POO",
+        "Quinta":  "",
+        "Horário":  "07:20 - 08:20"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "2ª Aula",
+        "Quarta":  "",
+        "Segunda":  "2ºB-T.I./POO",
+        "Quinta":  "",
+        "Horário":  "08:20 - 09:20"
+    },
+    {
+        "Sexta":  "---",
+        "Terça":  "---",
+        "Período":  "☕ Lanche",
+        "Quarta":  "---",
+        "Segunda":  "---",
+        "Quinta":  "---",
+        "Horário":  "09:20 - 09:40"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "3ºC-ADM/Gestão",
+        "Período":  "3ª Aula",
+        "Quarta":  "",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "09:40 - 10:40"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "3ºC-ADM/Gestão",
+        "Período":  "4ª Aula",
+        "Quarta":  "",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "10:40 - 11:40"
+    },
+    {
+        "Sexta":  "---",
+        "Terça":  "---",
+        "Período":  "🍽️ Almoço",
+        "Quarta":  "---",
+        "Segunda":  "---",
+        "Quinta":  "---",
+        "Horário":  "11:40 - 12:40"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "5ª Aula",
+        "Quarta":  "2ºB-T.I./Mentorias",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "12:40 - 13:40"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "6ª Aula",
+        "Quarta":  "2ºB-T.I./Mentorias",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "13:40 - 14:40"
+    },
+    {
+        "Sexta":  "---",
+        "Terça":  "---",
+        "Período":  "☕ Lanche",
+        "Quarta":  "---",
+        "Segunda":  "---",
+        "Quinta":  "---",
+        "Horário":  "14:40 - 14:50"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "7ª Aula",
+        "Quarta":  "",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "14:50 - 15:50"
+    },
+    {
+        "Sexta":  "",
+        "Terça":  "",
+        "Período":  "8ª Aula",
+        "Quarta":  "",
+        "Segunda":  "",
+        "Quinta":  "",
+        "Horário":  "15:50 - 16:50"
+    }
+]

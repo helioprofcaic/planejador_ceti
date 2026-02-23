@@ -1,0 +1,128 @@
+import pandas as pd
+import streamlit as st
+import utils
+import os
+
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(page_title="Menu", layout="wide")
+
+# --- INICIALIZAÇÃO DE ESTADO (SESSION STATE) ---
+# Garante que as configurações persistam entre as páginas
+if 'escola' not in st.session_state:
+    st.session_state['escola'] = "CETI PROFESSOR RALDIR CAVALCANTE BASTOS"
+if 'professor' not in st.session_state:
+    st.session_state['professor'] = "Helio Lima"
+if 'tema' not in st.session_state:
+    st.session_state['tema'] = "Padrão"
+if 'tamanho_fonte' not in st.session_state:
+    st.session_state['tamanho_fonte'] = 14
+if 'municipio' not in st.session_state:
+    st.session_state['municipio'] = ""
+
+# --- BARRA LATERAL DE CONFIGURAÇÃO ---
+with st.sidebar:
+    st.header("⚙️ Configuração Central")
+    st.session_state['escola'] = st.text_input("Escola", st.session_state['escola'])
+    st.session_state['professor'] = st.text_input("Professor(a)", st.session_state['professor'])
+    
+    st.session_state['municipio'] = st.text_input("Município", st.session_state['municipio'])
+    st.divider()
+    st.header("🎨 Aparência Global")
+    st.session_state['tema'] = st.selectbox(
+        "Tema Visual", 
+        ["Padrão", "Compacto", "Foco no Conteúdo"], 
+        index=["Padrão", "Compacto", "Foco no Conteúdo"].index(st.session_state['tema'])
+    )
+    st.session_state['tamanho_fonte'] = st.slider(
+        "Tamanho da Fonte (px)", 12, 24, st.session_state['tamanho_fonte']
+    )
+
+# --- APLICAÇÃO DO ESTILO ---
+utils.aplicar_estilo()
+utils.init_db() # Garante que o banco existe ao iniciar
+
+# Se não houver turmas no banco, tenta importar automaticamente na primeira execução
+if not utils.listar_turmas_db():
+    utils.importar_alunos_db()
+
+# --- BARRA LATERAL EXTRA ---
+with st.sidebar:
+    st.divider()
+    if st.button("🔄 Sincronizar Banco de Dados"):
+        with st.spinner("Lendo arquivos JSON e atualizando SQLite..."):
+            qtd = utils.sincronizar_bd()
+        st.success(f"{qtd} registros sincronizados!")
+
+# --- CONTEÚDO DA HOME ---
+st.title("🏠 Menu Principal")
+st.subheader(f"{st.session_state['escola']}")
+st.caption(f"Bem-vindo(a), Prof. {st.session_state['professor']}")
+
+st.markdown("""
+### 🧭 Navegação
+Utilize o menu lateral para acessar os módulos:
+
+- **📅 Planejamento**: Geração de planos de aula semanais, mensais e trimestrais.
+- **📊 Ficha Qualitativa**: Registro de avaliação socioemocional.
+- **📝 Frequência**: Controle de presença diária.
+- **⚙️ Configuração**: Personalização de turmas e disciplinas do professor.
+- **🛠️ Config. Componentes**: Ajuste de regras de carga horária e currículo.
+""")
+
+st.info("As configurações definidas aqui (Escola, Professor, Tema) serão aplicadas automaticamente em todas as páginas.")
+
+# --- HORÁRIO SEMANAL ---
+st.divider()
+st.subheader("📅 Grade Horária Semanal")
+
+caminho_horario = os.path.join("data", "horario_professor.json")
+df_horario = utils.carregar_dados_json(caminho_horario)
+
+if df_horario is None:
+    horario_data = [
+        {"Horário": "07:20 - 08:20", "Período": "1ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "08:20 - 09:20", "Período": "2ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "09:20 - 09:40", "Período": "☕ Lanche", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "09:40 - 10:40", "Período": "3ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "10:40 - 11:40", "Período": "4ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "11:40 - 12:40", "Período": "🍽️ Almoço", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "12:40 - 13:40", "Período": "5ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "13:40 - 14:40", "Período": "6ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "14:40 - 14:50", "Período": "☕ Lanche", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "14:50 - 15:50", "Período": "7ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+        {"Horário": "15:50 - 16:50", "Período": "8ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
+    ]
+    df_horario = pd.DataFrame(horario_data)
+
+def highlight_aulas(val):
+    """Destaca células que não estão vazias e não são '---'."""
+    if isinstance(val, str) and val.strip() and val.strip() != '---':
+        return 'background-color: #60a5fa'  # Azul mais escuro
+    return ''
+
+# Calcula altura para remover barra de rolagem: (linhas + cabeçalho) * 35px
+altura_tabela = (len(df_horario) + 1) * 33 + 3
+
+st.dataframe(
+    df_horario.style.apply(
+        lambda x: x.map(highlight_aulas), 
+        subset=['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
+    ),
+    hide_index=True,
+    use_container_width=True,
+    height=altura_tabela
+)
+
+with st.expander("_            ✏️ Editar Horário"):
+    df_editado = st.data_editor(
+        df_horario, 
+        hide_index=True, 
+        width='stretch', 
+        key="grade_horaria_editor",
+        row_height=33
+    )
+
+    if st.button("💾 Salvar Alterações do Horário"):
+        utils.salvar_dados_json(caminho_horario, df_editado)
+        st.success("✅ Grade horária salva com sucesso!")
+        st.rerun()

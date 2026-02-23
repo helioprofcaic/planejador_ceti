@@ -1,0 +1,84 @@
+﻿{
+    "BASICO":  {
+                   "MATEMÁTICA":  {
+                                      "habilidades":  [
+                                                          "EM13MAT101",
+                                                          "EM13MAT302",
+                                                          "EM13MAT401"
+                                                      ],
+                                      "competencia":  "Utilizar estratégias, conceitos e procedimentos matemáticos para interpretar situações.",
+                                      "objetos":  [
+                                                      "Conjuntos Numéricos",
+                                                      "Intervalos Reais",
+                                                      "Funções Exponenciais",
+                                                      "Análise de Gráficos"
+                                                  ]
+                                  },
+                   "LÍNGUA PORTUGUESA":  {
+                                             "habilidades":  [
+                                                                 "EM13LGG101",
+                                                                 "EM13LGG103",
+                                                                 "EM13LGG701"
+                                                             ],
+                                             "competencia":  "Compreender o funcionamento das diferentes linguagens e práticas culturais.",
+                                             "objetos":  [
+                                                             "Estratégias de Leitura",
+                                                             "Relação entre Textos",
+                                                             "Discursos Midiáticos",
+                                                             "Norma Culta"
+                                                         ]
+                                         }
+               },
+    "EPT":  {
+                "PROGRAMAÇÃO ORIENTADA À OBJETOS - POO":  {
+                                                              "habilidades":  [
+                                                                                  "Identificar o paradigma da orientação a objetos.",
+                                                                                  "Realizar encapsulamento e sobrecarga."
+                                                                              ],
+                                                              "competencia":  "Modelar sistemas computacionais utilizando o paradigma orientado a objetos.",
+                                                              "objetos":  [
+                                                                              "UML (Diagramas de Classe)",
+                                                                              "Herança e Polimorfismo",
+                                                                              "Encapsulamento e Interfaces"
+                                                                          ]
+                                                          },
+                "PROGRAMAÇÃO WEB FRONT-END":  {
+                                                  "habilidades":  [
+                                                                      "HPT-WEB-01",
+                                                                      "HPT-WEB-02"
+                                                                  ],
+                                                  "competencia":  "Desenvolver interfaces interativas e responsivas para web.",
+                                                  "objetos":  [
+                                                                  "HTML5/CSS3 Avançado",
+                                                                  "JavaScript/React",
+                                                                  "UI/UX Design"
+                                                              ]
+                                              },
+                "MENTORIAS TEC II":  {
+                                         "habilidades":  [
+                                                             "Planejar e gerenciar projetos.",
+                                                             "Identificar tecnologias digitais."
+                                                         ],
+                                         "competencia":  "Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa.",
+                                         "objetos":  [
+                                                         "Gestão de Projetos Integrados",
+                                                         "Tecnologias Digitais no Trabalho"
+                                                     ]
+                                     }
+            },
+    "APROFUNDAMENTO":  {
+                           "INTELIGÊNCIA ARTIFICIAL":  {
+                                                           "habilidades":  [
+                                                                               "EM13CO24",
+                                                                               "EM13CO25",
+                                                                               "EM13CO01"
+                                                                           ],
+                                                           "competencia":  "Compreender e utilizar tecnologias digitais de forma crítica e ética.",
+                                                           "objetos":  [
+                                                                           "Ética na IA",
+                                                                           "Algoritmos e Bolhas Digitais",
+                                                                           "Segurança em Ambientes Virtuais"
+                                                                       ]
+                                                       }
+                       }
+}

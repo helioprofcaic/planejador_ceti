@@ -1,0 +1,1002 @@
+import streamlit as st
+import json
+import os
+from fpdf import FPDF
+import io
+from pypdf import PdfWriter
+import sqlite3
+import pandas as pd
+from docx import Document
+from docx.shared import Pt, Cm
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from datetime import date
+
+def aplicar_estilo():
+    """Aplica o CSS global baseado nas configurações de sessão."""
+    tema = st.session_state.get('tema', "Padrão")
+    tamanho_fonte = st.session_state.get('tamanho_fonte', 16)
+    
+    padding_top = "0rem" if tema == "Compacto" else "2rem"
+    font_style = "Arial Narrow" if tema == "Compacto" else "sans-serif"
+    
+    st.markdown(f"""
+        <style>
+        html, body, [class*="st-"] {{
+            font-size: {tamanho_fonte}px;
+            font-family: {font_style};
+        }}
+        .main .block-container {{
+            padding-top: {padding_top};
+        }}
+        /* Ajuste para as tabelas não ficarem gigantes */
+        .stDataFrame div[data-testid="stTable"] {{
+            font-size: {tamanho_fonte - 2}px;
+        }}
+        </style>
+        """, unsafe_allow_html=True)
+
+def carregar_dados():
+    """Carrega o arquivo ementas.json da pasta data."""
+    caminho = os.path.join("data", "ementas.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def carregar_ementas_oficiais():
+    """Carrega o arquivo ementas_oficiais.json da pasta data."""
+    caminho = os.path.join("data", "ementas_oficiais.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def carregar_ementas_trimestre():
+    """Carrega o arquivo ementas_geral_1trimestre.json da pasta data."""
+    caminho = os.path.join("data", "ementas_geral_1trimestre.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def carregar_escola_db():
+    """Carrega o banco de dados da escola (escola_db.json)."""
+    caminho = os.path.join("data", "escola_db.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"turmas": {}, "professores": []}
+
+def salvar_escola_db(dados):
+    """Salva o arquivo escola_db.json na pasta data e atualiza o SQLite."""
+    caminho = os.path.join("data", "escola_db.json")
+    os.makedirs("data", exist_ok=True)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(dados, f, indent=2, ensure_ascii=False)
+    importar_escola_data_sqlite()
+
+def carregar_calendario_letivo():
+    """Carrega o arquivo calendario_letivo_2026.json da pasta data."""
+    caminho = os.path.join("data", "calendario_letivo_2026.json")
+    # Padrão de fallback (Bússola do Tempo padrão)
+    padrao = {
+        "trimestres": {
+            "1º": {"inicio": "2026-02-19", "fim": "2026-05-22", "semana_inicio": 0, "semana_fim": 13},
+            "2º": {"inicio": "2026-05-25", "fim": "2026-08-28", "semana_inicio": 13, "semana_fim": 26},
+            "3º": {"inicio": "2026-08-31", "fim": "2026-12-18", "semana_inicio": 26, "semana_fim": 40}
+        }
+    }
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except:
+                return padrao
+    return padrao
+
+def carregar_curriculo_db():
+    """Carrega o banco de dados do currículo (curriculo_db.json)."""
+    caminho = os.path.join("data", "curriculo_db.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"BASICO": {}, "APROFUNDAMENTO": {}, "EPT": {}}
+
+def carregar_habilidades_csv():
+    """Carrega habilidades de arquivos CSV na pasta data."""
+    dados_csv = {}
+    caminho_dir = "data"
+    if not os.path.exists(caminho_dir):
+        return dados_csv
+        
+    arquivos = [f for f in os.listdir(caminho_dir) if f.startswith("habilidades") and f.endswith(".csv")]
+    
+    for arquivo in arquivos:
+        try:
+            df = pd.read_csv(os.path.join(caminho_dir, arquivo))
+            # Normaliza colunas para minúsculas e sem espaços
+            df.columns = [c.lower().strip() for c in df.columns]
+            
+            if 'componente' in df.columns:
+                for _, row in df.iterrows():
+                    comp = str(row['componente']).strip()
+                    
+                    if comp not in dados_csv:
+                        dados_csv[comp] = {"competencia": "", "habilidades": [], "objetos": []}
+                    
+                    # Preenche competência (pega a primeira não nula encontrada)
+                    if 'competencia' in df.columns and pd.notna(row['competencia']) and not dados_csv[comp]["competencia"]:
+                        dados_csv[comp]["competencia"] = row['competencia']
+                        
+                    if 'habilidade' in df.columns and pd.notna(row['habilidade']):
+                        h = row['habilidade']
+                        if h not in dados_csv[comp]["habilidades"]:
+                            dados_csv[comp]["habilidades"].append(h)
+                            
+                    col_obj = 'objeto_conhecimento' if 'objeto_conhecimento' in df.columns else 'conteudo'
+                    if col_obj in df.columns and pd.notna(row[col_obj]):
+                        o = row[col_obj]
+                        if o not in dados_csv[comp]["objetos"]:
+                            dados_csv[comp]["objetos"].append(o)
+        except Exception as e:
+            print(f"Erro ao ler {arquivo}: {e}")
+            
+    return dados_csv
+
+def salvar_ementas_trimestre(dados):
+    """Salva o arquivo ementas_geral_1trimestre.json na pasta data."""
+    caminho = os.path.join("data", "ementas_geral_1trimestre.json")
+    os.makedirs("data", exist_ok=True)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(dados, f, indent=2, ensure_ascii=False)
+
+def carregar_config_componentes():
+    """Carrega o arquivo config_componentes.json da pasta data."""
+    caminho = os.path.join("data", "config_componentes.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    # Retorna uma estrutura padrão se o arquivo não existir
+    return {
+        "MAPEAMENTO_POR_CHAVE": {},
+        "PADRAO_GERAL": {"tipo_curso": "Anual / Regular", "duracao_semanas": 13},
+        "PADRAO_TECNICO_MODULAR": {"tipo_curso": "Modular Mensal (40h)", "duracao_semanas": 5}
+    }
+
+def salvar_config_componentes(dados):
+    """Salva o arquivo config_componentes.json na pasta data."""
+    caminho = os.path.join("data", "config_componentes.json")
+    os.makedirs("data", exist_ok=True)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(dados, f, indent=2, ensure_ascii=False)
+
+def salvar_planejamento(dados):
+    """Salva um planejamento específico em data/planejamentos.json."""
+    caminho = os.path.join("data", "planejamentos.json")
+    
+    # Carrega os planejamentos existentes ou cria um novo dicionário
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            try:
+                todos = json.load(f)
+            except json.JSONDecodeError:
+                print("Erro ao decodificar o JSON existente. Iniciando com um novo dicionário.")
+                todos = {} # Inicia um novo dicionário se houver erro no JSON
+    else:
+        todos = {}
+        
+    # Chave única para identificar o plano
+    trimestre = dados.get("trimestre", "1º")
+    chave = f"{dados['turma']}_{dados['componente']}_{dados['escala']}_{trimestre}"
+    todos[chave] = dados
+
+    
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(todos, f, indent=2, ensure_ascii=False)
+
+def carregar_planejamento(turma, componente, escala, trimestre="1º"):
+    """Carrega um planejamento específico se existir."""
+    caminho = os.path.join("data", "planejamentos.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            todos = json.load(f)
+            chave = f"{turma}_{componente}_{escala}_{trimestre}"
+            return todos.get(chave)
+    return None
+
+def carregar_alunos():
+    """Carrega o arquivo alunos.json da pasta data."""
+    caminho = os.path.join("data", "alunos.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def init_db():
+    """Inicializa o banco de dados SQLite e cria as tabelas se não existirem."""
+    db_path = os.path.join("data", "backup_sistema.db")
+    os.makedirs("data", exist_ok=True)
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    
+    # Tabela de Frequência
+    c.execute('''CREATE TABLE IF NOT EXISTS frequencia (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    turma TEXT,
+                    data TEXT,
+                    aluno_nome TEXT,
+                    presenca INTEGER,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )''')
+                
+    # Tabela Qualitativa
+    c.execute('''CREATE TABLE IF NOT EXISTS qualitativo (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    turma TEXT,
+                    aluno_nome TEXT,
+                    participacao TEXT,
+                    entrega TEXT,
+                    autonomia TEXT,
+                    nm1 REAL,
+                    nm2 REAL,
+                    nm3 REAL,
+                    mt REAL,
+                    recuperacao REAL,
+                    nota_final REAL,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )''')
+    
+    # Tabela de Alunos
+    c.execute('''CREATE TABLE IF NOT EXISTS alunos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    turma TEXT,
+                    numero INTEGER,
+                    nome TEXT
+                )''')
+    
+    # Tabela de Dados da Escola (escola_db)
+    c.execute('''CREATE TABLE IF NOT EXISTS escola_data (
+                    turma TEXT,
+                    componente TEXT,
+                    FOREIGN KEY (turma) REFERENCES alunos(turma)
+                )''')
+
+
+
+
+     # Tabela de Configuração do Professor
+    c.execute('''CREATE TABLE IF NOT EXISTS professor_config (
+                    professor TEXT PRIMARY KEY,
+                    email TEXT,
+                    municipio TEXT,
+                    config TEXT 
+                )''')
+    
+    conn.commit()
+    conn.close()
+
+def backup_sqlite(caminho_arquivo, df):
+    """Realiza o backup dos dados do DataFrame para o SQLite."""
+    try:
+        init_db()
+        db_path = os.path.join("data", "backup_sistema.db")
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        
+        filename = os.path.basename(caminho_arquivo)
+        
+        if filename.startswith("frequencia_"):
+            # Extrair metadados do nome do arquivo: frequencia_{turma}_{data}.json
+            conteudo = filename.replace("frequencia_", "").replace(".json", "")
+            data_aula = conteudo[-10:]
+            turma = conteudo[:-11]
+            
+            # Remove registros anteriores para evitar duplicação do mesmo dia/turma
+            c.execute("DELETE FROM frequencia WHERE turma = ? AND data = ?", (turma, data_aula))
+            
+            # Inserir novos dados
+            for _, row in df.iterrows():
+                presenca = 1 if row.get('Presença') else 0
+                c.execute("INSERT INTO frequencia (turma, data, aluno_nome, presenca) VALUES (?, ?, ?, ?)",
+                          (turma, data_aula, row.get('Nome do Aluno'), presenca))
+                          
+        elif filename.startswith("qualitativo_"):
+            # Extrair metadados: qualitativo_{turma}.json
+            turma = filename.replace("qualitativo_", "").replace(".json", "")
+            
+            # Remove registros anteriores da turma
+            c.execute("DELETE FROM qualitativo WHERE turma = ?", (turma,))
+            
+            # Inserir novos dados
+            for _, row in df.iterrows():
+                c.execute("INSERT INTO qualitativo (turma, aluno_nome, participacao, entrega, autonomia, nm1, nm2, nm3, mt, recuperacao, nota_final) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                          (turma, row.get('Nome do Estudante'), row.get('Participação'), row.get('Entrega'), row.get('Autonomia'),
+                           row.get('NM1'), row.get('NM2'), row.get('NM3'), row.get('MT'), row.get('Recuperação'), row.get('Nota Final')))
+        
+        conn.commit()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Erro ao realizar backup SQLite: {e}")
+
+def salvar_professor_config_db(professor, email, municipio, config):
+    """Salva a configuração do professor no banco de dados."""
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    
+    # Salva as configurações como string json
+    c.execute("INSERT OR REPLACE INTO professor_config (professor, email, municipio, config) VALUES (?, ?, ?, ?)",
+              (professor, email, municipio, json.dumps(config, ensure_ascii=False)))
+    conn.commit()
+    conn.close()
+
+
+def salvar_dados_json(caminho_arquivo, dados_df):
+    """Salva um DataFrame em um arquivo JSON, criando o diretório se necessário."""
+    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+    dados_df.to_json(caminho_arquivo, orient='records', indent=4, force_ascii=False)
+    
+    # Backup automático para SQLite
+    backup_sqlite(caminho_arquivo, dados_df)
+
+def carregar_dados_json(caminho_arquivo):
+    """Carrega um DataFrame de um arquivo JSON se ele existir."""
+    if os.path.exists(caminho_arquivo):
+        # Verifica se o arquivo não está vazio para evitar erro de parse
+        if os.path.getsize(caminho_arquivo) > 0:
+            try:
+                # Especificar dtype=False para evitar conversão automática de tipos que pode dar erro
+                with open(caminho_arquivo, "r", encoding="utf-8") as f:
+                    return pd.DataFrame(json.load(f))
+            except (ValueError, json.JSONDecodeError): # Captura erro se o JSON for inválido
+                print(f"Aviso: Arquivo JSON inválido em {caminho_arquivo}. Um novo será criado.")
+                return None
+    return None
+
+def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre="1º", municipio=""):
+    """Gera o DOCX do planejamento escolar."""
+    doc = Document()
+    
+    # Título
+    heading = doc.add_heading('Planejamento Escolar', 0)
+    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # Informações
+    p = doc.add_paragraph()
+    p.add_run(f"Escola: {escola}\n").bold = True
+    p.add_run(f"Professor: {professor} | Turma: {turma}\n")
+    p.add_run(f"Componente: {componente} | Escala: {escala} | Trimestre: {trimestre} | Município: {municipio}\n")
+    
+    # Competência
+    doc.add_heading('Competência Geral:', level=2)
+    doc.add_paragraph(comp_geral)
+    
+    # Tabela
+    if not df.empty:
+        t = doc.add_table(rows=1, cols=len(df.columns))
+        t.style = 'Table Grid'
+        
+        # Cabeçalho
+        hdr_cells = t.rows[0].cells
+        for i, col_name in enumerate(df.columns):
+            hdr_cells[i].text = str(col_name)
+            hdr_cells[i].paragraphs[0].runs[0].font.bold = True
+            
+        # Dados
+        for _, row in df.iterrows():
+            row_cells = t.add_row().cells
+            for i, val in enumerate(row):
+                row_cells[i].text = str(val)
+                
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+def gerar_docx_frequencia(turma, data_aula, df):
+    """Gera o DOCX da lista de frequência."""
+    doc = Document()
+    
+    heading = doc.add_heading('Lista de Frequência', 0)
+    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    p = doc.add_paragraph()
+    p.add_run(f"Turma: {turma}\n").bold = True
+    p.add_run(f"Data: {data_aula.strftime('%d/%m/%Y')}")
+    
+    if not df.empty:
+        # Tabela com 3 colunas: Nº, Nome, Assinatura
+        t = doc.add_table(rows=1, cols=3)
+        t.style = 'Table Grid'
+        
+        hdr_cells = t.rows[0].cells
+        hdr_cells[0].text = "Nº"
+        hdr_cells[1].text = "Nome do Aluno"
+        hdr_cells[2].text = "Assinatura / Presença"
+        
+        for cell in hdr_cells:
+            cell.paragraphs[0].runs[0].font.bold = True
+            
+        for _, row in df.iterrows():
+            row_cells = t.add_row().cells
+            row_cells[0].text = str(row['Nº'])
+            row_cells[1].text = str(row['Nome do Aluno'])
+            row_cells[2].text = "" # Espaço para assinatura
+            
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio):
+    """Gera o PDF do planejamento escolar."""
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, "Planejamento Escolar", ln=True, align='C')
+    
+    pdf.set_font("Arial", size=12)
+    pdf.cell(0, 10, f"Escola: {escola}", ln=True)
+    pdf.cell(0, 10, f"Professor: {professor} | Turma: {turma}", ln=True)
+    pdf.multi_cell(0, 8, f"Componente: {componente}\nEscala: {escala} | Trimestre: {trimestre} | Município: {municipio}", align='L')
+    pdf.ln(5)
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 10, "Competência Geral:", ln=True)
+    pdf.set_font("Arial", size=10)
+    pdf.multi_cell(0, 5, comp_geral)
+    pdf.ln(5)
+    
+    # Tabela
+    if not df.empty:
+        pdf.set_font("Arial", 'B', 8)
+        
+        # Pesos para distribuição inteligente de largura
+        pesos = {
+            "Nº": 0.5,
+            "Mês": 0.8,
+            "Semana": 0.8,
+            "Aula": 0.8,
+            "Período": 1.5,
+            "Habilidade": 3.0,
+            "Objetivos": 3.0,
+            "Conteúdo": 3.0,
+            "Metodologia": 2.0,
+            "Avaliação": 2.0
+        }
+        
+        page_width = 277
+        total_peso = sum(pesos.get(col, 1.5) for col in df.columns)
+        col_widths = {col: (pesos.get(col, 1.5) / total_peso) * page_width for col in df.columns}
+    
+        for col in df.columns:
+            pdf.cell(col_widths[col], 10, str(col), border=1, align='C')
+        pdf.ln()
+
+        pdf.set_font("Arial", size=9)
+        line_height = 5
+        
+        for _, row in df.iterrows():
+            # Calcula altura máxima da linha
+            max_lines = 1
+            for col in df.columns:
+                text = str(row[col])
+                lines = split_into_lines(pdf, text, col_widths[col] - 2, 9)
+                max_lines = max(max_lines, len(lines))
+            
+            row_height = max_lines * line_height
+            
+            # Checa se a linha cabe na página, se não, adiciona uma nova e redesenha o cabeçalho
+            if pdf.get_y() + row_height > pdf.page_break_trigger:
+                pdf.add_page(orientation=pdf.cur_orientation)
+                pdf.set_font("Arial", 'B', 8)
+                for col_header in df.columns:
+                    pdf.cell(col_widths[col_header], 10, str(col_header), border=1, align='C')
+                pdf.ln()
+                pdf.set_font("Arial", size=9)
+
+            
+            for col in df.columns:
+                text = str(row[col]).replace('\u2013', '-').replace('\u201c', '"').replace('\u201d', '"')
+                w = col_widths[col]
+                x, y = pdf.get_x(), pdf.get_y()
+                pdf.rect(x, y, w, row_height) # Borda
+                pdf.multi_cell(w, line_height, text, border=0, align='L') # Texto
+                pdf.set_xy(x + w, y) # Próxima célula
+            
+            pdf.ln(row_height)
+    return bytes(pdf.output())
+
+def gerar_capa_resumo(lista_planos):
+    """Gera uma página de capa com o resumo dos planos na cesta."""
+    pdf = FPDF(orientation='P', unit='mm', format='A4')
+    pdf.add_page()
+    
+    if not lista_planos:
+        return pdf.output(dest='S').encode('latin-1', 'replace')
+
+    # Dados gerais (pega do primeiro plano)
+    primeiro = lista_planos[0]
+    escola = primeiro.get('escola', '')
+    professor = primeiro.get('professor', '')
+    
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 15, "Resumo do Planejamento Integrado", ln=True, align='C')
+    pdf.ln(5)
+    
+    pdf.set_font("Arial", size=12)
+    pdf.cell(0, 8, f"Escola: {escola}", ln=True)
+    pdf.cell(0, 8, f"Professor: {professor}", ln=True)
+    pdf.cell(0, 8, "Início do Ano Letivo: 19/02/2026", ln=True)
+    pdf.ln(10)
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 10, "Componentes Curriculares na Cesta:", ln=True)
+    
+    # Configuração de datas (Via Bússola do Tempo)
+    calendario = carregar_calendario_letivo()
+    trimestres_data = calendario.get("trimestres", {})
+    
+    pdf.set_font("Arial", 'B', 10)
+    # Cabeçalho da tabela
+    pdf.cell(80, 8, "Componente", border=1)
+    pdf.cell(50, 8, "Turma", border=1)
+    pdf.cell(20, 8, "Trim.", border=1, align='C')
+    pdf.cell(40, 8, "Previsão Início", border=1, align='C')
+    pdf.ln()
+    
+    pdf.set_font("Arial", size=9)
+    
+    for plano in lista_planos:
+        comp = str(plano.get('componente', ''))
+        turma = str(plano.get('turma', ''))
+        trim = str(plano.get('trimestre', '1º'))
+        
+        data_inicio_str = trimestres_data.get(trim, {}).get("inicio", "2026-02-19")
+        try:
+            data_str = date.fromisoformat(data_inicio_str).strftime('%d/%m/%Y')
+        except ValueError:
+            data_str = "19/02/2026"
+        
+        # Calcula altura da linha baseado no texto (wrap)
+        lines_comp = split_into_lines(pdf, comp, 78, 9)
+        lines_turma = split_into_lines(pdf, turma, 48, 9)
+        max_lines = max(len(lines_comp), len(lines_turma), 1)
+        h_line = 6
+        h_row = max_lines * h_line
+        
+        # Verifica quebra de página
+        if pdf.get_y() + h_row > 275:
+            pdf.add_page()
+            pdf.set_font("Arial", 'B', 10)
+            pdf.cell(80, 8, "Componente", border=1)
+            pdf.cell(50, 8, "Turma", border=1)
+            pdf.cell(20, 8, "Trim.", border=1, align='C')
+            pdf.cell(40, 8, "Previsão Início", border=1, align='C')
+            pdf.ln()
+            pdf.set_font("Arial", size=9)
+        
+        x, y = pdf.get_x(), pdf.get_y()
+        
+        # Desenha bordas (retângulos) com a altura total da linha
+        pdf.rect(x, y, 80, h_row)
+        pdf.rect(x+80, y, 50, h_row)
+        pdf.rect(x+130, y, 20, h_row)
+        pdf.rect(x+150, y, 40, h_row)
+        
+        # Preenche conteúdo
+        pdf.multi_cell(80, h_line, comp, border=0, align='L')
+        pdf.set_xy(x + 80, y)
+        pdf.multi_cell(50, h_line, turma, border=0, align='L')
+        pdf.set_xy(x + 130, y)
+        pdf.cell(20, h_row, trim, border=0, align='C')
+        pdf.set_xy(x + 150, y)
+        pdf.cell(40, h_row, data_str, border=0, align='C')
+        
+        pdf.set_xy(x, y + h_row) # Move para próxima linha
+        
+    return bytes(pdf.output())
+    
+def consolidar_planos(lista_planos):
+    """
+    Recebe uma lista de dicionários com dados dos planos e gera um único PDF.
+    Cada item da lista deve conter: escola, professor, turma, componente, escala, comp_geral, df (DataFrame).
+    """
+    merger = PdfWriter()
+    
+    # Adiciona capa com resumo
+    if lista_planos:
+        capa_bytes = gerar_capa_resumo(lista_planos)
+        merger.append(io.BytesIO(capa_bytes))
+    
+    for plano in lista_planos: #itera sobre os planos da cesta
+        escola = plano['escola']
+        professor = plano['professor']
+        turma = plano['turma']
+        componente = plano['componente']
+        escala = plano['escala']
+        comp_geral = plano['comp_geral']
+        df = plano['df']
+        municipio = plano.get('municipio', "")  # Retorna string vazia se não existir
+        trimestre = plano.get('trimestre', '')
+        
+        # Cria um dicionário com os argumentos esperados
+        args = {
+            'escola': escola, 'professor': professor, 'turma': turma,
+            'componente': componente, 'escala': escala, 'comp_geral': comp_geral,
+            'df': df, 'trimestre': trimestre, 'municipio': municipio
+        }
+
+        pdf_bytes = gerar_pdf_planejamento(**args)
+        merger.append(io.BytesIO(pdf_bytes))
+    
+    output_buffer = io.BytesIO()
+    merger.write(output_buffer)
+    merger.close()
+    output_buffer.seek(0)
+    return output_buffer
+
+def gerar_pdf_frequencia(escola, professor, turma, data_aula, df):
+    """Gera o PDF da lista de frequência com status digital e cabeçalho completo."""
+    pdf = FPDF()
+    pdf.set_margins(8, 8, 8) # Margens reduzidas para aproveitar a página
+    pdf.set_auto_page_break(auto=True, margin=8)
+    pdf.add_page()
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, f"Lista de Frequência - {escola}", ln=True, align='C')
+    pdf.ln(2)
+    
+    pdf.set_font("Arial", size=10)
+    # pdf.cell(0, 5, f"Escola: {escola}", ln=True) # Removido pois já está no título
+    pdf.cell(0, 5, f"Professor: {professor} | Turma: {turma}", ln=True)
+    pdf.cell(0, 5, f"Data: {data_aula.strftime('%d/%m/%Y')}", ln=True)
+    pdf.ln(3)
+    
+    pdf.set_font("Arial", 'B', 9)
+    pdf.cell(10, 6, "Nº", border=1, align='C')
+    pdf.cell(80, 6, "Nome do Aluno", border=1, align='C')
+    pdf.cell(20, 6, "Status", border=1, align='C')
+    pdf.cell(50, 6, "Assinatura", border=1, align='C')
+    pdf.ln()
+    
+    pdf.set_font("Arial", size=8)
+    num_alunos = len(df)
+    for _, row in df.iterrows():
+        status = "P" if row.get('Presença', False) else "F"
+        pdf.cell(10, 6, str(row['Nº']), border=1, align='C')
+        pdf.cell(80, 6, str(row['Nome do Aluno']).strip()[:50], border=1)
+        pdf.cell(20, 6, status, border=1, align='C')
+        pdf.cell(50, 6, "", border=1)  # Adiciona a célula para a assinatura
+        pdf.ln()
+        
+    return bytes(pdf.output())
+
+
+def gerar_pdf_qualitativo(escola, professor, turma, df, componente="", contexto=""):
+    """Gera o PDF da ficha qualitativa."""
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.set_margins(7, 7, 7)
+    pdf.set_auto_page_break(auto=True, margin=8)
+    pdf.add_page()
+    
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(0, 8, "Ficha de Acompanhamento Qualitativo", ln=True, align='C')
+    pdf.ln(1)
+    
+    pdf.set_font("Arial", size=9)
+    pdf.cell(0, 5, f"Escola: {escola}", ln=True)
+    pdf.cell(0, 5, f"Professor: {professor} | Turma: {turma}", ln=True)
+    if componente or contexto:
+        pdf.cell(0, 5, f"Componente: {componente} | Contexto: {contexto}", ln=True)
+    pdf.ln(1)
+    
+    pdf.set_font("Arial", 'B', 7)
+    pdf.cell(10, 5, "Nº", border=1, align='C')
+    pdf.cell(90, 5, "Nome do Estudante", border=1, align='C')
+    pdf.cell(18, 5, "Particip.", border=1, align='C')
+    pdf.cell(18, 5, "Entrega", border=1, align='C')
+    pdf.cell(18, 5, "Autonomia", border=1, align='C')
+    pdf.cell(12, 5, "NM1", border=1, align='C')
+    pdf.cell(12, 5, "NM2", border=1, align='C')
+    pdf.cell(12, 5, "NM3", border=1, align='C')
+    pdf.cell(12, 5, "MT", border=1, align='C')
+    pdf.cell(12, 5, "Rec.", border=1, align='C')
+    pdf.cell(15, 5, "Final", border=1, align='C')
+    pdf.ln()
+    
+    pdf.set_font("Arial", size=5)
+    for _, row in df.iterrows():
+        pdf.cell(10, 5, str(row['Nº']), border=1, align='C')
+        pdf.cell(90, 5, str(row['Nome do Estudante'])[:50], border=1)
+        pdf.cell(18, 5, str(row.get('Participação', ''))[:15], border=1, align='C')
+        pdf.cell(18, 5, str(row.get('Entrega', ''))[:15], border=1, align='C')
+        pdf.cell(18, 5, str(row.get('Autonomia', ''))[:15], border=1, align='C')
+        pdf.cell(12, 5, str(row.get('NM1', '')) if pd.notna(row.get('NM1')) else "", border=1, align='C')
+        pdf.cell(12, 5, str(row.get('NM2', '')) if pd.notna(row.get('NM2')) else "", border=1, align='C')
+        pdf.cell(12, 5, str(row.get('NM3', '')) if pd.notna(row.get('NM3')) else "", border=1, align='C')
+        pdf.cell(12, 5, str(row.get('MT', '')) if pd.notna(row.get('MT')) else "", border=1, align='C')
+        pdf.cell(12, 5, str(row.get('Recuperação', '')) if pd.notna(row.get('Recuperação')) else "", border=1, align='C')
+        pdf.cell(15, 5, str(row.get('Nota Final', '')) if pd.notna(row.get('Nota Final')) else "", border=1, align='C')
+        pdf.ln()
+        
+    return bytes(pdf.output())
+
+
+def sincronizar_bd():
+    """Percorre os arquivos JSON e regenera o banco de dados SQLite."""
+    data_dir = "data"
+    if not os.path.exists(data_dir):
+        return 0
+        
+    files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
+    count = 0
+    
+    for file in files:
+        if file.startswith("frequencia_") or file.startswith("qualitativo_"):
+            filepath = os.path.join(data_dir, file)
+            try:
+                df = pd.read_json(filepath, orient='records', dtype=False)
+                backup_sqlite(filepath, df)
+                count += 1
+            except Exception as e:
+                print(f"Erro ao sincronizar {file}: {e}")
+                
+    # Importar Alunos do JSON para o Banco
+    alunos_imp = importar_alunos_db()
+    escola_imp = importar_escola_data_sqlite()
+    
+    return count + alunos_imp + escola_imp
+
+def importar_alunos_db():
+    """Importa alunos do JSON para o SQLite."""
+    caminho = os.path.join("data", "alunos.json")
+    if not os.path.exists(caminho):
+        return 0
+    
+    with open(caminho, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+        
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    
+    # Limpa tabela antes de importar para evitar duplicatas
+    c.execute("DELETE FROM alunos")
+    
+    count = 0
+    for turma, lista in dados.items():
+        for aluno in lista:
+            c.execute("INSERT INTO alunos (turma, numero, nome) VALUES (?, ?, ?)",
+                      (turma, aluno['n'], aluno['nome']))
+            count += 1
+            
+    conn.commit()
+    conn.close()
+    return count
+
+def importar_escola_data_sqlite():
+    """Importa dados de escola_db.json para a tabela escola_data no SQLite."""
+    caminho = os.path.join("data", "escola_db.json")
+    if not os.path.exists(caminho):
+        return 0
+    
+    with open(caminho, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+        
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    
+    # Limpa tabela antes de importar
+    c.execute("DELETE FROM escola_data")
+    
+    count = 0
+    turmas = dados.get("turmas", {})
+    for nome_turma, info in turmas.items():
+        componentes = info.get("componentes", [])
+        for comp in componentes:
+            c.execute("INSERT INTO escola_data (turma, componente) VALUES (?, ?)", (nome_turma, comp))
+            count += 1
+            
+    conn.commit()
+    conn.close()
+    return count
+
+def listar_turmas_db():
+    """Lista turmas disponíveis no banco de dados."""
+    db_path = os.path.join("data", "backup_sistema.db")
+    if not os.path.exists(db_path):
+        return []
+    conn = sqlite3.connect(db_path)
+    try:
+        turmas = pd.read_sql_query("SELECT DISTINCT turma FROM alunos ORDER BY turma", conn)
+        return turmas['turma'].tolist()
+    except:
+        return []
+    finally:
+        conn.close()
+
+def listar_alunos_turma_db(turma):
+    """Retorna lista de alunos de uma turma do banco de dados."""
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    try:
+        df = pd.read_sql_query("SELECT numero as n, nome FROM alunos WHERE turma = ? ORDER BY numero", conn, params=(turma,))
+        return df.to_dict('records')
+    except:
+        return []
+    finally:
+        conn.close()
+
+def carregar_perfil_professor():
+    """Carrega o perfil do professor de data/professor_config.json."""
+    caminho = os.path.join("data", "professor_config.json")
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return {}
+    return {}
+
+def salvar_perfil_professor(perfil):
+    """Salva o perfil do professor em data/professor_config.json."""
+    caminho = os.path.join("data", "professor_config.json")
+    os.makedirs("data", exist_ok=True)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(perfil, f, indent=2, ensure_ascii=False)
+
+def listar_professores_db():
+    """Lista os nomes dos professores salvos no banco de dados."""
+    init_db() # Garante que a tabela existe
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    try:
+        df = pd.read_sql_query("SELECT professor FROM professor_config ORDER BY professor", conn)
+        return df['professor'].tolist()
+    except Exception as e:
+        print(f"Erro ao listar professores: {e}")
+        return []
+    finally:
+        conn.close()
+
+def carregar_perfil_professor_db(nome_professor):
+    """Carrega o perfil de um professor específico do banco de dados."""
+    db_path = os.path.join("data", "backup_sistema.db")
+    conn = sqlite3.connect(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT config FROM professor_config WHERE professor = ?", (nome_professor,))
+        row = cursor.fetchone()
+        if row:
+            return json.loads(row[0])
+    except Exception as e:
+        print(f"Erro ao carregar perfil DB: {e}")
+    finally:
+        conn.close()
+    return {}
+
+def split_into_lines(pdf, text, width, font_size):
+    """Splits text into multiple lines based on the available width."""
+    pdf.set_font("Arial", size=font_size)
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        test_line = f"{current_line} {word}".strip()
+        if pdf.get_string_width(test_line) < width:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = word
+    lines.append(current_line.strip())
+    return lines
+
+def cell_with_textwrap(pdf, w, h, text, border=0, align='L'):
+    """Wrap text within a cell."""
+    x = pdf.get_x()
+    y = pdf.get_y()
+    pdf.multi_cell(w, h, str(text), border=border, align=align)
+    pdf.set_xy(x + w, y)
+
+def gerar_pdf_aula_ia(texto_markdown):
+    """Gera um PDF a partir do texto Markdown gerado pela IA."""
+    pdf = FPDF(orientation='P', unit='mm', format='A4')
+    
+    # --- SUPORTE A FONTE EXTERNA (TTF) ---
+    font_dir = os.path.join("data", "fonts")
+    font_regular = os.path.join(font_dir, "DejaVuSans.ttf")
+    font_bold = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
+    
+    # Download automático da fonte se não existir
+    try:
+        if not os.path.exists(font_regular) or not os.path.exists(font_bold):
+            import urllib.request
+            os.makedirs(font_dir, exist_ok=True)
+            base_url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/ttf/"
+            
+            if not os.path.exists(font_regular):
+                print(f"Baixando {font_regular}...")
+                urllib.request.urlretrieve(base_url + "DejaVuSans.ttf", font_regular)
+            if not os.path.exists(font_bold):
+                print(f"Baixando {font_bold}...")
+                urllib.request.urlretrieve(base_url + "DejaVuSans-Bold.ttf", font_bold)
+    except Exception as e:
+        print(f"Aviso: Não foi possível baixar as fontes automaticamente: {e}")
+
+    font_family = "Arial"
+    
+    if os.path.exists(font_regular):
+        try:
+            pdf.add_font('DejaVu', '', font_regular)
+            if os.path.exists(font_bold):
+                pdf.add_font('DejaVu', 'B', font_bold)
+            else:
+                pdf.add_font('DejaVu', 'B', font_regular)
+            font_family = "DejaVu"
+        except Exception as e:
+            print(f"Erro ao carregar fonte externa, usando Arial: {e}")
+
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    
+    lines = texto_markdown.split('\n')
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            pdf.ln(2)
+            continue
+            
+        if line.startswith('# '):
+            pdf.set_font(font_family, 'B', 16)
+            pdf.multi_cell(0, 10, line.replace('# ', '').replace('**', ''), align='C')
+            pdf.ln(5)
+        elif line.startswith('## '):
+            pdf.set_font(font_family, 'B', 14)
+            pdf.ln(3)
+            pdf.multi_cell(0, 8, line.replace('## ', '').replace('**', ''), align='L')
+            pdf.ln(2)
+        elif line.startswith('### '):
+            pdf.set_font(font_family, 'B', 12)
+            pdf.ln(2)
+            pdf.multi_cell(0, 7, line.replace('### ', '').replace('**', ''), align='L')
+            pdf.ln(1)
+        elif line.startswith('> '):
+            pdf.set_font(font_family, 'I', 10)
+            pdf.set_text_color(80, 80, 80)
+            pdf.set_x(20)
+            pdf.multi_cell(0, 6, line.replace('> ', '').replace('**', ''))
+            pdf.set_text_color(0, 0, 0)
+            pdf.ln(2)
+        elif line.startswith('---'):
+            y = pdf.get_y()
+            pdf.line(10, y, 200, y)
+            pdf.ln(5)
+        elif line.startswith('**') and ':**' in line:
+            parts = line.split(':**', 1)
+            if len(parts) == 2:
+                key = parts[0].replace('**', '') + ':'
+                val = parts[1].strip().replace('**', '')
+                pdf.set_font(font_family, 'B', 11)
+                pdf.write(6, key + ' ')
+                pdf.set_font(font_family, '', 11)
+                pdf.write(6, val)
+                pdf.ln(6)
+            else:
+                pdf.set_font(font_family, '', 11)
+                pdf.multi_cell(0, 6, line.replace('**', ''))
+        elif line.startswith('- ') or line.startswith('* '):
+            pdf.set_font(font_family, '', 11)
+                # Indentação para lista usando cell em vez de write para evitar erros de cursor
+            pdf.set_x(pdf.l_margin + 5)
+            pdf.cell(5, 6, '-', align='C')
+            pdf.multi_cell(0, 6, line[2:].replace('**', ''))
+        else:
+            pdf.set_font(font_family, '', 11)
+            pdf.set_x(pdf.l_margin) # Garante que começa na margem esquerda
+            pdf.multi_cell(0, 6, line.replace('**', ''))
+            
+    return bytes(pdf.output())

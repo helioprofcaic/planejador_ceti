@@ -1,0 +1,32 @@
+﻿{
+    "PADRAO_TECNICO_MODULAR":  {
+                                   "duracao_semanas":  5,
+                                   "aulas_por_semana":  4,
+                                   "tipo_curso":  "Modular Mensal (40h)"
+                               },
+    "MAPEAMENTO_POR_CHAVE":  {
+                                 "MENTORIA":  {
+                                                  "duracao_semanas":  40,
+                                                  "aulas_por_semana":  2,
+                                                  "tipo_curso":  "Técnico Anual",
+                                                  "palavras_chave":  [
+                                                                         "MENTORIA"
+                                                                     ]
+                                              },
+                                 "MODULAR_EPT":  {
+                                                     "duracao_semanas":  10,
+                                                     "aulas_por_semana":  4,
+                                                     "tipo_curso":  "Modular Mensal (80h)",
+                                                     "palavras_chave":  [
+                                                                            "POO",
+                                                                            "WEB",
+                                                                            "IOT"
+                                                                        ]
+                                                 }
+                             },
+    "PADRAO_GERAL":  {
+                         "duracao_semanas":  40,
+                         "aulas_por_semana":  2,
+                         "tipo_curso":  "Anual / Regular"
+                     }
+}
