@@ -48,7 +48,7 @@ else:
 # --- FORMULÁRIO DE PERFIL ---
 nome = st.text_input("Seu Nome Completo (Como sairá no Plano)", value=nome_atual, key=f"nome_{perfil_selecionado}")
 email = st.text_input("E-mail Institucional", value=email_atual, key=f"email_{perfil_selecionado}")
-st.session_state['municipio'] = st.text_input("Município", value=municipio_atual, key=f"mun_{perfil_selecionado}")
+municipio = st.text_input("Município", value=municipio_atual, key=f"mun_{perfil_selecionado}")
 
 st.write("---")
 st.subheader("Minha Carga Horária")
@@ -106,17 +106,18 @@ if st.button("💾 Salvar Minha Configuração"):
     perfil = {
         "professor": nome,
         "email": email,
-        "municipio": st.session_state['municipio'],
+        "municipio": municipio,
         "vinculos": config_vínculos
     }
 
     
 
     utils.salvar_perfil_professor(perfil)
-    utils.salvar_professor_config_db(nome, email, st.session_state.get('municipio', ""), perfil)
+    utils.salvar_professor_config_db(nome, email, municipio, perfil)
     
     # Atualizar estado da sessão para refletir mudanças imediatamente
     st.session_state['professor'] = nome
+    st.session_state['municipio'] = municipio
     st.success("Configuração salva com sucesso! Agora o sistema está personalizado para você.")
 
 st.divider()
