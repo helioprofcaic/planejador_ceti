@@ -39,7 +39,7 @@ def carregar_dados():
     """Carrega o arquivo ementas.json da pasta data."""
     caminho = os.path.join("data", "ementas.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {}
 
@@ -47,7 +47,7 @@ def carregar_ementas_oficiais():
     """Carrega o arquivo ementas_oficiais.json da pasta data."""
     caminho = os.path.join("data", "ementas_oficiais.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {}
 
@@ -55,7 +55,7 @@ def carregar_ementas_trimestre():
     """Carrega o arquivo ementas_geral_1trimestre.json da pasta data."""
     caminho = os.path.join("data", "ementas_geral_1trimestre.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {}
 
@@ -63,7 +63,7 @@ def carregar_escola_db():
     """Carrega o banco de dados da escola (escola_db.json)."""
     caminho = os.path.join("data", "escola_db.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {"turmas": {}, "professores": []}
 
@@ -87,7 +87,7 @@ def carregar_calendario_letivo():
         }
     }
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             try:
                 return json.load(f)
             except:
@@ -98,7 +98,7 @@ def carregar_curriculo_db():
     """Carrega o banco de dados do currículo (curriculo_db.json)."""
     caminho = os.path.join("data", "curriculo_db.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {"BASICO": {}, "APROFUNDAMENTO": {}, "EPT": {}}
 
@@ -154,7 +154,7 @@ def carregar_config_componentes():
     """Carrega o arquivo config_componentes.json da pasta data."""
     caminho = os.path.join("data", "config_componentes.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     # Retorna uma estrutura padrão se o arquivo não existir
     return {
@@ -176,7 +176,7 @@ def salvar_planejamento(dados):
     
     # Carrega os planejamentos existentes ou cria um novo dicionário
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             try:
                 todos = json.load(f)
             except json.JSONDecodeError:
@@ -198,7 +198,7 @@ def carregar_planejamento(turma, componente, escala, trimestre="1º"):
     """Carrega um planejamento específico se existir."""
     caminho = os.path.join("data", "planejamentos.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             todos = json.load(f)
             chave = f"{turma}_{componente}_{escala}_{trimestre}"
             return todos.get(chave)
@@ -208,7 +208,7 @@ def carregar_alunos():
     """Carrega o arquivo alunos.json da pasta data."""
     caminho = os.path.join("data", "alunos.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {}
 
@@ -347,7 +347,7 @@ def carregar_dados_json(caminho_arquivo):
         if os.path.getsize(caminho_arquivo) > 0:
             try:
                 # Especificar dtype=False para evitar conversão automática de tipos que pode dar erro
-                with open(caminho_arquivo, "r", encoding="utf-8") as f:
+                with open(caminho_arquivo, "r", encoding="utf-8-sig") as f:
                     return pd.DataFrame(json.load(f))
             except (ValueError, json.JSONDecodeError): # Captura erro se o JSON for inválido
                 print(f"Aviso: Arquivo JSON inválido em {caminho_arquivo}. Um novo será criado.")
@@ -755,7 +755,7 @@ def importar_alunos_db():
     if not os.path.exists(caminho):
         return 0
     
-    with open(caminho, "r", encoding="utf-8") as f:
+    with open(caminho, "r", encoding="utf-8-sig") as f:
         dados = json.load(f)
         
     db_path = os.path.join("data", "backup_sistema.db")
@@ -782,7 +782,7 @@ def importar_escola_data_sqlite():
     if not os.path.exists(caminho):
         return 0
     
-    with open(caminho, "r", encoding="utf-8") as f:
+    with open(caminho, "r", encoding="utf-8-sig") as f:
         dados = json.load(f)
         
     db_path = os.path.join("data", "backup_sistema.db")
@@ -834,7 +834,7 @@ def carregar_perfil_professor():
     """Carrega o perfil do professor de data/professor_config.json."""
     caminho = os.path.join("data", "professor_config.json")
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
+        with open(caminho, "r", encoding="utf-8-sig") as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError:

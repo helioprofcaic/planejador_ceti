@@ -127,7 +127,7 @@ st.caption("Ferramentas para ajuste e correção do banco de dados.")
 if st.button("🔄 Corrigir Terminologia (Neurodivergência)"):
     caminho_alunos = os.path.join("data", "alunos.json")
     if os.path.exists(caminho_alunos):
-        with open(caminho_alunos, "r", encoding="utf-8") as f:
+        with open(caminho_alunos, "r", encoding="utf-8-sig") as f:
             dados = json.load(f)
         
         for turma, lista in dados.items():
