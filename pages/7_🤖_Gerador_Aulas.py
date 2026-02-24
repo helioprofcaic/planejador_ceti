@@ -90,11 +90,14 @@ curriculo = utils.carregar_curriculo_db()
 comps_basico = list(curriculo.get("BASICO", {}).keys())
 comps_aprofundamento = list(curriculo.get("APROFUNDAMENTO", {}).keys())
 comps_ept = list(curriculo.get("EPT", {}).keys())
+turmas_disponiveis = utils.listar_turmas_db()
 
 # --- FORMULÁRIO PRINCIPAL ---
 col1, col2 = st.columns(2)
 
 with col1:
+    turma_sel = st.selectbox("Turma (Opcional)", [""] + turmas_disponiveis, help="Selecione a turma para aparecer no cabeçalho do plano.")
+    
     publico = st.selectbox("Público Alvo", [
         "Ensino Fundamental I (1º ao 5º ano)",
         "Ensino Fundamental II (6º ao 9º ano)",
@@ -177,6 +180,8 @@ if st.button("✨ Gerar Plano de Aula", type="primary"):
         escola = st.session_state.get('escola', "CETI PROFESSOR RALDIR CAVALCANTE BASTOS")
         perfil_prof = utils.carregar_perfil_professor()
         professor = perfil_prof.get("professor", st.session_state.get("professor", "Professor(a)"))
+        
+        turma_header = turma_sel if turma_sel else publico
 
         # Construção do Prompt
         prompt = f"""
@@ -185,6 +190,7 @@ if st.button("✨ Gerar Plano de Aula", type="primary"):
         **CONTEXTO:**
         - Escola: {escola}
         - Professor: {professor}
+        - Turma: {turma_header}
         - **Componente:** {componente}
         - **Tema:** {tema}
         - **Público:** {publico}
@@ -212,6 +218,7 @@ if st.button("✨ Gerar Plano de Aula", type="primary"):
         
         **🏫 Escola:** {escola}  
         **👨‍🏫 Professor:** {professor}  
+        **🎓 Turma:** {turma_header}
         **📚 Componente:** {componente}  
         
         ---

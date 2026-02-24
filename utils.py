@@ -926,10 +926,11 @@ def gerar_pdf_aula_ia(texto_markdown):
     font_dir = os.path.join("data", "fonts")
     font_regular = os.path.join(font_dir, "DejaVuSans.ttf")
     font_bold = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
+    font_italic = os.path.join(font_dir, "DejaVuSans-Oblique.ttf")
     
     # Download automático da fonte se não existir
     try:
-        if not os.path.exists(font_regular) or not os.path.exists(font_bold):
+        if not os.path.exists(font_regular) or not os.path.exists(font_bold) or not os.path.exists(font_italic):
             import urllib.request
             os.makedirs(font_dir, exist_ok=True)
             base_url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/ttf/"
@@ -940,6 +941,9 @@ def gerar_pdf_aula_ia(texto_markdown):
             if not os.path.exists(font_bold):
                 print(f"Baixando {font_bold}...")
                 urllib.request.urlretrieve(base_url + "DejaVuSans-Bold.ttf", font_bold)
+            if not os.path.exists(font_italic):
+                print(f"Baixando {font_italic}...")
+                urllib.request.urlretrieve(base_url + "DejaVuSans-Oblique.ttf", font_italic)
     except Exception as e:
         print(f"Aviso: Não foi possível baixar as fontes automaticamente: {e}")
 
@@ -952,6 +956,12 @@ def gerar_pdf_aula_ia(texto_markdown):
                 pdf.add_font('DejaVu', 'B', font_bold)
             else:
                 pdf.add_font('DejaVu', 'B', font_regular)
+            
+            if os.path.exists(font_italic):
+                pdf.add_font('DejaVu', 'I', font_italic)
+            else:
+                pdf.add_font('DejaVu', 'I', font_regular)
+                
             font_family = "DejaVu"
         except Exception as e:
             print(f"Erro ao carregar fonte externa, usando Arial: {e}")
