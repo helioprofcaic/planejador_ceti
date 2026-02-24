@@ -90,8 +90,18 @@ def load_json(filename, default_value=None):
 
     try:
         content = service.files().get_media(fileId=file_id).execute()
-        # Usa utf-8-sig para lidar com BOM do Windows (comum em arquivos locais editados)
-        return json.loads(content.decode('utf-8-sig'))
+        
+        # Tenta decodificar com diferentes codificações (UTF-8, Latin-1/ANSI) para evitar erros
+        encodings = ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252']
+        
+        for encoding in encodings:
+            try:
+                return json.loads(content.decode(encoding))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                continue
+        
+        st.error(f"Não foi possível ler o arquivo {filename}. O formato parece inválido ou corrompido.")
+        return default_value or {}
     except Exception as e:
         st.error(f"Erro ao ler {filename} do Drive: {e}")
         return default_value or {}
