@@ -24,6 +24,9 @@ REM Instala/Atualiza dependencias
 echo Verificando dependencias...
 pip install -r requirements.txt
 
+REM Forca o modo local ignorando o secrets.toml
+set FORCE_LOCAL_MODE=1
+
 REM Executa a aplicacao
 echo Iniciando o Planejador CETI...
 streamlit run app.py

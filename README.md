@@ -111,6 +111,20 @@ Por questões de segurança e LGPD, os dados reais dos alunos não estão inclu�
 
 ## ▶️ Como Rodar
 
+### 💡 Workflow de Desenvolvimento (Local vs. Nuvem)
+
+Para garantir a melhor experiência, entenda os dois modos de operação controlados pelo arquivo `.streamlit/secrets.toml`:
+
+*   **`usar_nuvem = false` (Modo Local - Recomendado para Desenvolvimento)**
+    *   **O que faz?** O sistema lê e grava todos os arquivos `.json` diretamente na pasta `data/` do seu computador.
+    *   **Vantagem:** Extremamente rápido, ideal para testar, codificar e fazer alterações no dia a dia.
+
+*   **`usar_nuvem = true` (Modo Nuvem - Para Produção/Deploy)**
+    *   **O que faz?** O sistema ignora a pasta `data/` e se conecta ao seu Google Drive para todas as operações.
+    *   **Vantagem:** Seus dados ficam centralizados e seguros na nuvem. É o modo **obrigatório** para quando você for publicar o aplicativo no Streamlit Cloud.
+
+**Resumo:** Use `false` no seu PC para agilidade e mude para `true` apenas quando for fazer o deploy final.
+
 **Windows:** Execute o arquivo `run.bat`.
 
 **Manual / Terminal:** Execute o comando abaixo:

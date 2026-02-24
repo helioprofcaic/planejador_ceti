@@ -63,6 +63,27 @@ with st.sidebar:
     st.divider()
     st.markdown("### Dicas de Prompt")
     st.caption("Quanto mais detalhes você fornecer nos objetivos, melhor será o resultado.")
+    
+    st.divider()
+    st.header("📚 Material de Apoio (PDF)")
+    st.caption("Selecione um PDF da pasta 'pdf' do Drive para usar como base.")
+    
+    pdfs_disponiveis = utils.listar_pdfs_referencia()
+    opcoes_pdf = ["Nenhum"] + [p['name'] for p in pdfs_disponiveis]
+    
+    pdf_selecionado_nome = st.selectbox("Usar conteúdo do arquivo:", options=opcoes_pdf)
+    
+    conteudo_pdf_extra = ""
+    if pdf_selecionado_nome != "Nenhum":
+        # Encontra o ID/Caminho do arquivo selecionado
+        arquivo_alvo = next((p for p in pdfs_disponiveis if p['name'] == pdf_selecionado_nome), None)
+        if arquivo_alvo:
+            with st.spinner(f"Lendo '{pdf_selecionado_nome}'..."):
+                conteudo_pdf_extra = utils.extrair_texto_pdf_referencia(arquivo_alvo['id'])
+            if conteudo_pdf_extra:
+                st.success(f"PDF carregado! ({len(conteudo_pdf_extra)} caracteres)")
+            else:
+                st.warning("Não foi possível extrair texto deste PDF.")
 
 # --- CARREGAMENTO DE DADOS ---
 curriculo = utils.carregar_curriculo_db()
@@ -172,6 +193,19 @@ if st.button("✨ Gerar Plano de Aula", type="primary"):
         - **Recursos:** {', '.join(recursos)}
         - **Observações:** {objetivos_especificos}
         
+        """
+        
+        if conteudo_pdf_extra:
+            prompt += f"""
+            **MATERIAL DE REFERÊNCIA (PDF):**
+            Use as informações abaixo como base teórica para o conteúdo da aula:
+            --- INÍCIO DO TEXTO DO PDF ---
+            {conteudo_pdf_extra[:30000]} 
+            --- FIM DO TEXTO DO PDF ---
+            (Nota: Se o texto do PDF for muito longo, foque nos pontos principais relacionados ao tema '{tema}')
+            """
+            
+        prompt += f"""
         **MODELO DE SAÍDA (Markdown):**
         
         # 🎨 {tema}

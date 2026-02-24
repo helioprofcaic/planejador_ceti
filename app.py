@@ -39,22 +39,18 @@ with st.sidebar:
 
 # --- APLICAÇÃO DO ESTILO ---
 utils.aplicar_estilo()
-utils.init_db() # Garante que o banco existe ao iniciar
-
-# Se não houver turmas no banco, tenta importar automaticamente na primeira execução
-if not utils.listar_turmas_db():
-    utils.importar_alunos_db()
-
-# --- BARRA LATERAL EXTRA ---
-with st.sidebar:
-    st.divider()
-    if st.button("🔄 Sincronizar Banco de Dados"):
-        with st.spinner("Lendo arquivos JSON e atualizando SQLite..."):
-            qtd = utils.sincronizar_bd()
-        st.success(f"{qtd} registros sincronizados!")
 
 # --- CONTEÚDO DA HOME ---
 st.title("🏠 Menu Principal")
+
+# --- STATUS DA CONEXÃO ---
+st.divider()
+if utils.USE_CLOUD_STORAGE:
+    st.success("☁️ **Modo Nuvem Ativado:** Os dados estão sendo lidos e salvos no seu Google Drive.")
+else:
+    st.info("📂 **Modo Local Ativado:** Os dados estão sendo lidos e salvos na pasta `data/` do projeto.")
+st.divider()
+
 st.subheader(f"{st.session_state['escola']}")
 st.caption(f"Bem-vindo(a), Prof. {st.session_state['professor']}")
 

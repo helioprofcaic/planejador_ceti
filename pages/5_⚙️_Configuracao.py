@@ -103,8 +103,30 @@ for turma in turmas_selecionadas:
                                 st.warning(f"O componente '{novo_comp}' já existe para esta turma.")
 st.divider()
 if st.button("💾 Salvar Minha Configuração"):
+    # --- VALIDAÇÃO DE NOME DUPLICADO ---
+    nome_input = nome.strip()
+    
+    if not nome_input:
+        st.error("❌ O nome do professor é obrigatório.")
+        st.stop()
+
+    # Normaliza lista existente para comparação (maiúsculas)
+    nomes_existentes_upper = [p.upper() for p in professores_db]
+    
+    # Cenário 1: Criando Novo Perfil -> Nome não pode existir
+    if perfil_selecionado == "➕ Novo Perfil":
+        if nome_input.upper() in nomes_existentes_upper:
+            st.error(f"❌ Já existe um professor cadastrado com o nome '{nome_input}'. Por favor, diferencie (ex: adicione o sobrenome).")
+            st.stop()
+            
+    # Cenário 2: Editando Perfil -> Se mudou o nome, o novo nome não pode conflitar com outro
+    elif nome_input.upper() != perfil_selecionado.upper():
+        if nome_input.upper() in nomes_existentes_upper:
+            st.error(f"❌ O nome '{nome_input}' já está em uso por outro professor.")
+            st.stop()
+
     perfil = {
-        "professor": nome,
+        "professor": nome_input,
         "email": email,
         "municipio": municipio,
         "vinculos": config_vínculos
@@ -113,10 +135,13 @@ if st.button("💾 Salvar Minha Configuração"):
     
 
     utils.salvar_perfil_professor(perfil)
-    utils.salvar_professor_config_db(nome, email, municipio, perfil)
+    utils.salvar_professor_config_db(nome_input, email, municipio, perfil)
+    
+    # --- CORREÇÃO: Atualizar a lista geral de professores no escola_db ---
+    utils.atualizar_lista_professores_db(nome_input)
     
     # Atualizar estado da sessão para refletir mudanças imediatamente
-    st.session_state['professor'] = nome
+    st.session_state['professor'] = nome_input
     st.session_state['municipio'] = municipio
     st.success("Configuração salva com sucesso! Agora o sistema está personalizado para você.")
 

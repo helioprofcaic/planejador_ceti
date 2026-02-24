@@ -4,6 +4,7 @@ import io
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.http import MediaIoBaseDownload
 
 # Escopos necessários para ler e escrever no Drive
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -41,6 +42,24 @@ def get_folder_id():
         return st.secrets["drive"]["folder_id"]
     return None
 
+def get_or_create_subfolder(service, parent_id, folder_name):
+    """Verifica se uma subpasta existe. Se não, cria e retorna o ID."""
+    query = f"mimeType = 'application/vnd.google-apps.folder' and name = '{folder_name}' and '{parent_id}' in parents and trashed = false"
+    results = service.files().list(q=query, fields="files(id, name)").execute()
+    files = results.get('files', [])
+    
+    if files:
+        return files[0]['id']
+    else:
+        # Cria a pasta se não existir
+        file_metadata = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [parent_id]
+        }
+        folder = service.files().create(body=file_metadata, fields='id').execute()
+        return folder.get('id')
+
 def find_file(service, filename, folder_id):
     """Procura o ID de um arquivo pelo nome dentro da pasta alvo."""
     query = f"name = '{filename}' and '{folder_id}' in parents and trashed = false"
@@ -49,14 +68,17 @@ def find_file(service, filename, folder_id):
     return files[0]['id'] if files else None
 
 def load_json(filename, default_value=None):
-    """Carrega um JSON do Drive. Se não existir, retorna o valor padrão."""
+    """Carrega um JSON da subpasta 'data' no Drive."""
     service = get_drive_service()
-    folder_id = get_folder_id()
+    root_id = get_folder_id()
     
-    if not service or not folder_id:
+    if not service or not root_id:
         return default_value or {}
 
-    file_id = find_file(service, filename, folder_id)
+    # Garante que busca na subpasta 'data'
+    data_folder_id = get_or_create_subfolder(service, root_id, 'data')
+    
+    file_id = find_file(service, filename, data_folder_id)
     if not file_id:
         return default_value or {}
 
@@ -68,14 +90,17 @@ def load_json(filename, default_value=None):
         return default_value or {}
 
 def save_json(filename, data):
-    """Salva (sobrescreve) um arquivo JSON no Drive."""
+    """Salva (sobrescreve) um arquivo JSON na subpasta 'data' no Drive."""
     service = get_drive_service()
-    folder_id = get_folder_id()
+    root_id = get_folder_id()
     
-    if not service or not folder_id:
+    if not service or not root_id:
         return False
 
-    file_id = find_file(service, filename, folder_id)
+    # Garante que salva na subpasta 'data'
+    data_folder_id = get_or_create_subfolder(service, root_id, 'data')
+
+    file_id = find_file(service, filename, data_folder_id)
     
     json_str = json.dumps(data, indent=2, ensure_ascii=False)
     media = MediaIoBaseUpload(io.BytesIO(json_str.encode('utf-8')), mimetype='application/json')
@@ -86,9 +111,42 @@ def save_json(filename, data):
             service.files().update(fileId=file_id, media_body=media).execute()
         else:
             # Cria novo arquivo
-            file_metadata = {'name': filename, 'parents': [folder_id]}
+            file_metadata = {'name': filename, 'parents': [data_folder_id]}
             service.files().create(body=file_metadata, media_body=media).execute()
         return True
     except Exception as e:
         st.error(f"Erro ao salvar {filename} no Drive: {e}")
         return False
+
+def list_files_in_subfolder(subfolder_name, mime_type=None):
+    """Lista arquivos dentro de uma subpasta específica (ex: 'pdf')."""
+    service = get_drive_service()
+    root_id = get_folder_id()
+    
+    if not service or not root_id:
+        return []
+        
+    target_folder_id = get_or_create_subfolder(service, root_id, subfolder_name)
+    
+    query = f"'{target_folder_id}' in parents and trashed = false"
+    if mime_type:
+        query += f" and mimeType = '{mime_type}'"
+        
+    results = service.files().list(q=query, fields="files(id, name)").execute()
+    return results.get('files', [])
+
+def download_file_bytes(file_id):
+    """Baixa o conteúdo de um arquivo do Drive como bytes."""
+    service = get_drive_service()
+    if not service: return None
+    
+    request = service.files().get_media(fileId=file_id)
+    file_io = io.BytesIO()
+    downloader = MediaIoBaseDownload(file_io, request)
+    
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+        
+    file_io.seek(0)
+    return file_io

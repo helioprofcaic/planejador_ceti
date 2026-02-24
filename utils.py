@@ -3,7 +3,7 @@ import json
 import os
 from fpdf import FPDF
 import io
-from pypdf import PdfWriter
+from pypdf import PdfWriter, PdfReader
 import pandas as pd
 from docx import Document
 from docx.shared import Pt, Cm
@@ -18,10 +18,14 @@ except ImportError:
     HAS_GOOGLE_STORAGE = False
 
 try:
-    USE_CLOUD_STORAGE = (
-        HAS_GOOGLE_STORAGE and
-        st.secrets.get("drive", {}).get("usar_nuvem", False)
-    )
+    # Se a variável de ambiente estiver definida (pelo run.bat), força local
+    if os.environ.get("FORCE_LOCAL_MODE") == "1":
+        USE_CLOUD_STORAGE = False
+    else:
+        USE_CLOUD_STORAGE = (
+            HAS_GOOGLE_STORAGE and
+            st.secrets.get("drive", {}).get("usar_nuvem", False)
+        )
 except Exception:
     USE_CLOUD_STORAGE = False
 
@@ -78,14 +82,34 @@ def carregar_escola_db():
     filename = "escola_db.json"
     default_data = {"turmas": {}, "professores": []}
     
+    data = default_data
     if USE_CLOUD_STORAGE:
-        return google_storage.load_json(filename, default_value=default_data)
+        data = google_storage.load_json(filename, default_value=default_data)
+    else:
+        caminho = os.path.join("data", filename)
+        if os.path.exists(caminho):
+            try:
+                with open(caminho, "r", encoding="utf-8-sig") as f:
+                    content = f.read()
+                    if content:
+                        data = json.loads(content)
+            except json.JSONDecodeError:
+                st.warning(f"⚠️ Arquivo `{filename}` está mal formatado. Usando dados padrão.")
+                data = default_data
     
-    caminho = os.path.join("data", filename)
-    if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            return json.load(f)
-    return default_data
+    # --- AUTO-CORREÇÃO: Sincronizar com alunos.json se não houver turmas ---
+    # Se o escola_db não tiver turmas, tenta pegar do alunos.json
+    if not data.get("turmas"):
+        alunos = carregar_alunos()
+        if alunos:
+            turmas_novas = {}
+            for turma in alunos.keys():
+                turmas_novas[turma] = {"componentes": []}
+            data["turmas"] = turmas_novas
+            # Opcional: Salvar essa inferência de volta para persistir
+            # salvar_escola_db(data) 
+            
+    return data
 
 def salvar_escola_db(dados):
     """Salva o arquivo escola_db.json no local ou na nuvem."""
@@ -269,8 +293,14 @@ def carregar_alunos():
         
     caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            return json.load(f)
+        try:
+            with open(caminho, "r", encoding="utf-8-sig") as f:
+                content = f.read()
+                if content:
+                    return json.loads(content)
+        except json.JSONDecodeError:
+            st.warning(f"⚠️ Arquivo `{filename}` está mal formatado. Nenhum aluno carregado.")
+            return {}
     return {}
 
 def salvar_alunos(dados):
@@ -325,16 +355,54 @@ def listar_arquivos_dados(prefixo):
     """Lista arquivos de dados (frequencia, qualitativo) locais ou na nuvem."""
     arquivos = []
     if USE_CLOUD_STORAGE:
-        service = google_storage.get_drive_service()
-        folder_id = google_storage.get_folder_id()
-        if service and folder_id:
-            query = f"name contains '{prefixo}' and '{folder_id}' in parents and trashed = false"
-            results = service.files().list(q=query, fields="files(id, name)").execute()
-            arquivos = [f['name'] for f in results.get('files', [])]
+        # Agora busca na subpasta 'data'
+        # Nota: list_files_in_subfolder retorna lista de dicts {'id', 'name'}, precisamos filtrar aqui
+        todos_arquivos = google_storage.list_files_in_subfolder('data')
+        arquivos = [f['name'] for f in todos_arquivos if prefixo in f['name']]
     else:
         if os.path.exists("data"):
             arquivos = [f for f in os.listdir("data") if f.startswith(prefixo) and f.endswith(".json")]
     return arquivos
+
+def listar_pdfs_referencia():
+    """Lista PDFs disponíveis na pasta 'pdf' (Nuvem) ou 'data/pdf' (Local)."""
+    if USE_CLOUD_STORAGE:
+        arquivos = google_storage.list_files_in_subfolder('pdf', 'application/pdf')
+        return arquivos # Retorna lista de dicts [{'id':..., 'name':...}]
+    else:
+        # Modo Local
+        caminho_pdf = os.path.join("data", "pdf")
+        if not os.path.exists(caminho_pdf):
+            os.makedirs(caminho_pdf, exist_ok=True)
+        
+        arquivos = []
+        for f in os.listdir(caminho_pdf):
+            if f.lower().endswith(".pdf"):
+                arquivos.append({'name': f, 'id': os.path.join(caminho_pdf, f)})
+        return arquivos
+
+def extrair_texto_pdf_referencia(file_id_or_path):
+    """Extrai texto de um PDF (seja do Drive ou Local)."""
+    texto_completo = ""
+    try:
+        if USE_CLOUD_STORAGE:
+            # Baixa bytes do Drive
+            pdf_bytes = google_storage.download_file_bytes(file_id_or_path)
+            if pdf_bytes:
+                reader = PdfReader(pdf_bytes)
+                for page in reader.pages:
+                    texto_completo += page.extract_text() + "\n"
+        else:
+            # Lê local
+            with open(file_id_or_path, 'rb') as f:
+                reader = PdfReader(f)
+                for page in reader.pages:
+                    texto_completo += page.extract_text() + "\n"
+    except Exception as e:
+        print(f"Erro ao ler PDF: {e}")
+        return ""
+        
+    return texto_completo
 
 def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre="1º", municipio=""):
     """Gera o DOCX do planejamento escolar."""
@@ -738,11 +806,13 @@ def carregar_perfil_professor():
         
     caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return {}
+        try:
+            with open(caminho, "r", encoding="utf-8-sig") as f:
+                content = f.read()
+                if content:
+                    return json.loads(content)
+        except json.JSONDecodeError:
+            return {}
     return {}
 
 def salvar_perfil_professor(perfil):
@@ -761,6 +831,18 @@ def listar_professores_db():
     """Lista os nomes dos professores cadastrados no escola_db.json."""
     escola_db = carregar_escola_db()
     return escola_db.get("professores", [])
+
+def atualizar_lista_professores_db(novo_professor):
+    """Adiciona um novo professor à lista geral em escola_db.json se não existir."""
+    escola_db = carregar_escola_db()
+    professores = escola_db.get("professores", [])
+    
+    # Verifica se já existe (case insensitive)
+    if novo_professor.upper() not in [p.upper() for p in professores]:
+        professores.append(novo_professor)
+        professores.sort()
+        escola_db["professores"] = professores
+        salvar_escola_db(escola_db)
 
 def salvar_professor_config_db(professor, email, municipio, config):
     """
@@ -791,8 +873,14 @@ def carregar_perfil_professor_db(nome_professor):
     
     caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            return json.load(f)
+        try:
+            with open(caminho, "r", encoding="utf-8-sig") as f:
+                content = f.read()
+                if content:
+                    return json.loads(content)
+        except json.JSONDecodeError:
+            st.warning(f"⚠️ Arquivo de perfil `{filename}` está mal formatado.")
+            return {}
     return {}
 
 def split_into_lines(pdf, text, width, font_size):

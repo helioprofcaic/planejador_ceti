@@ -14,6 +14,16 @@ data/backup_sistema.db
 data/backups/
 !data/.gitkeep
 
+# Ignorar segredos e configurações locais
+.streamlit/secrets.toml
+
+# Ignorar dados sensíveis (NUNCA envie dados reais de alunos)
+data/alunos.json
+data/planejamentos.json
+data/frequencia_*.json
+data/qualitativo_*.json
+data/perfil_*.json
+data/__/*
 
 # Arquivos Gerados pelo Usuário (Rascunhos)
 data/planejamentos.json
