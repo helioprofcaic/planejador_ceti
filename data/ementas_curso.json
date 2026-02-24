@@ -1,0 +1,446 @@
+{
+  "TECNOLOGIAS, AVA E MÉTODOS DE APREDIZAGEM": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Origem, conceitos e significados da EAD",
+      "A Modalidade Presencial versus a Modalidade a Distância",
+      "As tecnologias digitais e sua contribuição para a educação à distância",
+      "Os agentes na EAD: estudante, professor autor/formador, professor mediador (tutor)",
+      "O Ambiente Virtual de Aprendizagem como sala de aula",
+      "Ambiente Virtual de Aprendizagem na Plataforma Moodle",
+      "Os elementos e as ferramentas da Plataforma Moodle"
+    ],
+    "competencias": [
+      "Compreender o conceito de EAD como modalidade de ensino, suas especificidades, definições e evolução ao longo do tempo",
+      "Conhecer a plataforma Moodle e seus recursos e ferramentas como forma de viabilizar sua participação como estudante virtual"
+    ]
+  },
+  "PENSAMENTO COMPUTACIONAL": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Unidade 1 – Introdução à Computação: Tecnologias na Sociedade do Futuro",
+      "Unidade 2 – Introdução a Python: Desafios de Programação",
+      "Unidade 3 – Ciência de Dados: Construindo uma Análise de Dados com Python",
+      "Unidade 4 – Segurança Digital com Python",
+      "Unidade 5 – Reflexão Crítica e Educação Midiática",
+      "Unidade 6 – Bolhas em Redes Sociais e Grafos"
+    ],
+    "competencias": [
+      "Identificar as tecnologias digitais e seu impacto nas relações sociais",
+      "Avaliar criticamente a confiabilidade das informações digitais",
+      "Compreender as diferenças entre a inteligência humana e a IA",
+      "Identificar a necessidade de variáveis e estruturas lógicas",
+      "Utilizar funções, operadores e estruturas condicionais em Python",
+      "Desenvolver funções modulares e códigos reutilizáveis",
+      "Identificar os elementos básicos de programação em Python",
+      "Criar formulários digitais e importar datasets no Google Colab",
+      "Analisar dados utilizando a biblioteca Pandas e gerar insights",
+      "Identificar e reutilizar trechos de código em Python para segurança digital",
+      "Avaliar a robustez de senhas e algoritmos de criptografia",
+      "Compreender as mudanças tecnológicas e seus efeitos na segurança",
+      "Analisar os impactos da IA e avaliar a confiabilidade das informações",
+      "Identificar padrões de manipulação em conteúdos digitais",
+      "Refletir sobre o papel do usuário na circulação de informações online",
+      "Analisar a formação de bolhas informacionais nas redes sociais",
+      "Representar conexões sociais por meio de grafos",
+      "Compreender como algoritmos influenciam interações e comportamentos"
+    ]
+  },
+  "MENTORIAS TEC": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Desenvolvimento de projetos práticos com foco na empregabilidade e no domínio de ferramentas amplamente utilizadas no mercado de tecnologia",
+      "Construção de aplicações web utilizando HTML, CSS e Tailwind CSS",
+      "Introdução ao controle de versão com Git e GitHub",
+      "Utilização do VS Code como ambiente de desenvolvimento"
+    ],
+    "competencias": [
+      "Aplicar fundamentos de desenvolvimento web: Compreender e utilizar as bases do HTML e CSS, estruturando páginas com boas práticas de semântica e estilo",
+      "Utilizar frameworks modernos de estilo: Empregar Tailwind CSS na construção de interfaces modernas, responsivas e eficientes",
+      "Gerenciar versões de código: Utilizar Git e GitHub para versionamento, colaboração e publicação de projetos",
+      "Desenvolver soluções orientadas a problemas reais: Construir aplicações baseadas em demandas do mercado, com foco em experiência de usuário e funcionalidade",
+      "Aprimorar autonomia e responsabilidade técnica: Planejar, organizar e executar projetos de forma independente com acompanhamento técnico assíncrono",
+      "Simular práticas do mercado de trabalho: Reproduzir o fluxo de trabalho de equipes profissionais, com foco em entrega, documentação e uso de ferramentas padrão da indústria"
+    ]
+  },
+  "FUNDAMENTOS DA TECNOLOGIA DA INFORMAÇÃO": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Sistemas de Informação; Atividades dos sistemas de informação; Componentes de sistemas de informação",
+      "Fundamento das Tecnologias da Informação",
+      "Hardware de Computadores",
+      "Definição e componentes de computadores",
+      "Tecnologias de armazenamento",
+      "Tecnologias de entrada e saída; Software de sistemas; Software aplicativo",
+      "Redes de computadores; Topologias de redes; Redes locais; Redes remotas; Nuvem Computacional; Transmissão de Dados"
+    ],
+    "competencias": [
+      "Conhecer os fundamentos dos sistemas de informação e das tecnologias da informação",
+      "Desenvolver a capacidade de utilizar ferramentas de software"
+    ]
+  },
+  "ARQUITETURA DE COMPUTADORES": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Sistemas de Numeração",
+      "Organização interna dos Computadores e suas tecnologias",
+      "Memórias; Unidade Central de Processamento – CPU",
+      "Linguagem de Máquina, representação de dados e sistema de numeração"
+    ],
+    "competencias": [
+      "Conhecer os conceitos relacionados à operação e funcionamento do computador e tecnologias",
+      "Compreender o fluxo de processamento de informação nos computadores"
+    ]
+  },
+  "FUNDAMENTOS DE REDE DE COMPUTADORES": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Histórico da evolução das redes de computadores; Arquiteturas e classificação das redes de computadores",
+      "Modelo de referência OSI; Arquitetura TCP/IP; Protocolos de comunicação",
+      "Endereçamento",
+      "Introdução aos equipamentos de interconexão de redes de computadores; Protocolos de aplicação; Redes sem fio"
+    ],
+    "competencias": [
+      "Compreender fundamentos técnicos e científicos relacionados à infraestrutura e tecnologias de redes de computadores",
+      "Desenvolver capacidades técnicas essenciais para o curso técnico de referência, aplicando conhecimentos em ambientes reais de redes",
+      "Subsidiar o domínio do ambiente de usuário, com foco em sistemas conectados e serviços em rede",
+      "Integrar aspectos sociais, organizativos e metodológicos na abordagem de problemas e soluções em redes de computadores",
+      "Promover uma formação crítica e colaborativa, incentivando a autonomia e a tomada de decisão no contexto da tecnologia da informação e comunicação (TIC)"
+    ]
+  },
+  "FUNDAMENTOS DE BANCO DE DADOS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Modelo de Dados Relacionais; Linguagem de Consulta Estruturada (SQL)",
+      "Linguagem de Procedimento Estendida (PL/SQL); Sistema de Gerenciamento de Banco de Dados (SGDB); Linguagens de Consulta e Manipulação de Dados",
+      "Sistemas de Gerenciamento de Transações; Sistemas de Gerenciamento de Recuperação; Sistemas de Gerenciamento de Segurança",
+      "Esquemas de Banco de Dados; Ferramentas de Desenvolvimento de Banco de Dados"
+    ],
+    "competencias": [
+      "Modelar, implementar e manter banco de dados relacionais",
+      "Realizar operações em esquemas de dados",
+      "Otimizar bases de dados utilizando técnicas de normalização"
+    ]
+  },
+  "ADMINISTRAÇÃO DE BANCO DE DADOS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Arquitetura de banco de dados",
+      "Controle de acesso; Backup e Restore",
+      "Análise de performance; Métodos de pesquisa; Ajuste de pesquisa",
+      "Dimensionamento de área de armazenamento; Tunning"
+    ],
+    "competencias": [
+      "Compreender a arquitetura de banco de dados, identificando seus componentes, funcionamento interno e implicações no desempenho e na escalabilidade dos sistemas",
+      "Gerenciar mecanismos de controle de acesso, backup e recuperação de dados, garantindo a integridade, disponibilidade e segurança da informação",
+      "Analisar e otimizar a performance de consultas e operações no banco de dados, aplicando técnicas de ajuste (query tuning) e boas práticas de modelagem",
+      "Aplicar métodos de dimensionamento de recursos de armazenamento, prevendo crescimento e necessidades de escalabilidade com foco em eficiência",
+      "Realizar tunning de banco de dados, avaliando indicadores de desempenho e implementando ações de melhoria contínua baseadas em métricas técnicas"
+    ]
+  },
+  "LÓGICA DE PROGRAMAÇÃO": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Variáveis e atribuições",
+      "Fundamentos básicos de algoritmos e lógica de programação",
+      "Tipos de dados e Operadores",
+      "Estruturas lógicas"
+    ],
+    "competencias": [
+      "Desenvolver o raciocínio lógico aplicado à solução de problemas em nível computacional, além de introduzir os conceitos básicos de desenvolvimento de algoritmos e programas, de forma a propiciar uma visão crítica e sistemática sobre resolução de problemas"
+    ]
+  },
+  "MÉTODOS ÁGEIS DE DESENVOLVIMENTO": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Introdução aos métodos ágeis: princípios, valores e filosofia",
+      "Principais métodos ágeis; Gerenciamento ágil de projetos",
+      "Trabalhando com histórias de usuário",
+      "Práticas técnicas de desenvolvimento ágil de sistemas",
+      "Utilizar a UML como ferramenta para Modelagem ágil de sistemas"
+    ],
+    "competencias": [
+      "Compreender os fundamentos dos métodos ágeis, seus princípios, valores e filosofia, reconhecendo sua importância no desenvolvimento moderno de sistemas",
+      "Aplicar os principais métodos ágeis no gerenciamento de projetos, adaptando práticas de gestão e colaboração para diferentes contextos de desenvolvimento",
+      "Elaborar e analisar histórias de usuário, estruturando requisitos funcionais com foco nas necessidades do cliente e na entrega contínua de valor",
+      "Adotar práticas técnicas ágeis no ciclo de desenvolvimento de software, promovendo qualidade, eficiência e adaptabilidade no processo de construção de sistemas",
+      "Utilizar a UML de forma simplificada e contextualizada, como ferramenta de apoio à modelagem ágil de sistemas, conciliando agilidade com clareza na documentação"
+    ]
+  },
+  "TECNOLOGIAS SUSTENTÁVEIS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Introdução às tecnologias sustentáveis e seu papel no desenvolvimento global",
+      "Energias renováveis e alternativas: solar, eólica, hidrelétrica, biomassa",
+      "Tecnologias verdes e práticas de economia circular",
+      "Design e desenvolvimento de produtos sustentáveis",
+      "Tecnologias para gestão eficiente de recursos naturais",
+      "Tecnologias de baixo impacto ambiental e gestão de resíduos",
+      "Sustentabilidade no setor de TI e impacto ambiental",
+      "Políticas públicas e regulamentação ambiental relacionadas a tecnologias Sustentáveis"
+    ],
+    "competencias": [
+      "Compreender os princípios das tecnologias sustentáveis e sua aplicação na sociedade contemporânea",
+      "Avaliar alternativas energéticas e soluções tecnológicas com foco em sustentabilidade",
+      "Aplicar práticas de desenvolvimento sustentável na criação de produtos e serviços",
+      "Reconhecer o papel do profissional de TI na promoção da sustentabilidade ambiental",
+      "Analisar políticas públicas e diretrizes legais voltadas para o uso sustentável de tecnologias"
+    ]
+  },
+  "PROGRAMAÇÃO ESTRUTURADA": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Programação Estruturada: Tipos básicos de dados; Memória, constantes e variáveis",
+      "Operadores aritméticos, lógicos e relacionais; Comandos básicos de atribuição, de entrada e saída de dados; Funções primitivas",
+      "Estruturas condicionais; Estruturas de repetição; Tipos Estruturados de Dados: Strings; Vetores e Matrizes",
+      "Modularidade; Métodos estáticos (funções) ; Passagem de parâmetros (por valor e referência)"
+    ],
+    "competencias": [
+      "Compreender os fundamentos da programação estruturada, incluindo tipos primitivos de dados, variáveis, constantes e a estrutura de memória utilizada pelos programas",
+      "Aplicar operadores aritméticos, lógicos e relacionais para resolver problemas computacionais por meio de instruções básicas de entrada, saída e atribuição de valores",
+      "Elaborar algoritmos utilizando estruturas de controle, como condicionais e laços de repetição, para tomada de decisão e repetição de processos automatizados",
+      "Manipular dados estruturados, como vetores, matrizes e cadeias de caracteres (strings), promovendo o armazenamento eficiente e o processamento de informações em larga escala",
+      "Desenvolver programas modulares, utilizando funções/métodos com passagem de parâmetros por valor e por referência, visando reutilização de código e melhor organização lógica"
+    ]
+  },
+  "PROGRAMAÇÃO ORIENTADA A OBJETOS – POO": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Paradigma da Orientação a Objetos e representação gráfica em UML; (diagramas de classe e objeto)",
+      "Programação orientada a objetos: objetos, classes, herança, polimorfismo e Interfaces",
+      "Regras de escopo; Atributos de classes x instâncias",
+      "Empacotamento de classes; Encapsulamento, Sobrecarga e Classes abstratas"
+    ],
+    "competencias": [
+      "Compreender os fundamentos do paradigma da programação orientada a objetos, utilizando conceitos como classes, objetos, herança, polimorfismo e interfaces para modelar sistemas computacionais",
+      "Interpretar e aplicar representações gráficas de sistemas utilizando diagramas UML, com foco em diagramas de classes e de objetos, para documentar e planejar soluções orientadas a objetos",
+      "Aplicar corretamente regras de escopo e distinguir entre atributos de instância e atributos de classe, visando à organização e clareza do código",
+      "Empregar conceitos de encapsulamento, sobrecarga e classes abstratas no desenvolvimento de soluções modulares, seguras e reutilizáveis",
+      "Organizar projetos orientados a objetos utilizando técnicas de empacotamento de classes, promovendo estruturação eficiente e manutenção facilitada do código"
+    ]
+  },
+  "PROGRAMAÇÃO WEB FRONT-END": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Programação front-end versus back-end",
+      "Ferramentas para o desenvolvimento Back-end",
+      "Linguagem de programação para Web",
+      "Frameworks para Desenvolvimento Web e seus principais benefícios"
+    ],
+    "competencias": [
+      "Compreender as diferenças e as inter-relações entre programação front-end e back-end, reconhecendo suas funções no desenvolvimento de sistemas web",
+      "Selecionar e utilizar ferramentas adequadas para o desenvolvimento back-end, visando à construção de aplicações robustas e escaláveis",
+      "Aplicar linguagens de programação específicas para desenvolvimento web, desenvolvendo funcionalidades para servidores e clientes",
+      "Identificar e empregar frameworks para desenvolvimento web, aproveitando seus principais benefícios para acelerar e organizar o processo de desenvolvimento",
+      "Integrar componentes front-end e back-end de forma eficiente, promovendo o funcionamento harmônico de aplicações web completas"
+    ]
+  },
+  "ARQUITETURA DE MICROSERVIÇOS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Conceitos fundamentais de microserviços",
+      "Diferenças entre arquitetura monolítica e de microserviços",
+      "Design de microserviços: módulos, serviços independentes e APIs",
+      "Comunicação entre microserviços: REST, gRPC, eventos",
+      "Implementação e gerenciamento de microserviços",
+      "Escalabilidade e redundância com microserviços",
+      "Monitoramento e testes de microserviços",
+      "Desafios e vantagens da arquitetura de microserviços"
+    ],
+    "competencias": [
+      "Compreender os fundamentos e a aplicabilidade da arquitetura de microserviços",
+      "Projetar soluções escaláveis baseadas em serviços independentes e coesos",
+      "Selecionar protocolos e padrões adequados para comunicação entre microserviços",
+      "Avaliar vantagens e desafios da arquitetura distribuída frente à monolítica",
+      "Aplicar boas práticas de monitoramento, testes e manutenção de microserviços"
+    ]
+  },
+  "FUNDAMENTOS DE UI / UX OU IHC": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Princípios e elementos de design centrado no usuário",
+      "Fundamentos de direitos autorais e ética no design digital",
+      "Métodos e técnicas para coleta e análise de dados de usuários",
+      "Conceitos e práticas de User Experience (UX)",
+      "Conceitos e práticas de User Interface (UI)",
+      "Prototipagem e ferramentas para criação de interfaces",
+      "Testes de usabilidade e refinamento de protótipos"
+    ],
+    "competencias": [
+      "Aplicar princípios de design centrado no usuário para criar interfaces intuitivas",
+      "Integrar aspectos legais e éticos relacionados a direitos autorais no desenvolvimento de interfaces digitais",
+      "Utilizar técnicas de pesquisa para compreender as necessidades e comportamentos dos usuários",
+      "Projetar experiências de usuário eficientes e satisfatórias em sistemas digitais",
+      "Desenvolver protótipos funcionais para validação e aprimoramento de interfaces"
+    ]
+  },
+  "ÉTICA, TRABALHO E CIDADANIA": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Exercício da Ética, Cidadania e formação pessoal e profissional",
+      "Ética Profissional e o autoconhecimento",
+      "Formas de organização dos trabalhadores",
+      "Ética profissional a partir da comunicação no trabalho",
+      "Relações interpessoais, pessoais e atitudes"
+    ],
+    "competencias": [
+      "Desenvolver um trabalho em equipe, valorizando e encorajando o estudante para a prática e ética no ambiente profissional",
+      "Compreender a importância da ética profissional no ambiente de trabalho"
+    ]
+  },
+  "PROGRAMAÇÃO PARA DISPOSITIVOS MOVÉIS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Conceitos, tipos e arquitetura; Ferramentas de desenvolvimento (nativas e multiplataforma)",
+      "Configuração de ambiente de desenvolvimento; Emuladores; Interface Gráfica: criação de layouts responsivos, prototipação experiência do usuário e usabilidade mobile",
+      "Funcionalidades da API: interação entre Telas, eventos do usuário e do sistema e principais recursos nativos (camera, gps, bluetooth, mapas, notificações, gestos e toque etc.)",
+      "Gerenciamento de dados: armazenamento na memória, banco de dados (nativo, webservices) e sincronização offline;Implementação de projetos",
+      "Publicação de apps em loja de aplicativos mobile"
+    ],
+    "competencias": [
+      "Analisar os fundamentos e arquiteturas de sistemas para dispositivos móveis, reconhecendo seus principais recursos e limitações",
+      "Planejar e estruturar interfaces gráficas mobile com foco em responsividade, usabilidade e experiência do usuário",
+      "Desenvolver aplicações móveis com integração de APIs e uso de recursos nativos do dispositivo",
+      "Gerenciar dados em aplicações móveis utilizando diferentes formas de persistência local e remota",
+      "Executar o processo completo de desenvolvimento, testes e publicação de aplicativos móveis"
+    ]
+  },
+  "INTRODUÇÃO AO ECOSSISTEMA DEVOPS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Conceitos e princípios do DevOps",
+      "Integração contínua e entrega contínua",
+      "Automação de processos de desenvolvimento e operações",
+      "Ferramentas de DevOps: Jenkins, Docker, Kubernetes",
+      "Monitoramento e logging de sistemas",
+      "Infraestrutura como código",
+      "Cultura e práticas de colaboração entre equipes de desenvolvimento e operações",
+      "Desafios e benefícios da implementação de DevOps"
+    ],
+    "competencias": [
+      "Compreender os fundamentos e a filosofia DevOps como modelo de integração entre desenvolvimento e operações",
+      "Aplicar práticas de integração e entrega contínua em projetos de software",
+      "Utilizar ferramentas modernas de automação, monitoramento e containerização",
+      "Reconhecer a importância da cultura colaborativa entre equipes técnicas",
+      "Avaliar os impactos e ganhos da aplicação de práticas DevOps no ciclo de vida do software"
+    ]
+  },
+  "MANUTENÇÃO DE SISTEMAS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Suporte e chamados de serviço de manutenção",
+      "Ferramentas de gestão de suporte de chamados",
+      "Gerenciamento de suporte de chamados de serviço",
+      "Definição, tipos e procedimentos de Manutenção de Sistemas",
+      "Plano de manutenção e documentação",
+      "Trabalho em grupo; Roteiro e organização do Trabalho",
+      "Ferramentas de Gerenciamento e ciclo de PDCA",
+      "Modelagem de negócio – Canvas"
+    ],
+    "competencias": [
+      "Compreender os conceitos, classificações e metodologias relacionadas à manutenção de sistemas computacionais",
+      "Analisar e aplicar ferramentas de gestão de chamados de suporte técnico e manutenção",
+      "Planejar, executar e documentar procedimentos de manutenção em sistemas de software",
+      "Utilizar abordagens colaborativas para resolução de problemas técnicos em ambientes organizacionais",
+      "Aplicar o ciclo de melhoria contínua (PDCA) e modelagem de negócios no contexto da manutenção sistêmica"
+    ]
+  },
+  "TESTE DE SISTEMAS E SEGURANÇA DE DADOS": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Introdução a testes, avaliação e análise",
+      "Tipos de testes: caixa branca, caixa preta, caixa cinza, heurísticos, desempenho, performance, usabilidade, entre outros",
+      "Testes e avaliação conforme o estágio do software: projeto, desenvolvimento e implantação",
+      "Classificação de métodos de avaliação",
+      "Técnicas de coleta de dados. Tipos de dados coletados (quantitativos x qualitativos)",
+      "Tipo de análise (experimental, interpretativa, preditiva); Avaliação em diferentes domínios"
+    ],
+    "competencias": [
+      "Analisar os fundamentos e finalidades dos testes de software em diferentes fases do ciclo de desenvolvimento",
+      "Identificar, planejar e aplicar os principais tipos de testes de sistemas e métodos de avaliação",
+      "Coletar e interpretar dados de testes utilizando metodologias quantitativas e qualitativas",
+      "Integrar estratégias de segurança da informação aos processos de teste e validação de sistemas",
+      "Avaliar a performance, confiabilidade e segurança de sistemas em diversos domínios tecnológicos"
+    ]
+  },
+  "CYBERSEGURANÇA": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Introdução à cibersegurança e ameaças digitais",
+      "Políticas de segurança em TI: confidencialidade, integridade e disponibilidade",
+      "Técnicas de proteção de dados e criptografia",
+      "Autenticação e controle de acesso",
+      "Segurança em redes e sistemas operacionais",
+      "Ferramentas e práticas de análise forense digital",
+      "Resposta a incidentes e gestão de crises",
+      "Normas, regulamentações e certificações de segurança digital"
+    ],
+    "competencias": [
+      "Compreender os fundamentos da segurança da informação e suas aplicações no contexto tecnológico",
+      "Identificar e classificar ameaças e vulnerabilidades em sistemas computacionais",
+      "Aplicar técnicas de segurança para proteção de redes, dados e sistemas",
+      "Reconhecer e interpretar legislações e normas relacionadas à segurança digital",
+      "Desenvolver postura ética e preventiva frente a incidentes de segurança da informação"
+    ]
+  },
+  "INTELIGÊNCIA ARTIFICIAL APLICADA A AUTOMAÇÃO": {
+    "carga_horaria": 80,
+    "ementa": [
+      "Fundamentos da inteligência artificial (IA)",
+      "Técnicas de IA: algoritmos de aprendizado de máquina, redes neurais, aprendizado profundo",
+      "Automação inteligente: conceitos e implementações",
+      "Sistemas de IA para automação de processos industriais",
+      "Robótica e automação inteligente em manufatura",
+      "Processamento de linguagem natural e visão computacional para automação",
+      "Ética e implicações da IA na automação de processos",
+      "Casos de uso da IA em automação (indústria, serviços, etc.)"
+    ],
+    "competencias": [
+      "Compreender os conceitos fundamentais da inteligência artificial e sua aplicação em contextos automatizados",
+      "Identificar e analisar diferentes técnicas de IA para resolução de problemas em sistemas computacionais",
+      "Relacionar tecnologias de IA com cenários de automação industrial e de serviços",
+      "Avaliar o uso de ferramentas de IA em robótica, visão computacional e processamento de linguagem natural",
+      "Refletir criticamente sobre os impactos éticos e sociais da IA em processos automatizados"
+    ]
+  },
+  "AGENTES INTELIGENTES": {
+    "carga_horaria": 80,
+    "ementa": [
+      "Definição e conceitos de agentes inteligentes",
+      "Tipos de agentes: reativos, deliberativos, híbridos",
+      "Arquitetura de agentes inteligentes",
+      "Algoritmos de decisão e aprendizado de agentes",
+      "Interação de agentes com o ambiente e outros agentes",
+      "Agentes multiagentes e sistemas distribuídos",
+      "Aplicações de agentes inteligentes em sistemas autônomos",
+      "Desafios e tendências na pesquisa de agentes inteligentes"
+    ],
+    "competencias": [
+      "Compreender os fundamentos teóricos e práticos relacionados a agentes inteligentes",
+      "Desenvolver arquiteturas básicas de agentes para resolução de problemas computacionais",
+      "Aplicar algoritmos de decisão e aprendizado de máquina em ambientes baseados em agentes",
+      "Projetar sistemas multiagentes com foco em colaboração e autonomia",
+      "Avaliar criticamente as aplicações de agentes inteligentes em diferentes domínios tecnológicos"
+    ]
+  },
+  "ORIENTAÇÃO PROFISSIONAL E EMPREENDEDORISMO": {
+    "carga_horaria": 40,
+    "ementa": [
+      "Conceitos de orientação profissional e empreendedorismo",
+      "Desenvolvimento de habilidades empreendedoras",
+      "Planejamento estratégico e modelos de negócios",
+      "Gestão de inovação e criatividade no contexto empreendedor",
+      "Marketing e vendas para empreendedores",
+      "Finanças para pequenos negócios e startups",
+      "Liderança, gestão de equipes e tomada de decisões",
+      "Ética no empreendedorismo e responsabilidade social"
+    ],
+    "competencias": [
+      "Reconhecer a importância da orientação profissional como parte da trajetória formativa do técnico em Desenvolvimento de Sistemas",
+      "Desenvolver competências empreendedoras para atuação em cenários dinâmicos e inovadores",
+      "Planejar e estruturar ideias empreendedoras com base em modelos de negócios",
+      "Aplicar noções básicas de marketing, finanças e gestão no desenvolvimento de projetos empreendedores",
+      "Agir com ética, responsabilidade social e visão crítica no desenvolvimento de soluções sustentáveis e inovadoras"
+    ]
+  }
+}
