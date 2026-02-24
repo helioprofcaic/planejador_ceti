@@ -8,14 +8,16 @@ st.set_page_config(page_title="Frequência", layout="wide")
 
 # --- CONFIGURAÇÕES GLOBAIS ---
 utils.aplicar_estilo()
+
+# Carregar perfil do professor
+perfil_prof = utils.carregar_perfil_professor()
+
 # Recupera dados da sessão
 escola = st.session_state.get('escola', "CETI PROFESSOR RALDIR CAVALCANTE BASTOS")
-professor = st.session_state.get('professor', "Helio Lima")
+professor = perfil_prof.get("professor", st.session_state.get('professor', "Helio Lima"))
 
 st.header("📝 Lista de Frequência Diária")
 
-# Carregar turmas para o selectbox
-perfil_prof = utils.carregar_perfil_professor()
 turmas = []
 # Tenta carregar as turmas do perfil do professor
 if perfil_prof and "vinculos" in perfil_prof and perfil_prof["vinculos"]:

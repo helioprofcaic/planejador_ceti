@@ -317,12 +317,13 @@ def salvar_alunos(dados):
     """Salva o arquivo alunos.json na pasta data (local ou nuvem)."""
     filename = "alunos.json"
     if USE_CLOUD_STORAGE:
-        google_storage.save_json(filename, dados)
+        return google_storage.save_json(filename, dados)
     else:
         caminho = os.path.join("data", filename)
         os.makedirs("data", exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=2, ensure_ascii=False)
+        return True
 
 def salvar_dados_json(caminho_arquivo, dados_df):
     """Salva um DataFrame em um arquivo JSON (local ou nuvem)."""
@@ -830,12 +831,13 @@ def salvar_perfil_professor(perfil):
     filename = "professor_config.json"
     
     if USE_CLOUD_STORAGE:
-        google_storage.save_json(filename, perfil)
+        return google_storage.save_json(filename, perfil)
     else:
         caminho = os.path.join("data", filename)
         os.makedirs("data", exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(perfil, f, indent=2, ensure_ascii=False)
+        return True
 
 def listar_professores_db():
     """Lista os nomes dos professores cadastrados no escola_db.json."""

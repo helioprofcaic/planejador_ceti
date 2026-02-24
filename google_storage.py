@@ -57,8 +57,13 @@ def get_or_create_subfolder(service, parent_id, folder_name):
             'mimeType': 'application/vnd.google-apps.folder',
             'parents': [parent_id]
         }
-        folder = service.files().create(body=file_metadata, fields='id').execute()
-        return folder.get('id')
+        try:
+            folder = service.files().create(body=file_metadata, fields='id').execute()
+            return folder.get('id')
+        except Exception as e:
+            if "storageQuotaExceeded" in str(e):
+                st.error(f"❌ Erro de Cota: Não foi possível criar a pasta `{folder_name}`. Por favor, crie-a manualmente no Google Drive.")
+            return None
 
 def find_file(service, filename, folder_id):
     """Procura o ID de um arquivo pelo nome dentro da pasta alvo."""
@@ -140,6 +145,8 @@ def save_json(filename, data):
 
     # Garante que salva na subpasta 'data'
     data_folder_id = get_or_create_subfolder(service, root_id, 'data')
+    if not data_folder_id:
+        return False
 
     file_id = find_file(service, filename, data_folder_id)
     
@@ -156,7 +163,13 @@ def save_json(filename, data):
             service.files().create(body=file_metadata, media_body=media).execute()
         return True
     except Exception as e:
-        st.error(f"Erro ao salvar {filename} no Drive: {e}")
+        error_str = str(e)
+        if "storageQuotaExceeded" in error_str or "Service Accounts do not have storage quota" in error_str:
+            st.error(f"❌ **Erro de Permissão (Cota Zero)**")
+            st.warning(f"A Conta de Serviço não pode criar o arquivo `{filename}` porque não possui cota de armazenamento própria (comum em contas @gmail.com).")
+            st.info(f"👉 **Solução:** Vá até a pasta `data` no Google Drive e crie manualmente um arquivo vazio (pode ser um arquivo de texto renomeado) com o nome exato **`{filename}`**. O sistema conseguirá atualizá-lo.")
+        else:
+            st.error(f"Erro ao salvar {filename} no Drive: {e}")
         return False
 
 def list_files_in_subfolder(subfolder_name, mime_type=None):
