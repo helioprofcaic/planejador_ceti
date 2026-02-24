@@ -33,6 +33,21 @@ else:
 st.header("📊 Ficha de Acompanhamento Qualitativo")
 st.info("Registre o desempenho socioemocional e técnico dos estudantes por projeto, aula ou período.")
 
+# --- DIAGNÓSTICO DE ARQUIVOS ---
+if not turmas_disponiveis:
+    st.error("❌ Nenhuma turma encontrada.")
+    with st.expander("🕵️ Diagnóstico de Arquivos"):
+        if utils.USE_CLOUD_STORAGE:
+            st.info("☁️ Modo Nuvem: Arquivos na pasta 'data':")
+            try:
+                st.write(utils.listar_arquivos_dados(""))
+            except:
+                st.error("Erro ao conectar no Drive.")
+        else:
+            st.info("💻 Modo Local: Arquivos em data/:")
+            if os.path.exists("data"):
+                st.write(os.listdir("data"))
+
 # Seleção
 turma_sel = st.selectbox("Selecione a Turma", turmas_disponiveis if turmas_disponiveis else ["Nenhuma turma encontrada"])
 

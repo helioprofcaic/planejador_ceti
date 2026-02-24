@@ -25,6 +25,26 @@ if perfil_prof and "vinculos" in perfil_prof and perfil_prof["vinculos"]:
 if not turmas:
     turmas = utils.listar_turmas_db()
 
+# --- DIAGNÓSTICO DE ARQUIVOS (Se não houver turmas) ---
+if not turmas:
+    st.error("❌ Nenhuma turma encontrada. O sistema não conseguiu ler o arquivo de alunos.")
+    
+    with st.expander("🕵️ Diagnóstico de Arquivos (Clique aqui)"):
+        st.write("O sistema está procurando o arquivo `alunos.json`.")
+        if utils.USE_CLOUD_STORAGE:
+            st.info("☁️ Modo Nuvem Ativo: Listando arquivos na pasta 'data' do Drive...")
+            try:
+                arquivos_drive = utils.listar_arquivos_dados("") # Lista tudo
+                st.write("Arquivos encontrados:", arquivos_drive)
+            except Exception as e:
+                st.error(f"Erro ao listar Drive: {e}")
+        else:
+            st.info("💻 Modo Local Ativo: Verificando pasta data/...")
+            if os.path.exists("data"):
+                st.write("Arquivos locais:", os.listdir("data"))
+            else:
+                st.error("Pasta `data/` não existe.")
+
 col1, col2 = st.columns(2)
 with col1:
     turma_sel = st.selectbox("Turma", turmas if turmas else ["Nenhuma turma encontrada"])

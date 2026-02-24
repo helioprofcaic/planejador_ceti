@@ -84,6 +84,8 @@ def load_json(filename, default_value=None):
         file_id = find_file(service, filename, root_id)
 
     if not file_id:
+        if filename == "alunos.json":
+            st.warning(f"⚠️ O arquivo `{filename}` não foi encontrado no Google Drive (nem na pasta 'data', nem na raiz). Verifique o nome e o upload.")
         return default_value or {}
 
     try:
