@@ -18,14 +18,15 @@ perfil_prof = utils.carregar_perfil_professor()
 turmas_disponiveis = []
 mapa_componentes = {}
 
-if perfil_prof:
+# Tenta carregar as turmas do perfil do professor
+if perfil_prof and "vinculos" in perfil_prof and perfil_prof["vinculos"]:
     for v in perfil_prof["vinculos"]:
         t = v["turma"]
         turmas_disponiveis.append(t)
         mapa_componentes[t] = v["componentes"]
+# Se o perfil não tiver turmas, carrega todas as turmas e seus componentes
 else:
     turmas_disponiveis = utils.listar_turmas_db()
-    # Se não tem perfil, tenta pegar componentes do escola_db
     for t in turmas_disponiveis:
         mapa_componentes[t] = escola_db.get("turmas", {}).get(t, {}).get("componentes", [])
 

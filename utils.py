@@ -50,6 +50,16 @@ def aplicar_estilo():
         .stDataFrame div[data-testid="stTable"] {{
             font-size: {tamanho_fonte - 2}px;
         }}
+        
+        /* Ocultar elementos de UI do Streamlit que são em inglês */
+        #MainMenu {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        [data-testid="stToolbar"] {{visibility: hidden;}}
+        
+        /* Ocultar a palavra "Navigation" que aparece no topo da sidebar em algumas versões */
+        div[data-testid="stSidebarNav"] > div:first-child {{
+            display: none;
+        }}
         </style>
         """, unsafe_allow_html=True)
 

@@ -16,14 +16,18 @@ st.header("📝 Lista de Frequência Diária")
 
 # Carregar turmas para o selectbox
 perfil_prof = utils.carregar_perfil_professor()
-if perfil_prof:
+turmas = []
+# Tenta carregar as turmas do perfil do professor
+if perfil_prof and "vinculos" in perfil_prof and perfil_prof["vinculos"]:
     turmas = [v["turma"] for v in perfil_prof["vinculos"]]
-else:
+
+# Se o perfil não tiver turmas, carrega todas as turmas do banco de dados
+if not turmas:
     turmas = utils.listar_turmas_db()
 
 col1, col2 = st.columns(2)
 with col1:
-    turma_sel = st.selectbox("Turma", turmas if turmas else ["Turma A", "Turma B"])
+    turma_sel = st.selectbox("Turma", turmas if turmas else ["Nenhuma turma encontrada"])
 with col2:
     data_aula = st.date_input("Data da Aula", date.today())
 
