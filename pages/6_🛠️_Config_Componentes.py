@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import utils
 
-st.set_page_config(page_title="Configuração de Componentes", layout="wide")
+st.set_page_config(page_title="Configuração de Componentes", layout="wide", initial_sidebar_state="expanded")
 utils.aplicar_estilo()
 
 st.title("🛠️ Configuração de Componentes Curriculares")
@@ -11,6 +11,9 @@ st.info("Gerencie as regras de carga horária e associe os componentes da escola
 # Carregar a configuração atual
 config = utils.carregar_config_componentes()
 escola_db = utils.carregar_escola_db()
+
+# Menu lateral
+utils.exibir_menu_lateral()
 
 # Extrair todos os componentes únicos da escola para facilitar a seleção
 todos_componentes = set()
@@ -41,7 +44,7 @@ df_mapeamento = pd.DataFrame(mapeamento_lista)
 edited_df = st.data_editor(
     df_mapeamento,
     num_rows="dynamic",
-    use_container_width=True,
+    width='stretch',
     column_config={
         "ID da Regra": st.column_config.TextColumn(
             "ID da Regra (Ex: ANUAL_40H)",

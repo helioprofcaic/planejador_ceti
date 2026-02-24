@@ -20,7 +20,7 @@ todas_turmas = list(turmas_db.keys())
 
 # --- SELEÇÃO DE PERFIL ---
 professores_db = utils.listar_professores_db()
-opcoes_perfis = ["➕ Novo Perfil"] + professores_db
+opcoes_perfis = ["Visitante", "➕ Novo Perfil"] + [p for p in professores_db if p != "Visitante"]
 
 # Identifica perfil ativo atual (do JSON local) para pré-selecionar
 perfil_ativo_local = utils.carregar_perfil_professor()
@@ -31,6 +31,15 @@ if nome_ativo_local in professores_db:
     index_sel = professores_db.index(nome_ativo_local) + 1
 
 perfil_selecionado = st.selectbox("Selecione o Perfil para Editar", opcoes_perfis, index=index_sel)
+
+# --- PROTEÇÃO POR SENHA ---
+if perfil_selecionado != "Visitante":
+    st.info("🔒 Este perfil é protegido.")
+    senha_input = st.text_input("Digite a senha de administrador para acessar/trocar:", type="password")
+    
+    if senha_input != utils.SENHA_ADMIN:
+        st.warning("Senha incorreta ou não informada. Acesso restrito.")
+        st.stop()
 
 if perfil_selecionado == "➕ Novo Perfil":
     config_atual = {}

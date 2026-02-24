@@ -10,6 +10,9 @@ from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import date
 
+# --- CONFIGURAÇÃO DE SEGURANÇA ---
+SENHA_ADMIN = "1234"  # Senha padrão para troca de perfil
+
 # --- Integração com Google Drive ---
 try:
     import google_storage
@@ -865,6 +868,27 @@ def atualizar_lista_professores_db(novo_professor):
         escola_db["professores"] = professores
         salvar_escola_db(escola_db)
 
+def garantir_perfil_visitante():
+    """Garante que o perfil de visitante exista para login padrão."""
+    filename = "perfil_visitante.json"
+    perfil_visitante = {
+        "professor": "Visitante",
+        "email": "",
+        "municipio": "",
+        "vinculos": []
+    }
+    
+    if USE_CLOUD_STORAGE:
+        # Verifica se existe, se não, cria
+        if not google_storage.load_json(filename):
+            google_storage.save_json(filename, perfil_visitante)
+    else:
+        caminho = os.path.join("data", "perfis", filename)
+        if not os.path.exists(caminho):
+            os.makedirs(os.path.dirname(caminho), exist_ok=True)
+            with open(caminho, "w", encoding="utf-8") as f:
+                json.dump(perfil_visitante, f, indent=2, ensure_ascii=False)
+
 def salvar_professor_config_db(professor, email, municipio, config):
     """
     Salva a configuração do professor em um arquivo JSON específico no Drive.
@@ -880,7 +904,8 @@ def salvar_professor_config_db(professor, email, municipio, config):
     if USE_CLOUD_STORAGE:
         google_storage.save_json(filename, config)
     else:
-        caminho = os.path.join("data", filename)
+        caminho = os.path.join("data", "perfis", filename)
+        os.makedirs(os.path.dirname(caminho), exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
 
@@ -892,7 +917,7 @@ def carregar_perfil_professor_db(nome_professor):
     if USE_CLOUD_STORAGE:
         return google_storage.load_json(filename, default_value={})
     
-    caminho = os.path.join("data", filename)
+    caminho = os.path.join("data", "perfis", filename)
     if os.path.exists(caminho):
         try:
             with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -1089,3 +1114,10 @@ def criar_botao_voltar():
     with col2:
         if st.button("🏠 Voltar para o Menu Principal", use_container_width=True):
             st.switch_page("app.py")
+
+def exibir_menu_lateral():
+    """Exibe um menu de navegação lateral padronizado e botões rápidos."""
+    with st.sidebar:
+        # Botão explícito para voltar ao início
+        st.page_link("app.py", label="Início / Menu Principal", icon="🏠", use_container_width=True)
+        st.divider()

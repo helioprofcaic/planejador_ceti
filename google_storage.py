@@ -69,17 +69,23 @@ def find_file(service, filename, folder_id):
     """Procura o ID de um arquivo pelo nome dentro da pasta alvo."""
     # 1. Tenta busca exata (mais rápida)
     query = f"name = '{filename}' and '{folder_id}' in parents and trashed = false"
-    results = service.files().list(q=query, fields="files(id, name)").execute()
-    files = results.get('files', [])
-    if files:
-        return files[0]['id']
+    try:
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        files = results.get('files', [])
+        if files:
+            return files[0]['id']
+    except Exception as e:
+        print(f"Erro na busca exata (find_file): {e}")
         
     # 2. Fallback: Lista tudo e busca ignorando maiúsculas/minúsculas (Case Insensitive)
-    query_all = f"'{folder_id}' in parents and trashed = false"
-    results_all = service.files().list(q=query_all, fields="files(id, name)").execute()
-    for f in results_all.get('files', []):
-        if f['name'].lower() == filename.lower():
-            return f['id']
+    try:
+        query_all = f"'{folder_id}' in parents and trashed = false"
+        results_all = service.files().list(q=query_all, fields="files(id, name)").execute()
+        for f in results_all.get('files', []):
+            if f['name'].lower() == filename.lower():
+                return f['id']
+    except Exception as e:
+        print(f"Erro na busca fallback (find_file): {e}")
             
     return None
 
@@ -88,23 +94,23 @@ def load_json(filename, default_value=None):
     service = get_drive_service()
     root_id = get_folder_id()
     
-    if not service or not root_id:
-        return default_value or {}
-
-    # 1. Tenta buscar na subpasta 'data'
-    data_folder_id = get_or_create_subfolder(service, root_id, 'data')
-    file_id = find_file(service, filename, data_folder_id)
-    
-    # 2. Fallback: Se não achar em 'data', tenta na raiz (caso o usuário não tenha movido)
-    if not file_id:
-        file_id = find_file(service, filename, root_id)
-
-    if not file_id:
-        if filename == "alunos.json":
-            st.warning(f"⚠️ O arquivo `{filename}` não foi encontrado no Google Drive (nem na pasta 'data', nem na raiz). Verifique o nome e o upload.")
-        return default_value or {}
-
     try:
+        if not service or not root_id:
+            return default_value or {}
+
+        # 1. Tenta buscar na subpasta 'data'
+        data_folder_id = get_or_create_subfolder(service, root_id, 'data')
+        file_id = find_file(service, filename, data_folder_id)
+        
+        # 2. Fallback: Se não achar em 'data', tenta na raiz (caso o usuário não tenha movido)
+        if not file_id:
+            file_id = find_file(service, filename, root_id)
+
+        if not file_id:
+            if filename == "alunos.json":
+                st.warning(f"⚠️ O arquivo `{filename}` não foi encontrado no Google Drive (nem na pasta 'data', nem na raiz). Verifique o nome e o upload.")
+            return default_value or {}
+
         # Verifica se é um Google Doc (o que causaria erro de leitura)
         file_meta = service.files().get(fileId=file_id, fields='mimeType').execute()
         if file_meta.get('mimeType', '').startswith('application/vnd.google-apps'):
@@ -132,7 +138,8 @@ def load_json(filename, default_value=None):
             st.write("Não foi possível exibir o conteúdo do arquivo.")
         return default_value or {}
     except Exception as e:
-        st.error(f"Erro ao ler {filename} do Drive: {e}")
+        # Loga o erro no console para debug, mas não exibe erro visual para não travar o fluxo se for algo temporário
+        print(f"Erro ao carregar {filename} do Drive: {e}")
         return default_value or {}
 
 def save_json(filename, data):

@@ -9,12 +9,13 @@ st.set_page_config(page_title="Menu", layout="wide")
 # --- INICIALIZAÇÃO DE ESTADO (SESSION STATE) ---
 # Garante que as configurações persistam entre as páginas
 # Tenta carregar do arquivo primeiro para consistência
-perfil_prof = utils.carregar_perfil_professor()
+utils.garantir_perfil_visitante()
+perfil_prof = utils.carregar_perfil_professor_db("Visitante")
 
 if 'escola' not in st.session_state:
     st.session_state['escola'] = "CETI PROFESSOR RALDIR CAVALCANTE BASTOS"
 if 'professor' not in st.session_state:
-    st.session_state['professor'] = perfil_prof.get("professor", "Helio Lima")
+    st.session_state['professor'] = "Visitante"
 if 'tema' not in st.session_state:
     st.session_state['tema'] = "Padrão"
 if 'tamanho_fonte' not in st.session_state:
@@ -116,7 +117,7 @@ st.dataframe(
         subset=['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
     ),
     hide_index=True,
-    use_container_width=True,
+    width='stretch',
     height=altura_tabela
 )
 
