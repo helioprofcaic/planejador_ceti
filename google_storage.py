@@ -75,16 +75,21 @@ def load_json(filename, default_value=None):
     if not service or not root_id:
         return default_value or {}
 
-    # Garante que busca na subpasta 'data'
+    # 1. Tenta buscar na subpasta 'data'
     data_folder_id = get_or_create_subfolder(service, root_id, 'data')
-    
     file_id = find_file(service, filename, data_folder_id)
+    
+    # 2. Fallback: Se não achar em 'data', tenta na raiz (caso o usuário não tenha movido)
+    if not file_id:
+        file_id = find_file(service, filename, root_id)
+
     if not file_id:
         return default_value or {}
 
     try:
         content = service.files().get_media(fileId=file_id).execute()
-        return json.loads(content.decode('utf-8'))
+        # Usa utf-8-sig para lidar com BOM do Windows (comum em arquivos locais editados)
+        return json.loads(content.decode('utf-8-sig'))
     except Exception as e:
         st.error(f"Erro ao ler {filename} do Drive: {e}")
         return default_value or {}
