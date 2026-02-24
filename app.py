@@ -8,24 +8,31 @@ st.set_page_config(page_title="Menu", layout="wide")
 
 # --- INICIALIZAÇÃO DE ESTADO (SESSION STATE) ---
 # Garante que as configurações persistam entre as páginas
+# Tenta carregar do arquivo primeiro para consistência
+perfil_prof = utils.carregar_perfil_professor()
+
 if 'escola' not in st.session_state:
     st.session_state['escola'] = "CETI PROFESSOR RALDIR CAVALCANTE BASTOS"
 if 'professor' not in st.session_state:
-    st.session_state['professor'] = "Helio Lima"
+    st.session_state['professor'] = perfil_prof.get("professor", "Helio Lima")
 if 'tema' not in st.session_state:
     st.session_state['tema'] = "Padrão"
 if 'tamanho_fonte' not in st.session_state:
     st.session_state['tamanho_fonte'] = 14
 if 'municipio' not in st.session_state:
-    st.session_state['municipio'] = ""
+    st.session_state['municipio'] = perfil_prof.get("municipio", "")
 
 # --- BARRA LATERAL DE CONFIGURAÇÃO ---
 with st.sidebar:
     st.header("⚙️ Configuração Central")
     st.session_state['escola'] = st.text_input("Escola", st.session_state['escola'])
-    st.session_state['professor'] = st.text_input("Professor(a)", st.session_state['professor'])
     
-    st.session_state['municipio'] = st.text_input("Município", st.session_state['municipio'])
+    # Exibe os dados do perfil (Edição apenas na página de Configuração)
+    st.markdown(f"**Professor(a):** {st.session_state['professor']}")
+    st.markdown(f"**Município:** {st.session_state['municipio']}")
+    
+    st.info("Para alterar Professor ou Município, acesse a página **⚙️ Configuração**.")
+    
     st.divider()
     st.header("🎨 Aparência Global")
     st.session_state['tema'] = st.selectbox(

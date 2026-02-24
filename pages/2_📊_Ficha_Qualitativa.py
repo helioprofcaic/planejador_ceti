@@ -7,14 +7,15 @@ st.set_page_config(page_title="Ficha Qualitativa", layout="wide")
 
 # --- CONFIGURAÇÕES GLOBAIS ---
 utils.aplicar_estilo()
-escola = st.session_state.get('escola', "CETI PROFESSOR RALDIR CAVALCANTE BASTOS")
-professor = st.session_state.get('professor', "Helio Lima")
-
-# --- DADOS GLOBAIS ---
-escola_db = utils.carregar_escola_db()
 
 # --- DADOS ---
 perfil_prof = utils.carregar_perfil_professor()
+
+escola = st.session_state.get('escola', "CETI PROFESSOR RALDIR CAVALCANTE BASTOS")
+professor = perfil_prof.get("professor", st.session_state.get('professor', "Helio Lima"))
+
+# --- DADOS GLOBAIS ---
+escola_db = utils.carregar_escola_db()
 turmas_disponiveis = []
 mapa_componentes = {}
 
