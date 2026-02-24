@@ -343,7 +343,13 @@ def carregar_dados_json(caminho_arquivo):
     filename = os.path.basename(caminho_arquivo)
 
     if USE_CLOUD_STORAGE:
-        dados_dict = google_storage.load_json(filename, default_value=None)
+        # Usa um sentinela para distinguir "arquivo não encontrado" de "arquivo vazio"
+        sentinela = {"__arquivo_nao_encontrado__": True}
+        dados_dict = google_storage.load_json(filename, default_value=sentinela)
+        
+        if dados_dict == sentinela:
+            return None
+            
         if dados_dict is not None:
             # Se o arquivo existe na nuvem mas está vazio, retorna um DF vazio
             if not dados_dict:

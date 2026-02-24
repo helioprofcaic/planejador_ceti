@@ -63,7 +63,7 @@ caminho_arquivo = os.path.join("data", f"frequencia_{turma_sel}_{data_aula.strft
 # Tenta carregar dados salvos, senão cria um novo DataFrame
 df_chamada = utils.carregar_dados_json(caminho_arquivo)
 
-if df_chamada is None:
+if df_chamada is None or df_chamada.empty:
     lista_alunos = utils.listar_alunos_turma_db(turma_sel)
     if lista_alunos:
         df_chamada = pd.DataFrame({

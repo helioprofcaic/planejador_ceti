@@ -71,7 +71,7 @@ caminho_arquivo = os.path.join("data", f"qualitativo_{safe_filename}.json")
 # Tenta carregar dados salvos, senão cria um novo DataFrame
 df_qualitativo = utils.carregar_dados_json(caminho_arquivo)
 
-if df_qualitativo is None:
+if df_qualitativo is None or df_qualitativo.empty:
     lista_alunos = utils.listar_alunos_turma_db(turma_sel)
     df_qualitativo = pd.DataFrame({
         "Nº": range(1, len(lista_alunos) + 1),
