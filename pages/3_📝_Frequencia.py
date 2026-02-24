@@ -31,10 +31,12 @@ if not turmas:
     
     with st.expander("🕵️ Diagnóstico de Arquivos (Clique aqui)"):
         st.write("O sistema está procurando o arquivo `alunos.json`.")
+        st.write(f"**Modo Atual:** {'☁️ Nuvem (Google Drive)' if utils.USE_CLOUD_STORAGE else '💻 Local (Pasta data/)'}")
+        
         if utils.USE_CLOUD_STORAGE:
             st.info("☁️ Modo Nuvem Ativo: Listando arquivos na pasta 'data' do Drive...")
             try:
-                arquivos_drive = utils.listar_arquivos_dados("") # Lista tudo
+                arquivos_drive = utils.listar_arquivos_dados("") 
                 st.write("Arquivos encontrados:", arquivos_drive)
             except Exception as e:
                 st.error(f"Erro ao listar Drive: {e}")

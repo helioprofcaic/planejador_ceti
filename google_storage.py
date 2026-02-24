@@ -62,10 +62,21 @@ def get_or_create_subfolder(service, parent_id, folder_name):
 
 def find_file(service, filename, folder_id):
     """Procura o ID de um arquivo pelo nome dentro da pasta alvo."""
+    # 1. Tenta busca exata (mais rápida)
     query = f"name = '{filename}' and '{folder_id}' in parents and trashed = false"
     results = service.files().list(q=query, fields="files(id, name)").execute()
     files = results.get('files', [])
-    return files[0]['id'] if files else None
+    if files:
+        return files[0]['id']
+        
+    # 2. Fallback: Lista tudo e busca ignorando maiúsculas/minúsculas (Case Insensitive)
+    query_all = f"'{folder_id}' in parents and trashed = false"
+    results_all = service.files().list(q=query_all, fields="files(id, name)").execute()
+    for f in results_all.get('files', []):
+        if f['name'].lower() == filename.lower():
+            return f['id']
+            
+    return None
 
 def load_json(filename, default_value=None):
     """Carrega um JSON da subpasta 'data' no Drive."""
