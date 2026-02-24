@@ -169,3 +169,5 @@ if st.button("💾 Salvar Todas as Configurações", type="primary"):
     st.success("✅ Configurações salvas com sucesso!")
     st.balloons()
     st.rerun()
+
+utils.criar_botao_voltar()

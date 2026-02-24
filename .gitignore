@@ -22,13 +22,18 @@ data/alunos.json
 data/planejamentos.json
 data/frequencia_*.json
 data/qualitativo_*.json
+data/horario_global.json
 data/perfil_*.json
+data/perfis/*.json
+data/fonts/
 data/__/*
 
 # Arquivos Gerados pelo Usuário (Rascunhos)
 data/planejamentos.json
 data/frequencia_*.json
 data/qualitativo_*.json
+data/calendario_*.json
+data/config_*.json
 
 # Logs e outros
 *.log

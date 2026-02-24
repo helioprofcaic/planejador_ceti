@@ -52,9 +52,9 @@ def aplicar_estilo():
         }}
         
         /* Ocultar elementos de UI do Streamlit que são em inglês */
-        #MainMenu {{visibility: hidden;}}
+        /* #MainMenu {{visibility: hidden;}} */
         footer {{visibility: hidden;}}
-        [data-testid="stToolbar"] {{visibility: hidden;}}
+        /* [data-testid="stToolbar"] {{visibility: hidden;}} */
 
         /* Correção para Mobile: Forçar exibição do botão de menu */
         @media (max-width: 768px) {{
@@ -1036,3 +1036,56 @@ def gerar_pdf_aula_ia(texto_markdown):
             pdf.multi_cell(0, 6, line.replace('**', ''))
             
     return bytes(pdf.output())
+
+def carregar_horario_global():
+    """Carrega o quadro de horários completo da escola."""
+    filename = "horario_global.json"
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value={})
+    
+    caminho = os.path.join("data", filename)
+    if os.path.exists(caminho):
+        try:
+            with open(caminho, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def obter_horario_professor_do_global(nome_professor):
+    """
+    Filtra o horário global para encontrar as aulas de um professor específico.
+    Retorna uma lista de dicionários formatada para DataFrame.
+    """
+    global_db = carregar_horario_global()
+    aulas_prof = []
+    
+    # Mapeamento de ordem para ordenação
+    ordem_dias = {"SEGUNDA- FEIRA": 1, "SEGUNDA-FEIRA": 1, "TERÇA-FEIRA": 2, "QUARTA-FEIRA": 3, "QUINTA-FEIRA": 4, "SEXTA-FEIRA": 5}
+    
+    for dia, periodos in global_db.items():
+        for periodo, salas in periodos.items():
+            for sala, dados in salas.items():
+                # Verifica se o nome do professor está contido no registro (busca flexível)
+                prof_db = dados.get("professor", "").lower()
+                if nome_professor.lower() in prof_db or prof_db in nome_professor.lower():
+                    aulas_prof.append({
+                        "Dia": dia,
+                        "OrdemDia": ordem_dias.get(dia, 9),
+                        "Período": periodo,
+                        "Horário": dados.get("horario", ""),
+                        "Sala": sala,
+                        "Disciplina": dados.get("disciplina", "")
+                    })
+    
+    # Ordena por Dia e depois por Período
+    aulas_prof.sort(key=lambda x: (x["OrdemDia"], x["Período"]))
+    return aulas_prof
+
+def criar_botao_voltar():
+    """Cria um botão padronizado para voltar ao menu principal."""
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🏠 Voltar para o Menu Principal", use_container_width=True):
+            st.switch_page("app.py")
