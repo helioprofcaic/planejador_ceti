@@ -799,7 +799,7 @@ def importar_alunos_db():
 def listar_turmas_db():
     """Lista turmas disponíveis diretamente do JSON de alunos."""
     alunos = carregar_alunos()
-    if alunos:
+    if alunos and isinstance(alunos, dict):
         return sorted(list(alunos.keys()))
     return []
 

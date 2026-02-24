@@ -89,10 +89,17 @@ def load_json(filename, default_value=None):
         return default_value or {}
 
     try:
+        # Verifica se é um Google Doc (o que causaria erro de leitura)
+        file_meta = service.files().get(fileId=file_id, fields='mimeType').execute()
+        if file_meta.get('mimeType', '').startswith('application/vnd.google-apps'):
+            st.error(f"❌ Erro Crítico: O arquivo `{filename}` no Drive é um **Documento Google** (GDoc/GSheet), não um arquivo JSON real.")
+            st.info("👉 **Solução:** Exclua esse arquivo do Drive. No seu computador, crie o arquivo no Bloco de Notas, salve como .json e faça o upload novamente.")
+            return default_value or {}
+
         content = service.files().get_media(fileId=file_id).execute()
         
         # Tenta decodificar com diferentes codificações (UTF-8, Latin-1/ANSI) para evitar erros
-        encodings = ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252']
+        encodings = ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252', 'utf-16']
         
         for encoding in encodings:
             try:
@@ -100,7 +107,13 @@ def load_json(filename, default_value=None):
             except (UnicodeDecodeError, json.JSONDecodeError):
                 continue
         
-        st.error(f"Não foi possível ler o arquivo {filename}. O formato parece inválido ou corrompido.")
+        # Se falhou em todos, mostra o início do arquivo para diagnóstico
+        st.error(f"❌ O arquivo `{filename}` existe, mas o conteúdo não é um JSON válido.")
+        try:
+            snippet = content.decode('latin-1')[:200]
+            st.code(snippet, language="text")
+        except:
+            st.write("Não foi possível exibir o conteúdo do arquivo.")
         return default_value or {}
     except Exception as e:
         st.error(f"Erro ao ler {filename} do Drive: {e}")
