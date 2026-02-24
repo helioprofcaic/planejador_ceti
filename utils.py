@@ -4,12 +4,26 @@ import os
 from fpdf import FPDF
 import io
 from pypdf import PdfWriter
-import sqlite3
 import pandas as pd
 from docx import Document
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import date
+
+# --- Integração com Google Drive ---
+try:
+    import google_storage
+    HAS_GOOGLE_STORAGE = True
+except ImportError:
+    HAS_GOOGLE_STORAGE = False
+
+try:
+    USE_CLOUD_STORAGE = (
+        HAS_GOOGLE_STORAGE and
+        st.secrets.get("drive", {}).get("usar_nuvem", False)
+    )
+except Exception:
+    USE_CLOUD_STORAGE = False
 
 def aplicar_estilo():
     """Aplica o CSS global baseado nas configurações de sessão."""
@@ -36,7 +50,7 @@ def aplicar_estilo():
         """, unsafe_allow_html=True)
 
 def carregar_dados():
-    """Carrega o arquivo ementas.json da pasta data."""
+    """[DEPRECATED] Carrega o arquivo ementas.json da pasta data."""
     caminho = os.path.join("data", "ementas.json")
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -44,7 +58,7 @@ def carregar_dados():
     return {}
 
 def carregar_ementas_oficiais():
-    """Carrega o arquivo ementas_oficiais.json da pasta data."""
+    """[DEPRECATED] Carrega o arquivo ementas_oficiais.json da pasta data."""
     caminho = os.path.join("data", "ementas_oficiais.json")
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -52,7 +66,7 @@ def carregar_ementas_oficiais():
     return {}
 
 def carregar_ementas_trimestre():
-    """Carrega o arquivo ementas_geral_1trimestre.json da pasta data."""
+    """[DEPRECATED] Carrega o arquivo ementas_geral_1trimestre.json da pasta data."""
     caminho = os.path.join("data", "ementas_geral_1trimestre.json")
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -60,20 +74,30 @@ def carregar_ementas_trimestre():
     return {}
 
 def carregar_escola_db():
-    """Carrega o banco de dados da escola (escola_db.json)."""
-    caminho = os.path.join("data", "escola_db.json")
+    """Carrega o banco de dados da escola (escola_db.json) do local ou da nuvem."""
+    filename = "escola_db.json"
+    default_data = {"turmas": {}, "professores": []}
+    
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value=default_data)
+    
+    caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
-    return {"turmas": {}, "professores": []}
+    return default_data
 
 def salvar_escola_db(dados):
-    """Salva o arquivo escola_db.json na pasta data e atualiza o SQLite."""
-    caminho = os.path.join("data", "escola_db.json")
-    os.makedirs("data", exist_ok=True)
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump(dados, f, indent=2, ensure_ascii=False)
-    importar_escola_data_sqlite()
+    """Salva o arquivo escola_db.json no local ou na nuvem."""
+    filename = "escola_db.json"
+    
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, dados)
+    else:
+        caminho = os.path.join("data", filename)
+        os.makedirs("data", exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=2, ensure_ascii=False)
 
 def carregar_calendario_letivo():
     """Carrega o arquivo calendario_letivo_2026.json da pasta data."""
@@ -95,12 +119,18 @@ def carregar_calendario_letivo():
     return padrao
 
 def carregar_curriculo_db():
-    """Carrega o banco de dados do currículo (curriculo_db.json)."""
-    caminho = os.path.join("data", "curriculo_db.json")
+    """Carrega o banco de dados do currículo (curriculo_db.json) do local ou da nuvem."""
+    filename = "curriculo_db.json"
+    default_data = {"BASICO": {}, "APROFUNDAMENTO": {}, "EPT": {}}
+    
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value=default_data)
+        
+    caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
-    return {"BASICO": {}, "APROFUNDAMENTO": {}, "EPT": {}}
+    return default_data
 
 def carregar_habilidades_csv():
     """Carrega habilidades de arquivos CSV na pasta data."""
@@ -144,215 +174,167 @@ def carregar_habilidades_csv():
     return dados_csv
 
 def salvar_ementas_trimestre(dados):
-    """Salva o arquivo ementas_geral_1trimestre.json na pasta data."""
+    """[DEPRECATED] Salva o arquivo ementas_geral_1trimestre.json na pasta data."""
     caminho = os.path.join("data", "ementas_geral_1trimestre.json")
     os.makedirs("data", exist_ok=True)
     with open(caminho, "w", encoding="utf-8") as f:
         json.dump(dados, f, indent=2, ensure_ascii=False)
 
 def carregar_config_componentes():
-    """Carrega o arquivo config_componentes.json da pasta data."""
-    caminho = os.path.join("data", "config_componentes.json")
-    if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            return json.load(f)
-    # Retorna uma estrutura padrão se o arquivo não existir
-    return {
+    """Carrega o arquivo config_componentes.json da pasta data (local ou nuvem)."""
+    filename = "config_componentes.json"
+    default_data = {
         "MAPEAMENTO_POR_CHAVE": {},
         "PADRAO_GERAL": {"tipo_curso": "Anual / Regular", "duracao_semanas": 13},
         "PADRAO_TECNICO_MODULAR": {"tipo_curso": "Modular Mensal (40h)", "duracao_semanas": 5}
     }
-
-def salvar_config_componentes(dados):
-    """Salva o arquivo config_componentes.json na pasta data."""
-    caminho = os.path.join("data", "config_componentes.json")
-    os.makedirs("data", exist_ok=True)
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump(dados, f, indent=2, ensure_ascii=False)
-
-def salvar_planejamento(dados):
-    """Salva um planejamento específico em data/planejamentos.json."""
-    caminho = os.path.join("data", "planejamentos.json")
     
-    # Carrega os planejamentos existentes ou cria um novo dicionário
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value=default_data)
+        
+    caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
-            try:
-                todos = json.load(f)
-            except json.JSONDecodeError:
-                print("Erro ao decodificar o JSON existente. Iniciando com um novo dicionário.")
-                todos = {} # Inicia um novo dicionário se houver erro no JSON
+            return json.load(f)
+    return default_data
+
+def salvar_config_componentes(dados):
+    """Salva o arquivo config_componentes.json na pasta data (local ou nuvem)."""
+    filename = "config_componentes.json"
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, dados)
     else:
-        todos = {}
+        caminho = os.path.join("data", filename)
+        os.makedirs("data", exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=2, ensure_ascii=False)
+
+def salvar_planejamento(dados):
+    """Salva um planejamento específico em data/planejamentos.json (local ou nuvem)."""
+    filename = "planejamentos.json"
+    
+    # Carrega os planejamentos existentes ou cria um novo dicionário
+    if USE_CLOUD_STORAGE:
+        todos = google_storage.load_json(filename, default_value={})
+    else:
+        caminho = os.path.join("data", filename)
+        if os.path.exists(caminho):
+            try:
+                with open(caminho, "r", encoding="utf-8-sig") as f:
+                    todos = json.load(f)
+            except json.JSONDecodeError:
+                todos = {}
+        else:
+            todos = {}
         
     # Chave única para identificar o plano
     trimestre = dados.get("trimestre", "1º")
     chave = f"{dados['turma']}_{dados['componente']}_{dados['escala']}_{trimestre}"
     todos[chave] = dados
 
-    
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump(todos, f, indent=2, ensure_ascii=False)
+    # Salva o arquivo atualizado
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, todos)
+    else:
+        caminho = os.path.join("data", filename)
+        os.makedirs("data", exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(todos, f, indent=2, ensure_ascii=False)
 
 def carregar_planejamento(turma, componente, escala, trimestre="1º"):
-    """Carrega um planejamento específico se existir."""
-    caminho = os.path.join("data", "planejamentos.json")
-    if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8-sig") as f:
-            todos = json.load(f)
-            chave = f"{turma}_{componente}_{escala}_{trimestre}"
-            return todos.get(chave)
-    return None
+    """Carrega um planejamento específico se existir (local ou nuvem)."""
+    filename = "planejamentos.json"
+    
+    if USE_CLOUD_STORAGE:
+        todos = google_storage.load_json(filename, default_value={})
+    else:
+        caminho = os.path.join("data", filename)
+        if os.path.exists(caminho):
+            try:
+                with open(caminho, "r", encoding="utf-8-sig") as f:
+                    todos = json.load(f)
+            except json.JSONDecodeError:
+                todos = {}
+        else:
+            return None
+
+    chave = f"{turma}_{componente}_{escala}_{trimestre}"
+    return todos.get(chave)
 
 def carregar_alunos():
-    """Carrega o arquivo alunos.json da pasta data."""
-    caminho = os.path.join("data", "alunos.json")
+    """Carrega o arquivo alunos.json da pasta data (local ou nuvem)."""
+    filename = "alunos.json"
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value={})
+        
+    caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     return {}
 
-def init_db():
-    """Inicializa o banco de dados SQLite e cria as tabelas se não existirem."""
-    db_path = os.path.join("data", "backup_sistema.db")
-    os.makedirs("data", exist_ok=True)
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    
-    # Tabela de Frequência
-    c.execute('''CREATE TABLE IF NOT EXISTS frequencia (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    turma TEXT,
-                    data TEXT,
-                    aluno_nome TEXT,
-                    presenca INTEGER,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                )''')
-                
-    # Tabela Qualitativa
-    c.execute('''CREATE TABLE IF NOT EXISTS qualitativo (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    turma TEXT,
-                    aluno_nome TEXT,
-                    participacao TEXT,
-                    entrega TEXT,
-                    autonomia TEXT,
-                    nm1 REAL,
-                    nm2 REAL,
-                    nm3 REAL,
-                    mt REAL,
-                    recuperacao REAL,
-                    nota_final REAL,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                )''')
-    
-    # Tabela de Alunos
-    c.execute('''CREATE TABLE IF NOT EXISTS alunos (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    turma TEXT,
-                    numero INTEGER,
-                    nome TEXT
-                )''')
-    
-    # Tabela de Dados da Escola (escola_db)
-    c.execute('''CREATE TABLE IF NOT EXISTS escola_data (
-                    turma TEXT,
-                    componente TEXT,
-                    FOREIGN KEY (turma) REFERENCES alunos(turma)
-                )''')
-
-
-
-
-     # Tabela de Configuração do Professor
-    c.execute('''CREATE TABLE IF NOT EXISTS professor_config (
-                    professor TEXT PRIMARY KEY,
-                    email TEXT,
-                    municipio TEXT,
-                    config TEXT 
-                )''')
-    
-    conn.commit()
-    conn.close()
-
-def backup_sqlite(caminho_arquivo, df):
-    """Realiza o backup dos dados do DataFrame para o SQLite."""
-    try:
-        init_db()
-        db_path = os.path.join("data", "backup_sistema.db")
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        
-        filename = os.path.basename(caminho_arquivo)
-        
-        if filename.startswith("frequencia_"):
-            # Extrair metadados do nome do arquivo: frequencia_{turma}_{data}.json
-            conteudo = filename.replace("frequencia_", "").replace(".json", "")
-            data_aula = conteudo[-10:]
-            turma = conteudo[:-11]
-            
-            # Remove registros anteriores para evitar duplicação do mesmo dia/turma
-            c.execute("DELETE FROM frequencia WHERE turma = ? AND data = ?", (turma, data_aula))
-            
-            # Inserir novos dados
-            for _, row in df.iterrows():
-                presenca = 1 if row.get('Presença') else 0
-                c.execute("INSERT INTO frequencia (turma, data, aluno_nome, presenca) VALUES (?, ?, ?, ?)",
-                          (turma, data_aula, row.get('Nome do Aluno'), presenca))
-                          
-        elif filename.startswith("qualitativo_"):
-            # Extrair metadados: qualitativo_{turma}.json
-            turma = filename.replace("qualitativo_", "").replace(".json", "")
-            
-            # Remove registros anteriores da turma
-            c.execute("DELETE FROM qualitativo WHERE turma = ?", (turma,))
-            
-            # Inserir novos dados
-            for _, row in df.iterrows():
-                c.execute("INSERT INTO qualitativo (turma, aluno_nome, participacao, entrega, autonomia, nm1, nm2, nm3, mt, recuperacao, nota_final) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                          (turma, row.get('Nome do Estudante'), row.get('Participação'), row.get('Entrega'), row.get('Autonomia'),
-                           row.get('NM1'), row.get('NM2'), row.get('NM3'), row.get('MT'), row.get('Recuperação'), row.get('Nota Final')))
-        
-        conn.commit()
-        conn.close()
-        
-    except Exception as e:
-        print(f"Erro ao realizar backup SQLite: {e}")
-
-def salvar_professor_config_db(professor, email, municipio, config):
-    """Salva a configuração do professor no banco de dados."""
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    
-    # Salva as configurações como string json
-    c.execute("INSERT OR REPLACE INTO professor_config (professor, email, municipio, config) VALUES (?, ?, ?, ?)",
-              (professor, email, municipio, json.dumps(config, ensure_ascii=False)))
-    conn.commit()
-    conn.close()
-
+def salvar_alunos(dados):
+    """Salva o arquivo alunos.json na pasta data (local ou nuvem)."""
+    filename = "alunos.json"
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, dados)
+    else:
+        caminho = os.path.join("data", filename)
+        os.makedirs("data", exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=2, ensure_ascii=False)
 
 def salvar_dados_json(caminho_arquivo, dados_df):
-    """Salva um DataFrame em um arquivo JSON, criando o diretório se necessário."""
-    os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
-    dados_df.to_json(caminho_arquivo, orient='records', indent=4, force_ascii=False)
+    """Salva um DataFrame em um arquivo JSON (local ou nuvem)."""
+    filename = os.path.basename(caminho_arquivo)
     
-    # Backup automático para SQLite
-    backup_sqlite(caminho_arquivo, dados_df)
+    if USE_CLOUD_STORAGE:
+        # Converte DataFrame para lista de dicionários para ser compatível com JSON
+        dados_dict = dados_df.to_dict(orient='records')
+        google_storage.save_json(filename, dados_dict)
+    else:
+        # Salva localmente
+        os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
+        dados_df.to_json(caminho_arquivo, orient='records', indent=4, force_ascii=False)
 
 def carregar_dados_json(caminho_arquivo):
-    """Carrega um DataFrame de um arquivo JSON se ele existir."""
+    """Carrega um DataFrame de um arquivo JSON (local ou nuvem)."""
+    filename = os.path.basename(caminho_arquivo)
+
+    if USE_CLOUD_STORAGE:
+        dados_dict = google_storage.load_json(filename, default_value=None)
+        if dados_dict is not None:
+            # Se o arquivo existe na nuvem mas está vazio, retorna um DF vazio
+            if not dados_dict:
+                return pd.DataFrame()
+            return pd.DataFrame(dados_dict)
+        return None # Retorna None se o arquivo não existe na nuvem
+
+    # Lógica local
     if os.path.exists(caminho_arquivo):
-        # Verifica se o arquivo não está vazio para evitar erro de parse
         if os.path.getsize(caminho_arquivo) > 0:
             try:
-                # Especificar dtype=False para evitar conversão automática de tipos que pode dar erro
                 with open(caminho_arquivo, "r", encoding="utf-8-sig") as f:
                     return pd.DataFrame(json.load(f))
-            except (ValueError, json.JSONDecodeError): # Captura erro se o JSON for inválido
-                print(f"Aviso: Arquivo JSON inválido em {caminho_arquivo}. Um novo será criado.")
+            except (ValueError, json.JSONDecodeError):
+                print(f"Aviso: Arquivo JSON local inválido em {caminho_arquivo}.")
                 return None
     return None
+
+def listar_arquivos_dados(prefixo):
+    """Lista arquivos de dados (frequencia, qualitativo) locais ou na nuvem."""
+    arquivos = []
+    if USE_CLOUD_STORAGE:
+        service = google_storage.get_drive_service()
+        folder_id = google_storage.get_folder_id()
+        if service and folder_id:
+            query = f"name contains '{prefixo}' and '{folder_id}' in parents and trashed = false"
+            results = service.files().list(q=query, fields="files(id, name)").execute()
+            arquivos = [f['name'] for f in results.get('files', [])]
+    else:
+        if os.path.exists("data"):
+            arquivos = [f for f in os.listdir("data") if f.startswith(prefixo) and f.endswith(".json")]
+    return arquivos
 
 def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre="1º", municipio=""):
     """Gera o DOCX do planejamento escolar."""
@@ -724,115 +706,37 @@ def gerar_pdf_qualitativo(escola, professor, turma, df, componente="", contexto=
     return bytes(pdf.output())
 
 
+def init_db():
+    """[DEPRECATED] Função mantida apenas para compatibilidade, não faz nada."""
+    pass
+
 def sincronizar_bd():
-    """Percorre os arquivos JSON e regenera o banco de dados SQLite."""
-    data_dir = "data"
-    if not os.path.exists(data_dir):
-        return 0
-        
-    files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
-    count = 0
-    
-    for file in files:
-        if file.startswith("frequencia_") or file.startswith("qualitativo_"):
-            filepath = os.path.join(data_dir, file)
-            try:
-                df = pd.read_json(filepath, orient='records', dtype=False)
-                backup_sqlite(filepath, df)
-                count += 1
-            except Exception as e:
-                print(f"Erro ao sincronizar {file}: {e}")
-                
-    # Importar Alunos do JSON para o Banco
-    alunos_imp = importar_alunos_db()
-    escola_imp = importar_escola_data_sqlite()
-    
-    return count + alunos_imp + escola_imp
+    """[DEPRECATED] Função desativada na versão Cloud."""
+    return 0
 
 def importar_alunos_db():
-    """Importa alunos do JSON para o SQLite."""
-    caminho = os.path.join("data", "alunos.json")
-    if not os.path.exists(caminho):
-        return 0
-    
-    with open(caminho, "r", encoding="utf-8-sig") as f:
-        dados = json.load(f)
-        
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    
-    # Limpa tabela antes de importar para evitar duplicatas
-    c.execute("DELETE FROM alunos")
-    
-    count = 0
-    for turma, lista in dados.items():
-        for aluno in lista:
-            c.execute("INSERT INTO alunos (turma, numero, nome) VALUES (?, ?, ?)",
-                      (turma, aluno['n'], aluno['nome']))
-            count += 1
-            
-    conn.commit()
-    conn.close()
-    return count
-
-def importar_escola_data_sqlite():
-    """Importa dados de escola_db.json para a tabela escola_data no SQLite."""
-    caminho = os.path.join("data", "escola_db.json")
-    if not os.path.exists(caminho):
-        return 0
-    
-    with open(caminho, "r", encoding="utf-8-sig") as f:
-        dados = json.load(f)
-        
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    
-    # Limpa tabela antes de importar
-    c.execute("DELETE FROM escola_data")
-    
-    count = 0
-    turmas = dados.get("turmas", {})
-    for nome_turma, info in turmas.items():
-        componentes = info.get("componentes", [])
-        for comp in componentes:
-            c.execute("INSERT INTO escola_data (turma, componente) VALUES (?, ?)", (nome_turma, comp))
-            count += 1
-            
-    conn.commit()
-    conn.close()
-    return count
+    """[DEPRECATED]"""
+    return 0
 
 def listar_turmas_db():
-    """Lista turmas disponíveis no banco de dados."""
-    db_path = os.path.join("data", "backup_sistema.db")
-    if not os.path.exists(db_path):
-        return []
-    conn = sqlite3.connect(db_path)
-    try:
-        turmas = pd.read_sql_query("SELECT DISTINCT turma FROM alunos ORDER BY turma", conn)
-        return turmas['turma'].tolist()
-    except:
-        return []
-    finally:
-        conn.close()
+    """Lista turmas disponíveis diretamente do JSON de alunos."""
+    alunos = carregar_alunos()
+    if alunos:
+        return sorted(list(alunos.keys()))
+    return []
 
 def listar_alunos_turma_db(turma):
-    """Retorna lista de alunos de uma turma do banco de dados."""
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    try:
-        df = pd.read_sql_query("SELECT numero as n, nome FROM alunos WHERE turma = ? ORDER BY numero", conn, params=(turma,))
-        return df.to_dict('records')
-    except:
-        return []
-    finally:
-        conn.close()
+    """Retorna lista de alunos de uma turma diretamente do JSON."""
+    alunos = carregar_alunos()
+    return alunos.get(turma, [])
 
 def carregar_perfil_professor():
-    """Carrega o perfil do professor de data/professor_config.json."""
-    caminho = os.path.join("data", "professor_config.json")
+    """Carrega o perfil do professor de data/professor_config.json (local ou nuvem)."""
+    filename = "professor_config.json"
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value={})
+        
+    caminho = os.path.join("data", filename)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8-sig") as f:
             try:
@@ -842,40 +746,53 @@ def carregar_perfil_professor():
     return {}
 
 def salvar_perfil_professor(perfil):
-    """Salva o perfil do professor em data/professor_config.json."""
-    caminho = os.path.join("data", "professor_config.json")
-    os.makedirs("data", exist_ok=True)
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump(perfil, f, indent=2, ensure_ascii=False)
+    """Salva o perfil do professor em data/professor_config.json (local ou nuvem)."""
+    filename = "professor_config.json"
+    
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, perfil)
+    else:
+        caminho = os.path.join("data", filename)
+        os.makedirs("data", exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(perfil, f, indent=2, ensure_ascii=False)
 
 def listar_professores_db():
-    """Lista os nomes dos professores salvos no banco de dados."""
-    init_db() # Garante que a tabela existe
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    try:
-        df = pd.read_sql_query("SELECT professor FROM professor_config ORDER BY professor", conn)
-        return df['professor'].tolist()
-    except Exception as e:
-        print(f"Erro ao listar professores: {e}")
-        return []
-    finally:
-        conn.close()
+    """Lista os nomes dos professores cadastrados no escola_db.json."""
+    escola_db = carregar_escola_db()
+    return escola_db.get("professores", [])
+
+def salvar_professor_config_db(professor, email, municipio, config):
+    """
+    Salva a configuração do professor em um arquivo JSON específico no Drive.
+    Nome do arquivo: perfil_{professor_sanitized}.json
+    """
+    safe_name = professor.replace(" ", "_").lower()
+    filename = f"perfil_{safe_name}.json"
+    
+    # Adiciona metadados extras
+    config["email"] = email
+    config["municipio"] = municipio
+    
+    if USE_CLOUD_STORAGE:
+        google_storage.save_json(filename, config)
+    else:
+        caminho = os.path.join("data", filename)
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=2, ensure_ascii=False)
 
 def carregar_perfil_professor_db(nome_professor):
-    """Carrega o perfil de um professor específico do banco de dados."""
-    db_path = os.path.join("data", "backup_sistema.db")
-    conn = sqlite3.connect(db_path)
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT config FROM professor_config WHERE professor = ?", (nome_professor,))
-        row = cursor.fetchone()
-        if row:
-            return json.loads(row[0])
-    except Exception as e:
-        print(f"Erro ao carregar perfil DB: {e}")
-    finally:
-        conn.close()
+    """Carrega o perfil de um professor específico do arquivo JSON."""
+    safe_name = nome_professor.replace(" ", "_").lower()
+    filename = f"perfil_{safe_name}.json"
+    
+    if USE_CLOUD_STORAGE:
+        return google_storage.load_json(filename, default_value={})
+    
+    caminho = os.path.join("data", filename)
+    if os.path.exists(caminho):
+        with open(caminho, "r", encoding="utf-8-sig") as f:
+            return json.load(f)
     return {}
 
 def split_into_lines(pdf, text, width, font_size):

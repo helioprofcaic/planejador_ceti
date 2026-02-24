@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import os
 import utils
-import sqlite3
 
 st.set_page_config(page_title="Dashboard", layout="wide")
 
@@ -13,41 +12,57 @@ st.title("📈 Dashboard de Frequência")
 st.markdown("Visualização gráfica da assiduidade das turmas.")
 
 # --- CARREGAMENTO DE DADOS ---
-db_path = os.path.join("data", "backup_sistema.db")
 df_dash = pd.DataFrame()
 df_alunos = pd.DataFrame()
 
-if os.path.exists(db_path):
-    try:
-        conn = sqlite3.connect(db_path)
-        # Lê apenas os dados necessários do banco
-        query = "SELECT turma as Turma, data as Data, presenca FROM frequencia"
-        df_raw = pd.read_sql_query(query, conn)
+# Lista todos os arquivos de frequência disponíveis
+arquivos_freq = utils.listar_arquivos_dados("frequencia_")
+
+if arquivos_freq:
+    lista_dfs = []
+    
+    with st.spinner("Consolidando dados de frequência..."):
+        for arquivo in arquivos_freq:
+            # Extrai metadados do nome do arquivo: frequencia_{turma}_{data}.json
+            try:
+                # Remove extensão e prefixo
+                nome_limpo = arquivo.replace("frequencia_", "").replace(".json", "")
+                # Assume formato turma_data (data são os últimos 10 chars: YYYY-MM-DD)
+                data_str = nome_limpo[-10:]
+                turma_str = nome_limpo[:-11]
+                
+                df_temp = utils.carregar_dados_json(os.path.join("data", arquivo))
+                if df_temp is not None and not df_temp.empty:
+                    df_temp["Turma"] = turma_str
+                    df_temp["Data"] = data_str
+                    # Normaliza coluna de presença
+                    df_temp["presenca_bool"] = df_temp["Presença"].apply(lambda x: 1 if x else 0)
+                    lista_dfs.append(df_temp)
+            except Exception as e:
+                print(f"Erro ao processar {arquivo}: {e}")
+
+    if lista_dfs:
+        df_completo = pd.concat(lista_dfs, ignore_index=True)
         
-        # Query para análise por aluno
-        query_alunos = "SELECT aluno_nome, COUNT(*) as total, SUM(presenca) as presentes FROM frequencia GROUP BY aluno_nome"
-        df_alunos = pd.read_sql_query(query_alunos, conn)
-        conn.close()
-
-        if not df_raw.empty:
-            # Agrupa por Turma e Data para calcular o percentual
-            df_dash = df_raw.groupby(['Turma', 'Data']).agg(
-                Total=('presenca', 'count'),
-                Presentes=('presenca', 'sum')
-            ).reset_index()
-            
-            df_dash['Percentual'] = (df_dash['Presentes'] / df_dash['Total']) * 100
-            df_dash['Data'] = pd.to_datetime(df_dash['Data'])
-
-        if not df_alunos.empty:
-            df_alunos['Percentual'] = (df_alunos['presentes'] / df_alunos['total']) * 100
-
-    except Exception as e:
-        st.error(f"Erro ao ler banco de dados: {e}")
+        # Agrupa por Turma e Data para o gráfico temporal
+        df_dash = df_completo.groupby(['Turma', 'Data']).agg(
+            Total=('presenca_bool', 'count'),
+            Presentes=('presenca_bool', 'sum')
+        ).reset_index()
+        
+        df_dash['Percentual'] = (df_dash['Presentes'] / df_dash['Total']) * 100
+        df_dash['Data'] = pd.to_datetime(df_dash['Data'])
+        
+        # Agrupa por Aluno para análise de risco
+        df_alunos = df_completo.groupby(['Nome do Aluno', 'Turma']).agg(
+            total=('presenca_bool', 'count'),
+            presentes=('presenca_bool', 'sum')
+        ).reset_index()
+        df_alunos['Percentual'] = (df_alunos['presentes'] / df_alunos['total']) * 100
 
 # --- VISUALIZAÇÃO ---
 if df_dash.empty:
-    st.info("Nenhum registro encontrado. Vá na página inicial e clique em 'Sincronizar Banco de Dados' ou salve novas frequências.")
+    st.info("Nenhum registro de frequência encontrado.")
 else:
     # Métricas Gerais
     col1, col2, col3 = st.columns(3)
