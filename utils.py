@@ -55,10 +55,13 @@ def aplicar_estilo():
         #MainMenu {{visibility: hidden;}}
         footer {{visibility: hidden;}}
         [data-testid="stToolbar"] {{visibility: hidden;}}
-        
-        /* Ocultar a palavra "Navigation" que aparece no topo da sidebar em algumas versões */
-        div[data-testid="stSidebarNav"] > div:first-child {{
-            display: none;
+
+        /* Correção para Mobile: Forçar exibição do botão de menu */
+        @media (max-width: 768px) {{
+            [data-testid="stSidebarCollapsedControl"] {{
+                visibility: visible !important;
+                display: block !important;
+            }}
         }}
         </style>
         """, unsafe_allow_html=True)

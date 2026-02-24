@@ -62,14 +62,18 @@ st.subheader(f"{st.session_state['escola']}")
 st.caption(f"Bem-vindo(a), Prof. {st.session_state['professor']}")
 
 st.markdown("""
-### 🧭 Navegação
-Utilize o menu lateral para acessar os módulos:
+### 🧭 Navegação Rápida
+Clique em um dos links abaixo ou utilize o menu lateral para acessar os módulos:
 
-- **📅 Planejamento**: Geração de planos de aula semanais, mensais e trimestrais.
-- **📊 Ficha Qualitativa**: Registro de avaliação socioemocional.
-- **📝 Frequência**: Controle de presença diária.
-- **⚙️ Configuração**: Personalização de turmas e disciplinas do professor.
-- **🛠️ Config. Componentes**: Ajuste de regras de carga horária e currículo.
+- **[📅 Planejamento](Planejamento)**: Geração de planos de aula semanais, mensais e trimestrais.
+- **[📊 Ficha Qualitativa](Ficha_Qualitativa)**: Registro de avaliação socioemocional.
+- **[📝 Frequência](Frequencia)**: Controle de presença diária.
+- **[📈 Dashboard](Dashboard)**: Visualização gráfica da assiduidade das turmas.
+- **[🤖 Gerador de Aulas (IA)](Gerador_Aulas)**: Crie roteiros de aula completos com Inteligência Artificial.
+- **[📚 Repositório de Aulas](Repositorio_Aulas)**: Gerencie e visualize os roteiros de aula salvos.
+- **[⚙️ Configuração de Perfil](Configuracao)**: Personalização de turmas e disciplinas do professor.
+- **[🛠️ Config. Componentes](Config_Componentes)**: Ajuste de regras de carga horária e currículo.
+- **[☁️ Status da Nuvem](Status_Nuvem)**: Verifique a conexão com o Google Drive.
 """)
 
 st.info("As configurações definidas aqui (Escola, Professor, Tema) serão aplicadas automaticamente em todas as páginas.")
