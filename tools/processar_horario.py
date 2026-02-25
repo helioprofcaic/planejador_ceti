@@ -164,12 +164,35 @@ def processar_horario():
         os.makedirs(PASTA_PROFESSORES)
 
     for prof, aulas in professores_detectados.items():
-        # Sanitiza nome do arquivo
-        nome_arquivo = "".join([c for c in prof if c.isalnum() or c in (' ', '-', '_')]).strip()
-        caminho_prof = os.path.join(PASTA_PROFESSORES, f"{nome_arquivo}.json")
+        # Gera nome de arquivo seguro (padrao utils.py: perfil_nome_sobrenome.json)
+        safe_name = prof.replace(" ", "_").lower()
+        caminho_prof = os.path.join(PASTA_PROFESSORES, f"perfil_{safe_name}.json")
+        
+        # Consolida vinculos (Turma -> Componentes) para o perfil
+        vinculos_map = {}
+        for aula in aulas:
+            turma = aula['Sala']
+            disciplina = aula['Disciplina']
+            if turma not in vinculos_map:
+                vinculos_map[turma] = set()
+            vinculos_map[turma].add(disciplina)
+        
+        vinculos = []
+        for turma, comps in vinculos_map.items():
+            vinculos.append({
+                "turma": turma,
+                "componentes": sorted(list(comps))
+            })
+            
+        perfil_data = {
+            "professor": prof,
+            "email": "",
+            "municipio": "",
+            "vinculos": vinculos
+        }
         
         with open(caminho_prof, "w", encoding="utf-8") as f:
-            json.dump(aulas, f, indent=4, ensure_ascii=False)
+            json.dump(perfil_data, f, indent=2, ensure_ascii=False)
             
     print(f"✅ {len(professores_detectados)} perfis de professores gerados em: {PASTA_PROFESSORES}")
     print("Lista de Professores Identificados:", sorted(list(professores_detectados.keys())))

@@ -23,6 +23,7 @@ data/planejamentos.json
 data/frequencia_*.json
 data/qualitativo_*.json
 data/horario_global.json
+data/escola_db.json
 data/perfil_*.json
 data/perfis/*.json
 data/fonts/
