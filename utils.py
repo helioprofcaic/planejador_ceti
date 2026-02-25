@@ -338,7 +338,13 @@ def salvar_dados_json(caminho_arquivo, dados_df):
     if USE_CLOUD_STORAGE:
         # Converte DataFrame para lista de dicionários para ser compatível com JSON
         dados_dict = dados_df.to_dict(orient='records')
-        google_storage.save_json(filename, dados_dict)
+        
+        # Verifica se deve salvar na subpasta 'perfis'
+        folder_path = ['data']
+        if 'perfis' in os.path.normpath(caminho_arquivo).split(os.sep):
+            folder_path = ['data', 'perfis']
+            
+        google_storage.save_json(filename, dados_dict, folder_path=folder_path)
     else:
         # Salva localmente
         os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
@@ -351,7 +357,13 @@ def carregar_dados_json(caminho_arquivo):
     if USE_CLOUD_STORAGE:
         # Usa um sentinela para distinguir "arquivo não encontrado" de "arquivo vazio"
         sentinela = {"__arquivo_nao_encontrado__": True}
-        dados_dict = google_storage.load_json(filename, default_value=sentinela)
+        
+        # Verifica se deve carregar da subpasta 'perfis'
+        folder_path = ['data']
+        if 'perfis' in os.path.normpath(caminho_arquivo).split(os.sep):
+            folder_path = ['data', 'perfis']
+            
+        dados_dict = google_storage.load_json(filename, default_value=sentinela, folder_path=folder_path)
         
         if dados_dict == sentinela:
             return None
@@ -880,8 +892,8 @@ def garantir_perfil_visitante():
     
     if USE_CLOUD_STORAGE:
         # Verifica se existe, se não, cria
-        if not google_storage.load_json(filename):
-            google_storage.save_json(filename, perfil_visitante)
+        if not google_storage.load_json(filename, silent=True, folder_path=['data', 'perfis']):
+            google_storage.save_json(filename, perfil_visitante, folder_path=['data', 'perfis'])
     else:
         caminho = os.path.join("data", "perfis", filename)
         if not os.path.exists(caminho):
@@ -902,7 +914,7 @@ def salvar_professor_config_db(professor, email, municipio, config):
     config["municipio"] = municipio
     
     if USE_CLOUD_STORAGE:
-        google_storage.save_json(filename, config)
+        google_storage.save_json(filename, config, folder_path=['data', 'perfis'])
     else:
         caminho = os.path.join("data", "perfis", filename)
         os.makedirs(os.path.dirname(caminho), exist_ok=True)
@@ -915,7 +927,7 @@ def carregar_perfil_professor_db(nome_professor):
     filename = f"perfil_{safe_name}.json"
     
     if USE_CLOUD_STORAGE:
-        return google_storage.load_json(filename, default_value={})
+        return google_storage.load_json(filename, default_value={}, folder_path=['data', 'perfis'])
     
     caminho = os.path.join("data", "perfis", filename)
     if os.path.exists(caminho):

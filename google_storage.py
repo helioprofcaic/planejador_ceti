@@ -65,6 +65,14 @@ def get_or_create_subfolder(service, parent_id, folder_name):
                 st.error(f"❌ Erro de Cota: Não foi possível criar a pasta `{folder_name}`. Por favor, crie-a manualmente no Google Drive.")
             return None
 
+def get_nested_folder_id(service, root_id, folder_path):
+    """Navega ou cria uma estrutura de pastas e retorna o ID da última."""
+    current_id = root_id
+    for folder_name in folder_path:
+        current_id = get_or_create_subfolder(service, current_id, folder_name)
+        if not current_id: return None
+    return current_id
+
 def find_file(service, filename, folder_id):
     """Procura o ID de um arquivo pelo nome dentro da pasta alvo."""
     # 1. Tenta busca exata (mais rápida)
@@ -89,8 +97,11 @@ def find_file(service, filename, folder_id):
             
     return None
 
-def load_json(filename, default_value=None):
-    """Carrega um JSON da subpasta 'data' no Drive."""
+def load_json(filename, default_value=None, silent=False, folder_path=None):
+    """Carrega um JSON de uma subpasta específica (default: ['data'])."""
+    if folder_path is None:
+        folder_path = ['data']
+        
     service = get_drive_service()
     root_id = get_folder_id()
     
@@ -98,9 +109,11 @@ def load_json(filename, default_value=None):
         if not service or not root_id:
             return default_value or {}
 
-        # 1. Tenta buscar na subpasta 'data'
-        data_folder_id = get_or_create_subfolder(service, root_id, 'data')
-        file_id = find_file(service, filename, data_folder_id)
+        # 1. Tenta buscar na estrutura de pastas especificada
+        target_folder_id = get_nested_folder_id(service, root_id, folder_path)
+        file_id = None
+        if target_folder_id:
+            file_id = find_file(service, filename, target_folder_id)
         
         # 2. Fallback: Se não achar em 'data', tenta na raiz (caso o usuário não tenha movido)
         if not file_id:
@@ -130,32 +143,36 @@ def load_json(filename, default_value=None):
                 continue
         
         # Se falhou em todos, mostra o início do arquivo para diagnóstico
-        st.error(f"❌ O arquivo `{filename}` existe, mas o conteúdo não é um JSON válido.")
-        try:
-            snippet = content.decode('latin-1')[:200]
-            st.code(snippet, language="text")
-        except:
-            st.write("Não foi possível exibir o conteúdo do arquivo.")
+        if not silent:
+            st.error(f"❌ O arquivo `{filename}` existe, mas o conteúdo não é um JSON válido.")
+            try:
+                snippet = content.decode('latin-1')[:200]
+                st.code(snippet, language="text")
+            except:
+                st.write("Não foi possível exibir o conteúdo do arquivo.")
         return default_value or {}
     except Exception as e:
         # Loga o erro no console para debug, mas não exibe erro visual para não travar o fluxo se for algo temporário
         print(f"Erro ao carregar {filename} do Drive: {e}")
         return default_value or {}
 
-def save_json(filename, data):
-    """Salva (sobrescreve) um arquivo JSON na subpasta 'data' no Drive."""
+def save_json(filename, data, folder_path=None):
+    """Salva um arquivo JSON em uma subpasta específica (default: ['data'])."""
+    if folder_path is None:
+        folder_path = ['data']
+        
     service = get_drive_service()
     root_id = get_folder_id()
     
     if not service or not root_id:
         return False
 
-    # Garante que salva na subpasta 'data'
-    data_folder_id = get_or_create_subfolder(service, root_id, 'data')
-    if not data_folder_id:
+    # Garante que salva na estrutura de pastas
+    target_folder_id = get_nested_folder_id(service, root_id, folder_path)
+    if not target_folder_id:
         return False
 
-    file_id = find_file(service, filename, data_folder_id)
+    file_id = find_file(service, filename, target_folder_id)
     
     json_str = json.dumps(data, indent=2, ensure_ascii=False)
     media = MediaIoBaseUpload(io.BytesIO(json_str.encode('utf-8')), mimetype='application/json')
@@ -166,7 +183,7 @@ def save_json(filename, data):
             service.files().update(fileId=file_id, media_body=media).execute()
         else:
             # Cria novo arquivo
-            file_metadata = {'name': filename, 'parents': [data_folder_id]}
+            file_metadata = {'name': filename, 'parents': [target_folder_id]}
             service.files().create(body=file_metadata, media_body=media).execute()
         return True
     except Exception as e:
