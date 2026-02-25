@@ -198,21 +198,22 @@ if perfil_selecionado == "Helio Lima":
 
 st.divider()
 
-st.subheader("🛠️ Manutenção de Dados")
-st.caption("Ferramentas para ajuste e correção do banco de dados.")
+if st.session_state.get("professor") != "Visitante":
+    st.subheader("🛠️ Manutenção de Dados")
+    st.caption("Ferramentas para ajuste e correção do banco de dados.")
 
-if st.button("🔄 Corrigir Terminologia (Neurodivergência)"):
-    caminho_alunos = os.path.join("data", "escola", "alunos.json")
-    if os.path.exists(caminho_alunos):
-        with open(caminho_alunos, "r", encoding="utf-8-sig") as f:
-            dados = json.load(f)
-        
-        for turma, lista in dados.items():
-            for aluno in lista:
-                if "deficiencia" in aluno:
-                    aluno["neurodivergencia"] = aluno.pop("deficiencia")
-        
-        with open(caminho_alunos, "w", encoding="utf-8") as f:
-            json.dump(dados, f, indent=2, ensure_ascii=False)
-        
-        st.success("✅ Banco de dados atualizado! Termo ajustado para 'neurodivergencia'.")
+    if st.button("🔄 Corrigir Terminologia (Neurodivergência)"):
+        caminho_alunos = os.path.join("data", "escola", "alunos.json")
+        if os.path.exists(caminho_alunos):
+            with open(caminho_alunos, "r", encoding="utf-8-sig") as f:
+                dados = json.load(f)
+            
+            for turma, lista in dados.items():
+                for aluno in lista:
+                    if "deficiencia" in aluno:
+                        aluno["neurodivergencia"] = aluno.pop("deficiencia")
+            
+            with open(caminho_alunos, "w", encoding="utf-8") as f:
+                json.dump(dados, f, indent=2, ensure_ascii=False)
+            
+            st.success("✅ Banco de dados atualizado! Termo ajustado para 'neurodivergencia'.")

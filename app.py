@@ -70,6 +70,7 @@ Clique em um dos links abaixo ou utilize o menu lateral para acessar os módulos
 - **[📊 Ficha Qualitativa](Ficha_Qualitativa)**: Registro de avaliação socioemocional.
 - **[📝 Frequência](Frequencia)**: Controle de presença diária.
 - **[📈 Dashboard](Dashboard)**: Visualização gráfica da assiduidade das turmas.
+- **[🕒 Quadro de Horários](Quadro_Horario)**: Visualização da grade horária pessoal e global.
 - **[🤖 Gerador de Aulas (IA)](Gerador_Aulas)**: Crie roteiros de aula completos com Inteligência Artificial.
 - **[📚 Repositório de Aulas](Repositorio_Aulas)**: Gerencie e visualize os roteiros de aula salvos.
 - **[⚙️ Configuração de Perfil](Configuracao)**: Personalização de turmas e disciplinas do professor.

@@ -32,6 +32,8 @@ function Criar-Json {
 
 Write-Host "--- Iniciando Geração de Dados Fictícios ---" -ForegroundColor Yellow
 Garantir-PastaDados -caminho $pastaDados
+Garantir-PastaDados -caminho (Join-Path $pastaDados "perfis")
+Garantir-PastaDados -caminho (Join-Path $pastaDados "escola")
 
 # 1. escola_db.json (Banco de Dados Institucional)
 $escolaDb = @{
@@ -48,7 +50,7 @@ $escolaDb = @{
     }
     professores = @("Helio Lima", "Maria Souza", "Carlos Andrade")
 }
-Criar-Json -nomeArquivo "escola_db.json" -conteudo $escolaDb
+Criar-Json -nomeArquivo "escola/escola_db.json" -conteudo $escolaDb
 
 # 2. alunos.json (Base de Alunos)
 $alunos = @{
@@ -74,7 +76,7 @@ $alunos = @{
         @{ n = 4; nome = "Otávio Ribeiro Santos" }
     )
 }
-Criar-Json -nomeArquivo "alunos.json" -conteudo $alunos
+Criar-Json -nomeArquivo "escola/alunos.json" -conteudo $alunos
 
 # 3. curriculo_db.json (Cópia do currículo existente)
 # Este arquivo é complexo e estático, então replicamos a estrutura principal.
@@ -148,7 +150,7 @@ $configComponentes = @{
 }
 Criar-Json -nomeArquivo "config_componentes.json" -conteudo $configComponentes
 
-# 5. professor_config.json (Perfil do Professor)
+# 5. professor_config.json (Perfil Ativo Local)
 $professorConfig = @{
     "professor" = "Helio Lima"
     "email" = "helio.lima@email.com"
@@ -166,6 +168,26 @@ $professorConfig = @{
     )
 }
 Criar-Json -nomeArquivo "professor_config.json" -conteudo $professorConfig
+
+# 6. Perfil do Administrador (Helio Lima) com Senhas
+$perfilHelio = @{
+    "professor" = "Helio Lima"
+    "email" = "helio.lima@email.com"
+    "municipio" = "Teresina"
+    "vinculos" = @(
+        @{
+            "turma" = "2º Ano B - T.I."
+            "componentes" = @("PROGRAMAÇÃO ORIENTADA À OBJETOS - POO", "MENTORIAS TEC II")
+        }
+    )
+    "senhas" = @{
+        "admin" = "helio@raldir"
+        "usuario" = "helio@raldir"
+        "professor" = "helio@raldir"
+    }
+}
+Criar-Json -nomeArquivo "perfis/perfil_helio_lima.json" -conteudo $perfilHelio
+
 
 # 6. planejamentos.json (Arquivo de Rascunhos)
 $planejamentos = @{} # Começa vazio

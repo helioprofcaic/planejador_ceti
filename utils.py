@@ -300,6 +300,11 @@ def carregar_planejamento(turma, componente, escala, trimestre="1º"):
 
 def carregar_alunos():
     """Carrega o arquivo alunos.json da pasta data (local ou nuvem)."""
+    # --- PROTEÇÃO DE DADOS ---
+    # Visitantes não veem a lista de alunos
+    if st.session_state.get("professor") == "Visitante":
+        return {}
+
     filename = "alunos.json"
     if USE_CLOUD_STORAGE:
         return google_storage.load_json(filename, default_value={}, folder_path=['data', 'escola'])

@@ -135,10 +135,9 @@ streamlit run app.py
 
 ##  Documentação e Tutoriais
 
-*   👨‍🏫 Guia do Professor - Configuração de perfil e primeiros passos.
-*   🤖 Guia do Gerador de Aulas (IA) - Como criar roteiros automáticos com Inteligência Artificial.
-*   📊 Guia de Avaliação Qualitativa - Registro de desempenho socioemocional.
-*   💾 Guia da Estrutura de Dados - Entenda os arquivos JSON e o banco de dados.
+*   **[📘 Manual do Usuário](docs/MANUAL_USUARIO.md)**: Guia completo de uso para professores e coordenadores.
+*   **[🛠️ Documentação Técnica](docs/DOCUMENTACAO_TECNICA.md)**: Detalhes sobre arquitetura, dados e scripts para desenvolvedores.
+*   **[🤖 Tutorial IA](docs/TUTORIAL_IA.md)**: Como usar o gerador de aulas com Inteligência Artificial.
 
 ---
 Desenvolvido para otimizar a rotina pedagógica.
