@@ -213,6 +213,25 @@ def list_files_in_subfolder(subfolder_name, mime_type=None):
     results = service.files().list(q=query, fields="files(id, name)").execute()
     return results.get('files', [])
 
+def list_files_in_path(folder_path, mime_type=None):
+    """Lista arquivos dentro de uma estrutura de pastas (ex: ['data', 'frequencia'])."""
+    service = get_drive_service()
+    root_id = get_folder_id()
+    
+    if not service or not root_id:
+        return []
+        
+    target_id = get_nested_folder_id(service, root_id, folder_path)
+    if not target_id:
+        return []
+    
+    query = f"'{target_id}' in parents and trashed = false"
+    if mime_type:
+        query += f" and mimeType = '{mime_type}'"
+        
+    results = service.files().list(q=query, fields="files(id, name)").execute()
+    return results.get('files', [])
+
 def download_file_bytes(file_id):
     """Baixa o conteúdo de um arquivo do Drive como bytes."""
     service = get_drive_service()

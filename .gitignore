@@ -28,6 +28,7 @@ data/perfil_*.json
 data/perfis/*.json
 data/fonts/
 data/__/*
+data/frequencia/*
 docs/HORÁRIO - 2026ATUALIZADO.doc.md
 docs/MATRIZ INTEGRAL - TÉC. DESENVOLVIMENTO DE SISTEMAS - 3ª SÉRIE (2026).md
 

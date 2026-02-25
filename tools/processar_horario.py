@@ -9,6 +9,7 @@ ARQUIVO_MD = os.path.join(BASE_DIR, "docs", "HORÁRIO - 2026ATUALIZADO.doc.md")
 PASTA_DADOS = os.path.join(BASE_DIR, "data")
 ARQUIVO_GLOBAL = os.path.join(PASTA_DADOS, "horario_global.json")
 PASTA_PROFESSORES = os.path.join(PASTA_DADOS, "perfis")
+PASTA_FREQUENCIA = os.path.join(PASTA_DADOS, "frequencia")
 
 # Mapeamento de nomes curtos (tabela) para nomes completos (sistema)
 # Adicione aqui conforme necessário
@@ -162,6 +163,8 @@ def processar_horario():
     # Salvar Individuais
     if not os.path.exists(PASTA_PROFESSORES):
         os.makedirs(PASTA_PROFESSORES)
+    if not os.path.exists(PASTA_FREQUENCIA):
+        os.makedirs(PASTA_FREQUENCIA)
 
     for prof, aulas in professores_detectados.items():
         # Gera nome de arquivo seguro (padrao utils.py: perfil_nome_sobrenome.json)
@@ -191,6 +194,19 @@ def processar_horario():
             "vinculos": vinculos
         }
         
+        # --- Inicializa arquivo de frequência vazio para o professor ---
+        # (Movido para antes da verificação de perfil existente para garantir criação)
+        caminho_freq = os.path.join(PASTA_FREQUENCIA, f"frequencia_{safe_name}.json")
+        if not os.path.exists(caminho_freq):
+            with open(caminho_freq, "w", encoding="utf-8") as f:
+                json.dump([], f, indent=2, ensure_ascii=False)
+            print(f"✅ Arquivo de frequência criado: {os.path.basename(caminho_freq)}")
+
+        # Verifica se o arquivo já existe para não sobrescrever dados manuais (senhas, emails)
+        if os.path.exists(caminho_prof):
+            print(f"⚠️ Perfil já existe (ignorado): {os.path.basename(caminho_prof)}")
+            continue
+
         with open(caminho_prof, "w", encoding="utf-8") as f:
             json.dump(perfil_data, f, indent=2, ensure_ascii=False)
             

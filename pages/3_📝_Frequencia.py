@@ -57,11 +57,16 @@ with col2:
 
 st.write("### Chamada")
 
-# Caminho do arquivo para persistência
-caminho_arquivo = os.path.join("data", f"frequencia_{turma_sel}_{data_aula.strftime('%Y-%m-%d')}.json")
+# Tenta carregar dados salvos do arquivo acumulado do professor
+df_total_prof = utils.carregar_frequencia_professor(professor)
+df_chamada = pd.DataFrame()
 
-# Tenta carregar dados salvos, senão cria um novo DataFrame
-df_chamada = utils.carregar_dados_json(caminho_arquivo)
+if df_total_prof is not None and not df_total_prof.empty:
+    # Filtra para o dia e turma selecionados
+    data_str = data_aula.strftime('%Y-%m-%d')
+    mask = (df_total_prof.get("Turma") == turma_sel) & (df_total_prof.get("Data") == data_str)
+    if not df_total_prof[mask].empty:
+        df_chamada = df_total_prof[mask][["Nº", "Nome do Aluno", "Presença"]]
 
 if df_chamada is None or df_chamada.empty:
     lista_alunos = utils.listar_alunos_turma_db(turma_sel)
@@ -80,7 +85,7 @@ c1, c2, c3 = st.columns(3)
 
 with c1:
     if st.button("💾 Salvar Frequência"):
-        utils.salvar_dados_json(caminho_arquivo, df_editado)
+        utils.salvar_frequencia_dia(professor, turma_sel, data_aula, df_editado)
         st.success(f"Frequência de {data_aula.strftime('%d/%m/%Y')} salva.")
 
 with c2:

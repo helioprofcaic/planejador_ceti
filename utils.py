@@ -343,8 +343,11 @@ def salvar_dados_json(caminho_arquivo, dados_df):
         
         # Verifica se deve salvar na subpasta 'perfis'
         folder_path = ['data']
-        if 'perfis' in os.path.normpath(caminho_arquivo).split(os.sep):
+        path_parts = os.path.normpath(caminho_arquivo).split(os.sep)
+        if 'perfis' in path_parts:
             folder_path = ['data', 'perfis']
+        elif 'frequencia' in path_parts:
+            folder_path = ['data', 'frequencia']
             
         google_storage.save_json(filename, dados_dict, folder_path=folder_path)
     else:
@@ -362,8 +365,11 @@ def carregar_dados_json(caminho_arquivo):
         
         # Verifica se deve carregar da subpasta 'perfis'
         folder_path = ['data']
-        if 'perfis' in os.path.normpath(caminho_arquivo).split(os.sep):
+        path_parts = os.path.normpath(caminho_arquivo).split(os.sep)
+        if 'perfis' in path_parts:
             folder_path = ['data', 'perfis']
+        elif 'frequencia' in path_parts:
+            folder_path = ['data', 'frequencia']
             
         dados_dict = google_storage.load_json(filename, default_value=sentinela, folder_path=folder_path)
         
@@ -388,17 +394,24 @@ def carregar_dados_json(caminho_arquivo):
                 return None
     return None
 
-def listar_arquivos_dados(prefixo):
+def listar_arquivos_dados(prefixo, subfolder=None):
     """Lista arquivos de dados (frequencia, qualitativo) locais ou na nuvem."""
     arquivos = []
     if USE_CLOUD_STORAGE:
-        # Agora busca na subpasta 'data'
-        # Nota: list_files_in_subfolder retorna lista de dicts {'id', 'name'}, precisamos filtrar aqui
-        todos_arquivos = google_storage.list_files_in_subfolder('data')
+        folder_path = ['data']
+        if subfolder:
+            folder_path.append(subfolder)
+            
+        todos_arquivos = google_storage.list_files_in_path(folder_path)
         arquivos = [f['name'] for f in todos_arquivos if prefixo in f['name']]
     else:
-        if os.path.exists("data"):
-            arquivos = [f for f in os.listdir("data") if f.startswith(prefixo) and f.endswith(".json")]
+        search_path = "data"
+        if subfolder:
+            search_path = os.path.join("data", subfolder)
+            
+        if os.path.exists(search_path):
+            arquivos = [f for f in os.listdir(search_path) if f.startswith(prefixo) and f.endswith(".json")]
+            
     return arquivos
 
 def listar_pdfs_referencia():
@@ -1160,3 +1173,45 @@ def exibir_menu_lateral():
         # Botão explícito para voltar ao início
         st.page_link("app.py", label="Início / Menu Principal", icon="🏠", use_container_width=True)
         st.divider()
+
+# --- FUNÇÕES DE FREQUÊNCIA ACUMULADA (POR PROFESSOR) ---
+
+def obter_caminho_frequencia_professor(professor):
+    """Retorna o caminho do arquivo de frequência acumulada do professor."""
+    safe_name = professor.replace(" ", "_").lower()
+    return os.path.join("data", "frequencia", f"frequencia_{safe_name}.json")
+
+def carregar_frequencia_professor(professor):
+    """Carrega o DataFrame de frequência acumulada do professor."""
+    caminho = obter_caminho_frequencia_professor(professor)
+    return carregar_dados_json(caminho)
+
+def salvar_frequencia_dia(professor, turma, data_obj, df_chamada):
+    """Salva/Atualiza a frequência de um dia específico no arquivo acumulado do professor."""
+    # 1. Carrega dados existentes
+    df_total = carregar_frequencia_professor(professor)
+    
+    # 2. Prepara os novos dados
+    df_novos = df_chamada.copy()
+    df_novos["Turma"] = turma
+    df_novos["Data"] = data_obj.strftime('%Y-%m-%d')
+    
+    # 3. Mescla
+    if df_total is None or df_total.empty:
+        df_total = df_novos
+    else:
+        # Garante que as colunas de filtro existam
+        if "Data" not in df_total.columns: df_total["Data"] = ""
+        if "Turma" not in df_total.columns: df_total["Turma"] = ""
+        
+        # Remove registros anteriores para esta Turma e Data (Sobrescrita para atualização)
+        data_str = data_obj.strftime('%Y-%m-%d')
+        mask_existente = (df_total["Turma"] == turma) & (df_total["Data"] == data_str)
+        df_total = df_total[~mask_existente]
+        
+        # Concatena
+        df_total = pd.concat([df_total, df_novos], ignore_index=True)
+    
+    # 4. Salva
+    caminho = obter_caminho_frequencia_professor(professor)
+    salvar_dados_json(caminho, df_total)
