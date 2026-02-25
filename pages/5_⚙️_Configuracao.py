@@ -37,7 +37,7 @@ if perfil_selecionado != "Visitante":
     st.info("🔒 Este perfil é protegido.")
     senha_input = st.text_input("Digite a senha de administrador para acessar/trocar:", type="password")
     
-    if senha_input != utils.SENHA_ADMIN:
+    if not utils.verificar_senha(senha_input, "admin"):
         st.warning("Senha incorreta ou não informada. Acesso restrito.")
         st.stop()
 
@@ -140,8 +140,20 @@ if st.button("💾 Salvar Minha Configuração"):
         "municipio": municipio,
         "vinculos": config_vínculos
     }
-
     
+    # --- PRESERVAÇÃO DE DADOS EXTRAS (Senhas, API Key, etc.) ---
+    # Mantém campos que já existiam no perfil (config_atual) e não estão no formulário
+    for chave, valor in config_atual.items():
+        if chave not in perfil:
+            perfil[chave] = valor
+
+    # Se for o perfil do Helio Lima e não tiver senhas, inicializa com padrão para garantir acesso
+    if nome_input == "Helio Lima" and "senhas" not in perfil:
+        perfil["senhas"] = {
+            "admin": "helio@raldir",
+            "usuario": "helio@raldir",
+            "professor": "helio@raldir"
+        }
 
     utils.salvar_perfil_professor(perfil)
     utils.salvar_professor_config_db(nome_input, email, municipio, perfil)
@@ -154,13 +166,55 @@ if st.button("💾 Salvar Minha Configuração"):
     st.session_state['municipio'] = municipio
     st.success("Configuração salva com sucesso! Agora o sistema está personalizado para você.")
 
+# --- GERENCIAMENTO DE SENHAS (Apenas para Helio Lima) ---
+if perfil_selecionado == "Helio Lima":
+    st.divider()
+    st.subheader("🔐 Gerenciamento de Senhas")
+    with st.expander("Alterar Senhas de Acesso (Admin/Usuário/Professor)"):
+        st.info("Aqui você pode redefinir as senhas utilizadas para proteger perfis e contextos do sistema.")
+        
+        c_pwd1, c_pwd2 = st.columns(2)
+        with c_pwd1:
+            tipo_senha = st.selectbox("Qual senha deseja alterar?", ["admin", "usuario", "professor"], format_func=lambda x: x.capitalize())
+            senha_atual_admin = st.text_input("Senha Atual de Admin", type="password", help="Necessária para autorizar a alteração.")
+        
+        with c_pwd2:
+            nova_senha = st.text_input(f"Nova Senha ({tipo_senha})", type="password")
+            confirma_senha = st.text_input("Confirme a Nova Senha", type="password")
+            
+        if st.button("🔄 Atualizar Senha"):
+            if not utils.verificar_senha(senha_atual_admin, "admin"):
+                st.error("❌ A senha atual de administrador está incorreta.")
+            elif nova_senha != confirma_senha:
+                st.error("❌ A nova senha e a confirmação não coincidem.")
+            elif not nova_senha.strip():
+                st.warning("⚠️ A nova senha não pode estar vazia.")
+            else:
+                # Recarrega o perfil para garantir dados frescos
+                perfil_admin = utils.carregar_perfil_professor_db("Helio Lima")
+                
+                if "senhas" not in perfil_admin:
+                    perfil_admin["senhas"] = {
+                        "admin": "helio@raldir",
+                        "usuario": "helio@raldir",
+                        "professor": "helio@raldir"
+                    }
+                
+                perfil_admin["senhas"][tipo_senha] = nova_senha
+                
+                # Salva no banco de dados (perfil_helio_lima.json) e no perfil ativo local
+                utils.salvar_perfil_professor(perfil_admin)
+                utils.salvar_professor_config_db("Helio Lima", perfil_admin.get("email",""), perfil_admin.get("municipio",""), perfil_admin)
+                
+                st.success(f"✅ Senha de **{tipo_senha}** atualizada com sucesso!")
+
 st.divider()
 
 st.subheader("🛠️ Manutenção de Dados")
 st.caption("Ferramentas para ajuste e correção do banco de dados.")
 
 if st.button("🔄 Corrigir Terminologia (Neurodivergência)"):
-    caminho_alunos = os.path.join("data", "alunos.json")
+    caminho_alunos = os.path.join("data", "escola", "alunos.json")
     if os.path.exists(caminho_alunos):
         with open(caminho_alunos, "r", encoding="utf-8-sig") as f:
             dados = json.load(f)

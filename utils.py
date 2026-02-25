@@ -10,9 +10,6 @@ from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import date
 
-# --- CONFIGURAÇÃO DE SEGURANÇA ---
-SENHA_ADMIN = "1234"  # Senha padrão para troca de perfil
-
 # --- Integração com Google Drive ---
 try:
     import google_storage
@@ -100,9 +97,9 @@ def carregar_escola_db():
     
     data = default_data
     if USE_CLOUD_STORAGE:
-        data = google_storage.load_json(filename, default_value=default_data)
+        data = google_storage.load_json(filename, default_value=default_data, folder_path=['data', 'escola'])
     else:
-        caminho = os.path.join("data", filename)
+        caminho = os.path.join("data", "escola", filename)
         if os.path.exists(caminho):
             try:
                 with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -132,10 +129,10 @@ def salvar_escola_db(dados):
     filename = "escola_db.json"
     
     if USE_CLOUD_STORAGE:
-        google_storage.save_json(filename, dados)
+        google_storage.save_json(filename, dados, folder_path=['data', 'escola'])
     else:
-        caminho = os.path.join("data", filename)
-        os.makedirs("data", exist_ok=True)
+        caminho = os.path.join("data", "escola", filename)
+        os.makedirs(os.path.dirname(caminho), exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=2, ensure_ascii=False)
 
@@ -305,9 +302,9 @@ def carregar_alunos():
     """Carrega o arquivo alunos.json da pasta data (local ou nuvem)."""
     filename = "alunos.json"
     if USE_CLOUD_STORAGE:
-        return google_storage.load_json(filename, default_value={})
+        return google_storage.load_json(filename, default_value={}, folder_path=['data', 'escola'])
         
-    caminho = os.path.join("data", filename)
+    caminho = os.path.join("data", "escola", filename)
     if os.path.exists(caminho):
         try:
             with open(caminho, "r", encoding="utf-8-sig") as f:
@@ -323,10 +320,10 @@ def salvar_alunos(dados):
     """Salva o arquivo alunos.json na pasta data (local ou nuvem)."""
     filename = "alunos.json"
     if USE_CLOUD_STORAGE:
-        return google_storage.save_json(filename, dados)
+        return google_storage.save_json(filename, dados, folder_path=['data', 'escola'])
     else:
-        caminho = os.path.join("data", filename)
-        os.makedirs("data", exist_ok=True)
+        caminho = os.path.join("data", "escola", filename)
+        os.makedirs(os.path.dirname(caminho), exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=2, ensure_ascii=False)
         return True
@@ -879,6 +876,33 @@ def atualizar_lista_professores_db(novo_professor):
         professores.sort()
         escola_db["professores"] = professores
         salvar_escola_db(escola_db)
+
+def verificar_senha(senha_input, tipo="admin"):
+    """
+    Verifica a senha informada contra as senhas salvas no perfil do administrador (Helio Lima).
+    Tipos: 'admin', 'usuario', 'professor'.
+    """
+    # Carrega o perfil do admin (Helio Lima)
+    # Se o arquivo não existir, retorna dict vazio
+    perfil_admin = carregar_perfil_professor_db("Helio Lima")
+    
+    # Senhas padrão (fallback) caso não estejam definidas no arquivo
+    senhas_padrao = {
+        "admin": "helio@raldir",
+        "usuario": "helio@raldir",
+        "professor": "helio@raldir"
+    }
+    
+    # Obtém o dicionário de senhas do perfil ou usa o padrão
+    senhas_definidas = perfil_admin.get("senhas", senhas_padrao)
+    
+    # Garante que senhas_definidas seja um dicionário (caso venha None ou vazio de forma errada)
+    if not isinstance(senhas_definidas, dict):
+        senhas_definidas = senhas_padrao
+        
+    senha_correta = senhas_definidas.get(tipo, senhas_padrao.get(tipo))
+    
+    return senha_input == senha_correta
 
 def garantir_perfil_visitante():
     """Garante que o perfil de visitante exista para login padrão."""

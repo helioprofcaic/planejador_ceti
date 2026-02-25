@@ -199,7 +199,7 @@ def processar_horario():
 
     # --- ATUALIZAR ESCOLA_DB.JSON ---
     # Isso garante que os nomes apareçam na página de Configuração
-    arquivo_escola_db = os.path.join(PASTA_DADOS, "escola_db.json")
+    arquivo_escola_db = os.path.join(PASTA_DADOS, "escola", "escola_db.json")
     if os.path.exists(arquivo_escola_db):
         try:
             with open(arquivo_escola_db, "r", encoding="utf-8") as f:
