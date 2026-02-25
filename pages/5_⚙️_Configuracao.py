@@ -147,14 +147,6 @@ if st.button("💾 Salvar Minha Configuração"):
         if chave not in perfil:
             perfil[chave] = valor
 
-    # Se for o perfil do Helio Lima e não tiver senhas, inicializa com padrão para garantir acesso
-    if nome_input == "Helio Lima" and "senhas" not in perfil:
-        perfil["senhas"] = {
-            "admin": "helio@raldir",
-            "usuario": "helio@raldir",
-            "professor": "helio@raldir"
-        }
-
     utils.salvar_perfil_professor(perfil)
     utils.salvar_professor_config_db(nome_input, email, municipio, perfil)
     
@@ -194,11 +186,7 @@ if perfil_selecionado == "Helio Lima":
                 perfil_admin = utils.carregar_perfil_professor_db("Helio Lima")
                 
                 if "senhas" not in perfil_admin:
-                    perfil_admin["senhas"] = {
-                        "admin": "helio@raldir",
-                        "usuario": "helio@raldir",
-                        "professor": "helio@raldir"
-                    }
+                    perfil_admin["senhas"] = {}
                 
                 perfil_admin["senhas"][tipo_senha] = nova_senha
                 

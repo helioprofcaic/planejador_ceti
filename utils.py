@@ -886,21 +886,19 @@ def verificar_senha(senha_input, tipo="admin"):
     # Se o arquivo não existir, retorna dict vazio
     perfil_admin = carregar_perfil_professor_db("Helio Lima")
     
-    # Senhas padrão (fallback) caso não estejam definidas no arquivo
-    senhas_padrao = {
-        "admin": "helio@raldir",
-        "usuario": "helio@raldir",
-        "professor": "helio@raldir"
-    }
-    
-    # Obtém o dicionário de senhas do perfil ou usa o padrão
-    senhas_definidas = perfil_admin.get("senhas", senhas_padrao)
+    # Obtém o dicionário de senhas do perfil
+    senhas_definidas = perfil_admin.get("senhas", {})
     
     # Garante que senhas_definidas seja um dicionário (caso venha None ou vazio de forma errada)
     if not isinstance(senhas_definidas, dict):
-        senhas_definidas = senhas_padrao
+        senhas_definidas = {}
         
-    senha_correta = senhas_definidas.get(tipo, senhas_padrao.get(tipo))
+    # Recupera a senha correta. Se não existir, retorna None (acesso negado)
+    senha_correta = senhas_definidas.get(tipo)
+    
+    # Se a senha não estiver definida no JSON, bloqueia o acesso
+    if not senha_correta:
+        return False
     
     return senha_input == senha_correta
 
