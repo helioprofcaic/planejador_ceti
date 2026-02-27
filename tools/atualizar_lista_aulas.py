@@ -33,6 +33,8 @@ def rotular_componente_por_caminho(path_str):
     """Tenta identificar o componente curricular com base em palavras-chave no caminho do arquivo."""
     if pd.isna(path_str): return "Não Identificado"
     path_lower = str(path_str).lower().replace('\\', '/')
+    parts = path_lower.split('/')
+    comp_identificado = None
     
     mapa_componentes = {
         'robotica': 'Robótica',
@@ -59,15 +61,32 @@ def rotular_componente_por_caminho(path_str):
 
     for chave, valor in mapa_componentes.items():
         if chave in path_lower:
-            return valor
+            comp_identificado = valor
+            break
             
     # Fallback: Pega o nome da pasta pai
-    parts = path_lower.split('/')
-    if len(parts) >= 2:
-        # Assume estrutura data/aulas/TURMA/COMPONENTE/arquivo.md
-        return parts[-2].replace('_', ' ').title()
+    if not comp_identificado:
+        if len(parts) >= 2:
+            # Assume estrutura data/aulas/TURMA/COMPONENTE/arquivo.md
+            comp_identificado = parts[-2].replace('_', ' ').title()
+        else:
+            comp_identificado = "Não Identificado"
+            
+    # Tenta identificar a turma
+    turma_identificada = ""
+    for part in reversed(parts[:-1]):
+        if part in ['data', 'planejamento', 'aulas']: continue
+        if comp_identificado and comp_identificado.lower() in part.replace('_', ' '): continue
         
-    return "Não Identificado"
+        if any(x in part for x in ['ano', 'serie', 'turma', '1', '2', '3', '9']):
+            turma_identificada = part.replace('_', ' ').replace('-', ' ').title()
+            turma_identificada = turma_identificada.replace("9ano", "9º Ano").replace("1serie", "1ª Série").replace("2serie", "2ª Série").replace("3serie", "3ª Série")
+            break
+            
+    if turma_identificada:
+        return f"{comp_identificado} ({turma_identificada})"
+        
+    return comp_identificado
 
 def atualizar_csv():
     if not os.path.exists(CSV_PATH):

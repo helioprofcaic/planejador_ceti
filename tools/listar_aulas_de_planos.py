@@ -4,7 +4,18 @@ import re
 
 def rotular_componente_por_caminho(path_str):
     """Tenta identificar o componente curricular com base em palavras-chave no caminho do arquivo."""
+    # 1. Prioridade: Padrão de nome de arquivo "Nome_Componente_(Turma).md"
+    filename = os.path.basename(path_str)
+    match = re.match(r"^(.*)[_\s]\((.*)\)\.md$", filename, re.IGNORECASE)
+    if match:
+        comp_nome = match.group(1).replace('_', ' ').strip().title()
+        turma_nome = match.group(2).replace('_', ' ').strip().upper()
+        return f"{comp_nome} ({turma_nome})"
+
     path_lower = path_str.lower().replace('\\', '/') # Normaliza para lower e com /
+    parts = path_lower.split('/')
+    
+    comp_identificado = None
     
     # Mapeamento de palavras-chave para nomes de componentes
     mapa_componentes = {
@@ -14,7 +25,12 @@ def rotular_componente_por_caminho(path_str):
         'orientada a objetos': 'Programação Orientada a Objetos',
         'web': 'Programação Web',
         'front-end': 'Programação Web',
-        'mentoria': 'Mentoria Tec',
+        'mentoria': 'Mentorias Tec',
+        "MENTORIA": 'Mentorias Tec II', 
+        "MENTORIA TEC": 'Mentorias Tec II',
+        "MENTORIA TEC II": 'Mentorias Tec II',
+        "MENTORIA TEC II (2Ano DS)": 'Mentorias Tec II',
+        'Mentorias Tec II (2Ano DS)': 'Mentorias Tec II',
         'pensamento computacional': 'Pensamento Computacional',
         'inteligencia artificial': 'Inteligência Artificial',
         'ia': 'Inteligência Artificial',
@@ -32,14 +48,33 @@ def rotular_componente_por_caminho(path_str):
 
     for chave, valor in mapa_componentes.items():
         if chave in path_lower:
-            return valor
+            comp_identificado = valor
+            break
             
     # Fallback: Pega o nome da pasta pai se nenhum rótulo for encontrado
-    parts = path_str.split('/')
-    if len(parts) >= 2:
-        return parts[-2].replace('_', ' ').replace('-', ' ').title()
+    if not comp_identificado:
+        if len(parts) >= 2:
+            comp_identificado = parts[-2].replace('_', ' ').replace('-', ' ').title()
+        else:
+            comp_identificado = "Não Identificado"
+
+    # Tenta identificar a turma pela estrutura de pastas
+    turma_identificada = ""
+    for part in reversed(parts[:-1]):
+        if part in ['data', 'planejamento', 'aulas']: continue
+        if comp_identificado.lower() in part.replace('_', ' '): continue
         
-    return "Não Identificado"
+        # Heurística simples para identificar turma
+        if any(x in part for x in ['ano', 'serie', 'turma', '1', '2', '3', '9']):
+            turma_identificada = part.replace('_', ' ').replace('-', ' ').title()
+            # Normalização básica
+            turma_identificada = turma_identificada.replace("9ano", "9º Ano").replace("1serie", "1ª Série").replace("2serie", "2ª Série").replace("3serie", "3ª Série")
+            break
+            
+    if turma_identificada:
+        return f"{comp_identificado} ({turma_identificada})"
+        
+    return comp_identificado
 
 def parse_aulas_from_md(filepath, base_dir):
     """

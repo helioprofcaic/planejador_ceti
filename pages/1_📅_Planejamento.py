@@ -29,10 +29,30 @@ if 'cesta_planos' not in st.session_state:
 
 # --- FUNÇÕES AUXILIARES ---
 def normalizar_texto(texto):
-    """Remove acentos e padroniza para maiúsculas."""
-    if not texto: return ""
-    return ''.join(c for c in unicodedata.normalize('NFD', str(texto))
-                  if unicodedata.category(c) != 'Mn').upper()
+    if not texto:
+        return ""
+
+    texto = str(texto)
+
+    # Corrige números romanos Unicode
+    texto = texto.replace("Ⅰ", "I")
+    texto = texto.replace("Ⅱ", "II")
+    texto = texto.replace("Ⅲ", "III")
+    texto = texto.replace("Ⅳ", "IV")
+
+    texto = ''.join(
+        c for c in unicodedata.normalize('NFD', texto)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+    texto = texto.upper().strip()
+    texto = " ".join(texto.split())
+
+    # 🔥 Remove plural simples (S final)
+    tokens = texto.split()
+    tokens = [t[:-1] if t.endswith("S") else t for t in tokens]
+
+    return " ".join(tokens)
 
 def buscar_dados_curriculo(nome_comp, curriculo_db):
     """Busca dados do componente no currículo. Prioriza EPT > Aprofundamento > Basico."""
@@ -141,6 +161,33 @@ def calcular_cronograma_turma(turma, componentes_ordenados, config_componentes, 
             acumulado_semanas_modular = fim # O próximo começa quando este termina
             
     return cronograma
+
+def filtrar_aulas_por_trimestre(
+    aulas_unicas,
+    comp_sel,
+    info_cronograma,
+    tri_inicio,
+    tri_fim
+):
+    if not comp_sel or comp_sel not in info_cronograma:
+        return aulas_unicas
+
+    dados_agendamento = info_cronograma[comp_sel]
+    cfg_comp = dados_agendamento.get("cfg", {})
+    aulas_semana = cfg_comp.get("aulas_por_semana", 1)
+
+    view_start_week = max(dados_agendamento.get("inicio", 0), tri_inicio)
+    view_end_week = min(dados_agendamento.get("fim", 40), tri_fim)
+
+    duracao_view = view_end_week - view_start_week
+    total_aulas_trimestre = duracao_view * aulas_semana
+
+    semana_relativa_inicio = view_start_week - dados_agendamento.get("inicio", 0)
+
+    aula_inicio = semana_relativa_inicio * aulas_semana
+    aula_fim = aula_inicio + total_aulas_trimestre
+
+    return aulas_unicas[aula_inicio:aula_fim]
 
 # --- INTERFACE ---
 st.title("🚀 Planejamento Escolar")
@@ -251,25 +298,30 @@ if turma_sel and comp_sel:
                 comp_sel_norm = normalizar_texto(comp_sel)
                 
                 def match_componente(comp_csv):
-                    if pd.isna(comp_csv): return False
-                    c_norm = normalizar_texto(str(comp_csv))
-                    
-                    # 1. Busca exata ou substring (Bidirecional)
-                    if c_norm in comp_sel_norm or comp_sel_norm in c_norm:
-                        return True
-                        
-                    # 2. Tratamento de Plurais e Variações (Tokenização)
-                    tokens_csv = [t.rstrip('S') for t in c_norm.split()]
-                    tokens_sel = [t.rstrip('S') for t in comp_sel_norm.split()]
-                    
-                    if not tokens_csv: return False
-                    return all(t in tokens_sel for t in tokens_csv)
+                    if pd.isna(comp_csv):
+                        return False
+
+                    c_norm = normalizar_texto(comp_csv)
+                    sel_norm = normalizar_texto(comp_sel)
+
+                    # Remove texto entre parênteses do CSV
+                    if "(" in c_norm:
+                        c_norm = c_norm.split("(")[0].strip()
+
+                    return c_norm == sel_norm
                 
                 df_filtrado = df_aulas[df_aulas['Componente'].apply(match_componente)]
                 
                 if not df_filtrado.empty:
-                    aulas_unicas = df_filtrado['Nome da Aula'].unique()
-                    aulas_sugeridas = "\n".join(aulas_unicas)
+                    aulas_unicas = list(df_filtrado['Nome da Aula'].unique())
+                    aulas_filtradas = filtrar_aulas_por_trimestre(
+                        aulas_unicas,
+                        comp_sel,
+                        info_cronograma,
+                        tri_inicio,
+                        tri_fim
+                    )
+                    aulas_sugeridas = "\n".join(aulas_filtradas)
         except Exception as e:
             print(f"Erro ao carregar lista de aulas: {e}")
 
@@ -446,8 +498,14 @@ if turma_sel and comp_sel:
 
     df_plano = pd.DataFrame(linhas)
     df_editado = st.data_editor(df_plano, num_rows="dynamic", width='stretch')
+    
+    st.markdown("### 👤 Identificação do Professor")
 
-    # Botões
+    nome_professor = st.text_input(
+        "Digite seu nome completo para constar no PDF:",
+        placeholder="Ex: João Carlos da Silva"
+    )
+        # Botões
     st.divider()
     c1, c2, c3, c4 = st.columns(4)
     with c1:
@@ -467,30 +525,60 @@ if turma_sel and comp_sel:
             utils.salvar_planejamento(plano_save)
             st.success("✅ Planejamento salvo com sucesso! Você pode fechar e voltar depois.")
     with c2:
-        # Passando comp_especifica como principal para o documento, ou concatenando
-        comp_texto_doc = f"Competência Geral: {comp_geral}\n\nCompetência Específica: {comp_especifica}"
-        docx_bytes = utils.gerar_docx_planejamento(escola, professor, turma_sel, comp_sel, escala, comp_texto_doc, df_editado, trimestre_sel, municipio_atual, lista_aulas)
-        
-        st.download_button(
-            label="📄 Baixar DOCX",
-            data=docx_bytes,
-            file_name=f"planejamento_{turma_sel}.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        )
+        if not nome_professor.strip():
+            st.warning("Informe seu nome completo para gerar o DOCX.")
+        else:
+            comp_texto_doc = f"Competência Geral: {comp_geral}\n\nCompetência Específica: {comp_especifica}"
+            
+            docx_bytes = utils.gerar_docx_planejamento(
+                escola,
+                nome_professor,  # 🔥 agora usa o nome digitado
+                turma_sel,
+                comp_sel,
+                escala,
+                comp_texto_doc,
+                df_editado,
+                trimestre_sel,
+                municipio_atual,
+                lista_aulas
+            )
+
+            st.download_button(
+                label="📄 Baixar DOCX",
+                data=docx_bytes,
+                file_name=f"planejamento_{turma_sel}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
     with c3:
-        comp_texto_doc = f"Competência Geral: {comp_geral}\n\nCompetência Específica: {comp_especifica}"
-        pdf_bytes = utils.gerar_pdf_planejamento(escola, professor, turma_sel, comp_sel, escala, comp_texto_doc, df_editado, trimestre_sel, municipio_atual, lista_aulas)
-        st.download_button(
-            label="🖨️ Baixar PDF",
-            data=pdf_bytes,
-            file_name=f"planejamento_{turma_sel}.pdf",
-            mime="application/pdf"
-        )
+        if not nome_professor.strip():
+            st.warning("Informe seu nome completo para gerar o PDF.")
+        else:
+            comp_texto_doc = f"Competência Geral: {comp_geral}\n\nCompetência Específica: {comp_especifica}"
+            
+            pdf_bytes = utils.gerar_pdf_planejamento(
+                escola,
+                nome_professor,  # 🔥 agora usa o nome digitado
+                turma_sel,
+                comp_sel,
+                escala,
+                comp_texto_doc,
+                df_editado,
+                trimestre_sel,
+                municipio_atual,
+                lista_aulas
+            )
+
+            st.download_button(
+                label="🖨️ Baixar PDF",
+                data=pdf_bytes,
+                file_name=f"planejamento_{turma_sel}.pdf",
+                mime="application/pdf"
+            )
     with c4:
         if st.button("🛒 Adicionar à Cesta"):
             plano_data = {
                 "escola": escola,
-                "professor": professor,
+                "professor": nome_professor,
                 "turma": turma_sel,
                 "componente": comp_sel,
                 "escala": escala,

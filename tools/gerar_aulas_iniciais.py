@@ -1,48 +1,59 @@
 import os
+import unicodedata
+import re
 
-def criar_arquivo_aula(filepath, escola, professor, componente, turma, semana, aula_num, tema, objetivos, conteudo, atividade, quiz):
+def normalizar_para_nome_arquivo(texto):
+    """Converte 'Pensamento Computacional' para 'Pensamento_Computacional'."""
+    # Remove acentos
+    nfkd = unicodedata.normalize('NFKD', texto)
+    sem_acento = "".join([c for c in nfkd if not unicodedata.combining(c)])
+    # Substitui caracteres não alfanuméricos por _
+    limpo = re.sub(r'[^a-zA-Z0-9]', '_', sem_acento)
+    # Remove _ duplicados e das pontas
+    return re.sub(r'_+', '_', limpo).strip('_')
+
+def criar_arquivo_plano_consolidado(output_dir, escola, professor, componente, turma, conteudos):
+    # Gera nome do arquivo: Componente_(Turma).md
+    comp_slug = normalizar_para_nome_arquivo(componente)
+    
+    # Simplifica o nome da turma para o arquivo
+    turma_slug = normalizar_para_nome_arquivo(turma.split('-')[0])
+    if "9" in turma: turma_slug = "9_Ano"
+    
+    filename = f"{comp_slug}_({turma_slug}).md"
+    filepath = os.path.join(output_dir, filename)
+    
     content = f"""# 🏫 Escola: {escola}
 # 👨‍🏫 Professor: {professor}
 # 📚 Componente: {componente}
 # 🎓 Turma: {turma}
-# 📅 Semana: {semana:02d} | Aula: {aula_num:02d}
 
 ---
+"""
+    for i, aula in enumerate(conteudos):
+        content += f"""
+## 📅 Aula {i+1:02d}: {aula['tema']}
 
-## 🎯 Objetivos da Aula
-{objetivos}
+**Objetivos:**
+{aula['obj']}
 
-## 📑 Sumário
-1. Introdução e Contextualização
-2. Desenvolvimento do Tema
-3. Atividade Prática
-4. Avaliação e Fechamento
+**Conteúdo:**
+{aula['cont']}
 
----
+**Atividade Prática:**
+{aula['ativ']}
 
-## 💡 Tópicos Abordados
-
-{conteudo}
-
----
-
-## 🛠️ Atividade Prática
-**Título:** {tema} na Prática
-
-**Instruções:**
-{atividade}
+**Quiz:**
+{aula['quiz']}
 
 ---
-
-## 📝 Quiz de Fixação
-{quiz}
 """
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"✅ Criado: {filepath}")
+    print(f"✅ Criado: {filename}")
 
 # --- CONFIGURAÇÃO GERAL ---
-output_dir = os.path.join("data", "aulas")
+output_dir = os.path.join("data", "planejamento")
 os.makedirs(output_dir, exist_ok=True)
 
 escola = "CETI PROFESSOR RALDIR CAVALCANTE BASTOS"
@@ -113,9 +124,7 @@ conteudos_pc = [
     }
 ]
 
-for i, aula in enumerate(conteudos_pc):
-    filename = f"2ano_PCII_Sem01_Aula{i+1:02d}.md"
-    criar_arquivo_aula(os.path.join(output_dir, filename), escola, professor, comp_pc, turma_pc, 1, i+1, aula["tema"], aula["obj"], aula["cont"], aula["ativ"], aula["quiz"])
+criar_arquivo_plano_consolidado(output_dir, escola, professor, comp_pc, turma_pc, conteudos_pc)
 
 
 # ==============================================================================
@@ -155,8 +164,6 @@ conteudos_testes = [
     }
 ]
 
-for i, aula in enumerate(conteudos_testes):
-    filename = f"3ano_Testes_Sem01_Aula{i+1:02d}.md"
-    criar_arquivo_aula(os.path.join(output_dir, filename), escola, professor, comp_testes, turma_testes, 1, i+1, aula["tema"], aula["obj"], aula["cont"], aula["ativ"], aula["quiz"])
+criar_arquivo_plano_consolidado(output_dir, escola, professor, comp_testes, turma_testes, conteudos_testes)
 
-print("\n✨ Processo concluído! 12 planos de aula gerados na pasta 'data/aulas'.")
+print(f"\n✨ Processo concluído! Planos gerados na pasta '{output_dir}'.")
