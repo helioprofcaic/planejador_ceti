@@ -23,14 +23,27 @@ data/planejamentos.json
 data/frequencia_*.json
 data/qualitativo_*.json
 data/horario_global.json
+
 data/escola/*
 data/perfil_*.json
 data/perfis/*.json
 data/fonts/
 data/__/*
+data/aulas/*
 data/frequencia/*
-docs/HORÁRIO - 2026ATUALIZADO.doc.md
-docs/MATRIZ INTEGRAL - TÉC. DESENVOLVIMENTO DE SISTEMAS - 3ª SÉRIE (2026).md
+data/planejamento/*
+data/ementas/*
+
+docs/*
+!docs/DOCUMENTACAO_TECNICA.md
+!docs/MANUAL_USUARIO.md
+!docs/TUTORIAL_AVALIACAO.md
+!docs/TUTORIAL_DADOS.md
+!docs/TUTORIAL_IA.md
+!docs/TUTORIAL_PROFESSOR.md
+
+
+
 
 
 # Arquivos Gerados pelo Usuário (Rascunhos)

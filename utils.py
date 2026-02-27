@@ -454,7 +454,7 @@ def extrair_texto_pdf_referencia(file_id_or_path):
         
     return texto_completo
 
-def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre="1º", municipio=""):
+def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre="1º", municipio="", lista_aulas=""):
     """Gera o DOCX do planejamento escolar."""
     doc = Document()
     
@@ -471,6 +471,11 @@ def gerar_docx_planejamento(escola, professor, turma, componente, escala, comp_g
     # Competência
     doc.add_heading('Competência Geral:', level=2)
     doc.add_paragraph(comp_geral)
+    
+    # Lista de Aulas (Opcional)
+    if lista_aulas:
+        doc.add_heading('Lista de Aulas / Conteúdos:', level=2)
+        doc.add_paragraph(lista_aulas)
     
     # Tabela
     if not df.empty:
@@ -529,9 +534,10 @@ def gerar_docx_frequencia(turma, data_aula, df):
     buffer.seek(0)
     return buffer
 
-def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio):
+def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio, lista_aulas=""):
     """Gera o PDF do planejamento escolar."""
     pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.set_auto_page_break(False)
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
     pdf.cell(0, 10, "Planejamento Escolar", ln=True, align='C')
@@ -548,6 +554,14 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
     pdf.multi_cell(0, 5, comp_geral)
     pdf.ln(5)
     
+    # Lista de Aulas (Opcional)
+    if lista_aulas:
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, "Lista de Aulas / Conteúdos:", ln=True)
+        pdf.set_font("Arial", size=10)
+        pdf.multi_cell(0, 5, lista_aulas)
+        pdf.ln(5)
+    
     # Tabela
     if not df.empty:
         pdf.set_font("Arial", 'B', 8)
@@ -557,22 +571,43 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
             "Nº": 0.5,
             "Mês": 0.8,
             "Semana": 0.8,
-            "Aula": 0.8,
-            "Período": 1.5,
-            "Habilidade": 3.0,
-            "Objetivos": 3.0,
-            "Conteúdo": 3.0,
-            "Metodologia": 2.0,
-            "Avaliação": 2.0
+            "Aula": 0.6,
+            "Período": 1.2,
+            "Habilidade": 2.0,
+            "Habilidades Integradas": 2.0,
+            "Objetivos": 2.5,
+            "Objetivos de Aprendizagem": 2.5,
+            "Conteúdo": 2.5,
+            "Objeto do Conhecimento": 2.5,
+            "Metodologia": 1.5,
+            "Material de Apoio": 1.5,
+            "Avaliação": 1.5,
+            "Estratégia de Avaliação": 1.5
         }
         
         page_width = 277
         total_peso = sum(pesos.get(col, 1.5) for col in df.columns)
         col_widths = {col: (pesos.get(col, 1.5) / total_peso) * page_width for col in df.columns}
     
+        # --- HEADER COM MULTI-CELL (Para evitar invasão de coluna) ---
+        # Calcula altura máxima do cabeçalho
+        header_max_lines = 1
         for col in df.columns:
-            pdf.cell(col_widths[col], 10, str(col), border=1, align='C')
-        pdf.ln()
+            # Subtrai margem extra para compensar fonte Bold no cálculo
+            lines = split_into_lines(pdf, str(col), col_widths[col] - 4, 8)
+            header_max_lines = max(header_max_lines, len(lines))
+        
+        header_height = header_max_lines * 5 # 5mm por linha
+
+        # Desenha cabeçalho
+        pdf.set_font("Arial", 'B', 8)
+        for col in df.columns:
+            w = col_widths[col]
+            x, y = pdf.get_x(), pdf.get_y()
+            pdf.rect(x, y, w, header_height)
+            pdf.multi_cell(w, 5, str(col), border=0, align='C')
+            pdf.set_xy(x + w, y)
+        pdf.ln(header_height)
 
         pdf.set_font("Arial", size=9)
         line_height = 5
@@ -588,12 +623,17 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
             row_height = max_lines * line_height
             
             # Checa se a linha cabe na página, se não, adiciona uma nova e redesenha o cabeçalho
-            if pdf.get_y() + row_height > pdf.page_break_trigger:
-                pdf.add_page(orientation=pdf.cur_orientation)
+            if pdf.get_y() + row_height > 190:
+                pdf.add_page(orientation='L')
                 pdf.set_font("Arial", 'B', 8)
-                for col_header in df.columns:
-                    pdf.cell(col_widths[col_header], 10, str(col_header), border=1, align='C')
-                pdf.ln()
+                # Redesenha cabeçalho na nova página
+                for col in df.columns:
+                    w = col_widths[col]
+                    x, y = pdf.get_x(), pdf.get_y()
+                    pdf.rect(x, y, w, header_height)
+                    pdf.multi_cell(w, 5, str(col), border=0, align='C')
+                    pdf.set_xy(x + w, y)
+                pdf.ln(header_height)
                 pdf.set_font("Arial", size=9)
 
             
@@ -610,7 +650,7 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
 
 def gerar_capa_resumo(lista_planos):
     """Gera uma página de capa com o resumo dos planos na cesta."""
-    pdf = FPDF(orientation='P', unit='mm', format='A4')
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
     if not lista_planos:
@@ -632,7 +672,7 @@ def gerar_capa_resumo(lista_planos):
     pdf.ln(10)
     
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, "Componentes Curriculares na Cesta:", ln=True)
+    pdf.cell(0, 10, "Componentes Curriculares Listados:", ln=True)
     
     # Configuração de datas (Via Bússola do Tempo)
     calendario = carregar_calendario_letivo()
@@ -667,8 +707,8 @@ def gerar_capa_resumo(lista_planos):
         h_row = max_lines * h_line
         
         # Verifica quebra de página
-        if pdf.get_y() + h_row > 275:
-            pdf.add_page()
+        if pdf.get_y() + h_row > 190:
+            pdf.add_page(orientation='L')
             pdf.set_font("Arial", 'B', 10)
             pdf.cell(80, 8, "Componente", border=1)
             pdf.cell(50, 8, "Turma", border=1)
@@ -720,12 +760,13 @@ def consolidar_planos(lista_planos):
         df = plano['df']
         municipio = plano.get('municipio', "")  # Retorna string vazia se não existir
         trimestre = plano.get('trimestre', '')
+        lista_aulas = plano.get('lista_aulas', "")
         
         # Cria um dicionário com os argumentos esperados
         args = {
             'escola': escola, 'professor': professor, 'turma': turma,
             'componente': componente, 'escala': escala, 'comp_geral': comp_geral,
-            'df': df, 'trimestre': trimestre, 'municipio': municipio
+            'df': df, 'trimestre': trimestre, 'municipio': municipio, 'lista_aulas': lista_aulas
         }
 
         pdf_bytes = gerar_pdf_planejamento(**args)

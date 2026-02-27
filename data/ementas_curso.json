@@ -346,7 +346,7 @@
     ]
   },
   "TESTE DE SISTEMAS E SEGURANÇA DE DADOS": {
-    "carga_horaria": 40,
+    "carga_horaria": 80,
     "ementa": [
       "Introdução a testes, avaliação e análise",
       "Tipos de testes: caixa branca, caixa preta, caixa cinza, heurísticos, desempenho, performance, usabilidade, entre outros",

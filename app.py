@@ -91,13 +91,13 @@ if df_horario is None:
     horario_data = [
         {"Horário": "07:20 - 08:20", "Período": "1ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
         {"Horário": "08:20 - 09:20", "Período": "2ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
-        {"Horário": "09:20 - 09:40", "Período": "☕ Lanche", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "09:20 - 09:40", "Período": "☕", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
         {"Horário": "09:40 - 10:40", "Período": "3ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
         {"Horário": "10:40 - 11:40", "Período": "4ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
-        {"Horário": "11:40 - 12:40", "Período": "🍽️ Almoço", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "11:40 - 12:40", "Período": "🍽️", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
         {"Horário": "12:40 - 13:40", "Período": "5ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
         {"Horário": "13:40 - 14:40", "Período": "6ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
-        {"Horário": "14:40 - 14:50", "Período": "☕ Lanche", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
+        {"Horário": "14:40 - 14:50", "Período": "☕", "Segunda": "---", "Terça": "---", "Quarta": "---", "Quinta": "---", "Sexta": "---"},
         {"Horário": "14:50 - 15:50", "Período": "7ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
         {"Horário": "15:50 - 16:50", "Período": "8ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
     ]
@@ -122,7 +122,7 @@ st.dataframe(
     height=altura_tabela
 )
 
-with st.expander("_            ✏️ Editar Horário"):
+with st.expander(" ✏️ Editar Horário"):
     df_editado = st.data_editor(
         df_horario, 
         hide_index=True, 

@@ -2,87 +2,140 @@
   "BASICO": {
     "MATEMÁTICA": {
       "competencia": "Utilizar estratégias, conceitos e procedimentos matemáticos para interpretar situações.",
-      "habilidades": ["EM13MAT101", "EM13MAT302", "EM13MAT401"],
-      "objetos": ["Conjuntos Numéricos", "Intervalos Reais", "Funções Exponenciais", "Análise de Gráficos"]
+      "habilidades": [
+        "EM13MAT101",
+        "EM13MAT302",
+        "EM13MAT401"
+      ]
     },
     "LÍNGUA PORTUGUESA": {
       "competencia": "Compreender o funcionamento das diferentes linguagens e práticas culturais.",
-      "habilidades": ["EM13LGG101", "EM13LGG103", "EM13LGG701"],
-      "objetos": ["Estratégias de Leitura", "Relação entre Textos", "Discursos Midiáticos", "Norma Culta"]
+      "habilidades": [
+        "EM13LGG101",
+        "EM13LGG103",
+        "EM13LGG701"
+      ]
     },
     "CIÊNCIAS": {
       "competencia": "Compreender conceitos fundamentais das ciências naturais e suas aplicações.",
-      "habilidades": ["EF09CI01", "EF09CI02"],
-      "objetos": ["Matéria e Energia", "Vida e Evolução", "Terra e Universo"]
+      "habilidades": [
+        "EF09CI01",
+        "EF09CI02"
+      ]
     },
     "GEOGRAFIA": {
       "competencia": "Analisar a produção do espaço geográfico e as relações sociedade-natureza.",
-      "habilidades": ["EM13CHS101", "EM13CHS201"],
-      "objetos": ["Geopolítica", "Cartografia", "Meio Ambiente", "Urbanização"]
+      "habilidades": [
+        "EM13CHS101",
+        "EM13CHS201"
+      ]
     },
     "HISTÓRIA": {
       "competencia": "Compreender processos históricos e suas repercussões na atualidade.",
-      "habilidades": ["EM13CHS102", "EM13CHS601"],
-      "objetos": ["História do Brasil", "História Geral", "Patrimônio Cultural"]
+      "habilidades": [
+        "EM13CHS102",
+        "EM13CHS601"
+      ]
     },
     "FILOSOFIA": {
       "competencia": "Desenvolver o pensamento crítico e a reflexão sobre questões fundamentais da existência.",
-      "habilidades": ["EM13CHS101", "EM13CHS502"],
-      "objetos": ["Ética", "Política", "Epistemologia", "Estética"]
+      "habilidades": [
+        "EM13CHS101",
+        "EM13CHS502"
+      ]
     },
     "SOCIOLOGIA": {
       "competencia": "Analisar a organização social e os processos de interação humana.",
-      "habilidades": ["EM13CHS102", "EM13CHS401"],
-      "objetos": ["Cultura e Sociedade", "Trabalho e Produção", "Desigualdade Social"]
+      "habilidades": [
+        "EM13CHS102",
+        "EM13CHS401"
+      ]
     },
     "EDUCAÇÃO FÍSICA": {
       "competencia": "Compreender a cultura corporal de movimento e sua importância para a saúde.",
-      "habilidades": ["EM13LGG501", "EM13LGG502"],
-      "objetos": ["Esportes", "Ginástica", "Danças", "Lutas"]
+      "habilidades": [
+        "EM13LGG501",
+        "EM13LGG502"
+      ]
     },
     "ARTE": {
       "competencia": "Apreciar e produzir manifestações artísticas em diferentes linguagens.",
-      "habilidades": ["EM13LGG601", "EM13LGG602"],
-      "objetos": ["Artes Visuais", "Música", "Teatro", "Dança"]
+      "habilidades": [
+        "EM13LGG601",
+        "EM13LGG602"
+      ]
     },
     "LÍNGUA INGLESA": {
       "competencia": "Utilizar a língua inglesa como ferramenta de comunicação global.",
-      "habilidades": ["EM13LGG401", "EM13LGG402"],
-      "objetos": ["Leitura e Interpretação", "Gramática Contextualizada", "Vocabulário"]
+      "habilidades": [
+        "EM13LGG401",
+        "EM13LGG402"
+      ]
     },
     "QUÍMICA": {
       "competencia": "Investigar as transformações da matéria e suas implicações energéticas.",
-      "habilidades": ["EM13CNT101", "EM13CNT201"],
-      "objetos": ["Estrutura Atômica", "Tabela Periódica", "Reações Químicas", "Estequiometria"]
+      "habilidades": [
+        "EM13CNT101",
+        "EM13CNT201"
+      ]
     },
     "FÍSICA": {
       "competencia": "Analisar fenômenos naturais e processos tecnológicos com base nos princípios da Física.",
-      "habilidades": ["EM13CNT101", "EM13CNT301"],
-      "objetos": ["Mecânica", "Termodinâmica", "Óptica", "Eletromagnetismo"]
+      "habilidades": [
+        "EM13CNT101",
+        "EM13CNT301"
+      ]
     },
     "BIOLOGIA": {
       "competencia": "Compreender a vida em seus diversos níveis de organização.",
-      "habilidades": ["EM13CNT202", "EM13CNT203"],
-      "objetos": ["Citologia", "Genética", "Ecologia", "Evolução"]
+      "habilidades": [
+        "EM13CNT202",
+        "EM13CNT203"
+      ]
+    },
+    "COMPUTAÇÃO": {
+      "competencia": "Desenvolver o pensamento computacional através da lógica e algoritmos.",
+      "habilidades": [
+        "EF09CO01",
+        "EF09CO02"
+      ]
+    },
+    "INTELIGÊNCIA ARTIFICIAL": {
+      "competencia": "Compreender e utilizar tecnologias digitais de forma crítica e ética.",
+      "habilidades": [
+        "EM13CO24",
+        "EM13CO25",
+        "EM13CO01"
+      ]
     }
   },
   "APROFUNDAMENTO": {
     "INTELIGÊNCIA ARTIFICIAL": {
+      "carga_horaria": 40,
       "competencia": "Compreender e utilizar tecnologias digitais de forma crítica e ética.",
-      "habilidades": ["EM13CO24", "EM13CO25", "EM13CO01"],
-      "objetos": ["Ética na IA", "Algoritmos e Bolhas Digitais", "Segurança em Ambientes Virtuais"],
-      "bases_tecnologicas": ["História da IA", "Redes Neurais Simples", "Viés Algorítmico"],
+      "habilidades": [
+        "EM13CO24",
+        "EM13CO25",
+        "EM13CO01"
+      ],
+      "objetos": [
+        "Ética na IA",
+        "Algoritmos e Bolhas Digitais",
+        "Segurança em Ambientes Virtuais"
+      ],
+      "bases_tecnologicas": [
+        "História da IA",
+        "Redes Neurais Simples",
+        "Viés Algorítmico"
+      ],
       "referencias": "RUSSELL, Stuart; NORVIG, Peter. Inteligência Artificial. 3. ed. Rio de Janeiro: Elsevier, 2013."
-    },
-    "COMPUTAÇÃO": {
-      "competencia": "Desenvolver o pensamento computacional através da lógica e algoritmos.",
-      "habilidades": ["EF09CO01", "EF09CO02"],
-      "objetos": ["Lógica de Programação", "Sistemas Operacionais", "Hardware"]
     },
     "ROBÓTICA": {
       "competencia": "Projetar e construir sistemas robóticos para resolução de problemas.",
-      "habilidades": ["EM13CNT301", "EM13CNT302"],
-      "objetos": ["Arduino e Sensores", "Mecânica Básica", "Programação"]
+      "habilidades": [
+        "EM13CNT301",
+        "EM13CNT302"
+      ]
     }
   },
   "EPT": {
@@ -91,32 +144,28 @@
       "habilidades": [
         "Identificar o paradigma da orientação a objetos e representação UML.",
         "Realizar encapsulamento, sobrecarga e classes abstratas."
-      ],
-      "objetos": ["UML (Diagramas de Classe)", "Herança e Polimorfismo", "Encapsulamento e Interfaces"],
-      "bases_tecnologicas": [
-        "Diagramas de Classe e Objeto (UML)",
-        "Regras de escopo",
-        "Atributos de classes x instâncias",
-        "Polimorfismo e Interfaces"
-      ],
-      "referencias": "DEITEL, Paul; DEITEL, Harvey. Java: como programar. 10. ed. São Paulo: Pearson, 2017."
+      ]
     },
     "PROGRAMAÇÃO WEB FRONT-END": {
       "competencia": "Desenvolver interfaces interativas e responsivas para web.",
-      "habilidades": ["HPT-WEB-01", "HPT-WEB-02"],
-      "objetos": ["HTML5/CSS3 Avançado", "JavaScript/React", "UI/UX Design"],
-      "bases_tecnologicas": ["DOM", "Fetch API", "React Components", "CSS Grid/Flexbox"],
-      "referencias": "FLANAGAN, David. JavaScript: O Guia Definitivo. 6. ed. Porto Alegre: Bookman, 2013."
+      "habilidades": [
+        "HPT-WEB-01",
+        "HPT-WEB-02"
+      ]
     },
     "IOT - INTERNET DAS COISAS": {
       "competencia": "Integrar hardware e software para coleta e transmissão de dados.",
-      "habilidades": ["HPT-IOT-01", "HPT-IOT-02"],
-      "objetos": ["Protocolos MQTT/HTTP", "NodeMCU/ESP32", "Sensores e Atuadores"]
+      "habilidades": [
+        "HPT-IOT-01",
+        "HPT-IOT-02"
+      ]
     },
     "SISTEMAS INTELIGENTES E AUTÔNOMOS": {
       "competencia": "Desenvolver aplicações que utilizam lógica de agentes e modelos preditivos.",
-      "habilidades": ["HPT-IA-01", "HPT-IA-02"],
-      "objetos": ["Redes Neurais", "Visão Computacional", "Processamento de Linguagem Natural (NLP)"]
+      "habilidades": [
+        "HPT-IA-01",
+        "HPT-IA-02"
+      ]
     },
     "MENTORIAS TEC II": {
       "competencia": "Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa.",
@@ -124,17 +173,14 @@
         "Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa [7]",
         "Identificar tecnologias digitais e suas formas de uso nas atividades no mundo do trabalho [8]",
         "Expressar e partilhar informações e soluções computacionais de forma ética e criativa [9]"
-      ],
-      "objetos": ["Gestão de Projetos Integrados", "Tecnologias Digitais no Trabalho", "Ética e Criatividade Computacional"]
+      ]
     },
     "PENSAMENTO COMPUTACIONAL II": {
       "competencia": "Aprofundar estratégias cognitivas como decomposição, reconhecimento de padrões, abstração e algoritmos.",
-      "habilidades": ["EM13CO11", "EM13CO13", "EM13CO18"],
-      "objetos": [
-        "Modelagem e Simulação",
-        "Análise de Dados e Previsões",
-        "Gestão Colaborativa de Projetos",
-        "Algoritmos e Abstração de Processos Mentais"
+      "habilidades": [
+        "EM13CO11",
+        "EM13CO13",
+        "EM13CO18"
       ]
     },
     "INTELIGÊNCIA ARTIFICIAL APLICADA A AUTOMAÇÃO": {
@@ -142,49 +188,224 @@
       "habilidades": [
         "Implementar lógica de visão computacional básica.",
         "Configurar agentes inteligentes para tarefas de automação."
-      ],
-      "objetos": ["Visão Computacional", "Controle por Voz", "Automação Industrial com IA"],
-      "bases_tecnologicas": [
-        "Redes Neurais",
-        "Processamento de Linguagem Natural (NLP)",
-        "Integração de APIs de IA",
-        "Robótica e Sensores Inteligentes"
       ]
     },
     "ARQUITETURA DE MICROSSERVIÇOS": {
       "competencia": "Projetar soluções escaláveis baseadas em serviços independentes.",
-      "habilidades": ["HPT-MICRO-01", "HPT-MICRO-02"],
-      "objetos": ["Monolitos vs Microsserviços", "APIs RESTful", "Comunicação gRPC", "Escalabilidade"]
+      "habilidades": [
+        "HPT-MICRO-01",
+        "HPT-MICRO-02"
+      ]
     },
     "FUNDAMENTOS DE UI / UX OU IHC": {
       "competencia": "Aplicar princípios de design centrado no usuário para criar interfaces intuitivas.",
-      "habilidades": ["HPT-UIUX-01", "HPT-UIUX-02"],
-      "objetos": ["Design Centrado no Usuário", "UX/UI", "Prototipagem", "Testes de Usabilidade"]
+      "habilidades": [
+        "HPT-UIUX-01",
+        "HPT-UIUX-02"
+      ]
     },
     "INTRODUÇÃO AO ECOSSISTEMA DEVops": {
       "competencia": "Compreender o ciclo de vida de desenvolvimento e operações.",
-      "habilidades": ["HPT-DEVOPS-01", "HPT-DEVOPS-02"],
-      "objetos": ["CI/CD", "Containers (Docker)", "Automação de Infraestrutura"]
+      "habilidades": [
+        "HPT-DEVOPS-01",
+        "HPT-DEVOPS-02"
+      ]
     },
     "ATIVIDADES INTEGRADORAS - INTELIGÊNCIA ARTIFICIAL": {
       "competencia": "Integrar conhecimentos de IA em aplicações do mundo real.",
-      "habilidades": ["HPT-IA-INT-01", "HPT-IA-INT-02"],
-      "objetos": ["Análise de Dados", "Modelos Preditivos", "Integração de APIs de IA"]
+      "habilidades": [
+        "HPT-IA-INT-01",
+        "HPT-IA-INT-02"
+      ]
     },
     "TESTE DE SISTEMAS E SEGURANÇA DE DADOS": {
       "competencia": "Garantir a qualidade, integridade e segurança de sistemas computacionais.",
-      "habilidades": ["HPT-SEG-01", "HPT-SEG-02"],
-      "objetos": ["Testes Unitários", "Segurança da Informação", "Criptografia e LGPD"]
+      "habilidades": [
+        "HPT-SEG-01",
+        "HPT-SEG-02"
+      ]
     },
     "PROJETO INTEGRADOR": {
       "competencia": "Desenvolver um projeto completo de software aplicando todas as fases do ciclo de vida.",
-      "habilidades": ["HPT-PI-01", "HPT-PI-02"],
-      "objetos": ["Levantamento de Requisitos", "Documentação", "Desenvolvimento e Deploy"]
+      "habilidades": [
+        "HPT-PI-01",
+        "HPT-PI-02"
+      ]
     },
     "ORIENTAÇÃO PROFISSIONAL E EMPREENDEDORISMO": {
       "competencia": "Desenvolver visão de negócio e planejamento de carreira na área de tecnologia.",
-      "habilidades": ["HPT-EMP-01", "HPT-EMP-02"],
-      "objetos": ["Modelagem de Negócios (Canvas)", "Gestão de Projetos Ágeis", "Ética Profissional"]
+      "habilidades": [
+        "HPT-EMP-01",
+        "HPT-EMP-02"
+      ]
+    },
+    "ADMINISTRAÇÃO DE BANCO DE DADOS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ARQUITETURA DE COMPUTADORES": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ARQUITETURA DE COMPUTADORES E INFRAESTRUTURA DE TI": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ATENDIMENTO EDUCACIONAL ESPECIALIZADO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "CADEIA DE SUPRIMENTOS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "CIÊNCIAS DA NATUREZA (APROFUNDAMENTO)": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "CULTURA INTEGRADA A ARTE": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "DESIGN DIGITAL": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "EDUCAÇÃO AMBIENTAL E SUSTENTABILIDADE": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "EDUCAÇÃO DO TRÂNSITO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ESPORTE INTEGRADA A EDUCAÇÃO FÍSICA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ESTRATÉGIAS DE VENDA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "FUNDAMENTOS DA TECNOLOGIA DA INFORMAÇÃO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "FUNDAMENTOS DE BANCO DE DADOS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "FUNDAMENTOS DE REDES DE COMPUTADORES": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "GESTÃO DE CONTEÚDO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "GESTÃO DE ESTOQUES": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "HABILIDADES SOCIOEMOCIONAIS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "INGLÊS TÉCNICO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "INTELIGÊNCIA ARTIFICIAL (FGB)": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "INTERNET DAS COISAS - IOT": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LINGUA ESTRANGEIRA INGLÊS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LINGUA PORTUGUESA (APROFUNDAMENTO)": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LOGÍSTICA INTEGRADA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LÍNGUA ESTRANGEIRA ESPANHOL": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LÓGICA DE PROGRAMAÇÃO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "LÓGICA E PROGRAMAÇÃO ESTRUTURADA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MANUTENÇÃO DE SISTEMAS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MARKETING DIGITAL": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MATEMÁTICA (APROFUNDAMENTO)": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MENTORIAS TEC I": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MODELAGEM DE BANCO DE DADOS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MONITORIA / HORÁRIO DE ESTUDO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "MÉTODOS ÁGEIS DE DESENVOLVIMENTO": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "PENSAMENTO COMPUTACIONAL I": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "PROGRAMAÇÃO ESTRUTURADA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "PROGRAMAÇÃO WEB BACK-END": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "PROJETO DE VIDA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "TECNOLOGIA ASSISTIVA": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "TECNOLOGIAS E AMBIENTES VIRTUAIS DE APRENDIZAGEM": {
+      "competencia": "",
+      "habilidades": []
+    },
+    "ÉTICA, TRABALHO E CIDADANIA": {
+      "competencia": "",
+      "habilidades": []
     }
   }
 }

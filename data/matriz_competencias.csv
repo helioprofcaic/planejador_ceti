@@ -1,0 +1,73 @@
+﻿Componente,Seção (BASICO/EPT/APROFUNDAMENTO),Competência,Habilidades (separadas por |)
+ADMINISTRAÇÃO DE BANCO DE DADOS,EPT,,
+ARQUITETURA DE COMPUTADORES,EPT,,
+ARQUITETURA DE COMPUTADORES E INFRAESTRUTURA DE TI,EPT,,
+ARQUITETURA DE MICROSSERVIÇOS,EPT,Projetar soluções escaláveis baseadas em serviços independentes.,HPT-MICRO-01 | HPT-MICRO-02
+ARTE,BASICO,Apreciar e produzir manifestações artísticas em diferentes linguagens.,EM13LGG601 | EM13LGG602
+ATENDIMENTO EDUCACIONAL ESPECIALIZADO,EPT,,
+ATIVIDADES INTEGRADORAS - INTELIGÊNCIA ARTIFICIAL,EPT,Integrar conhecimentos de IA em aplicações do mundo real.,HPT-IA-INT-01 | HPT-IA-INT-02
+BIOLOGIA,BASICO,Compreender a vida em seus diversos níveis de organização.,EM13CNT202 | EM13CNT203
+CADEIA DE SUPRIMENTOS,EPT,,
+CIÊNCIAS,BASICO,Compreender conceitos fundamentais das ciências naturais e suas aplicações.,EF09CI01 | EF09CI02
+CIÊNCIAS DA NATUREZA (APROFUNDAMENTO),EPT,,
+COMPUTAÇÃO,BASICO,Desenvolver o pensamento computacional através da lógica e algoritmos.,EF09CO01 | EF09CO02
+CULTURA INTEGRADA A ARTE,EPT,,
+DESIGN DIGITAL,EPT,,
+EDUCAÇÃO AMBIENTAL E SUSTENTABILIDADE,EPT,,
+EDUCAÇÃO DO TRÂNSITO,EPT,,
+EDUCAÇÃO FÍSICA,BASICO,Compreender a cultura corporal de movimento e sua importância para a saúde.,EM13LGG501 | EM13LGG502
+ESPORTE INTEGRADA A EDUCAÇÃO FÍSICA,EPT,,
+ESTRATÉGIAS DE VENDA,EPT,,
+FILOSOFIA,BASICO,Desenvolver o pensamento crítico e a reflexão sobre questões fundamentais da existência.,EM13CHS101 | EM13CHS502
+FUNDAMENTOS DA TECNOLOGIA DA INFORMAÇÃO,EPT,,
+FUNDAMENTOS DE BANCO DE DADOS,EPT,,
+FUNDAMENTOS DE REDES DE COMPUTADORES,EPT,,
+FUNDAMENTOS DE UI / UX OU IHC,EPT,Aplicar princípios de design centrado no usuário para criar interfaces intuitivas.,HPT-UIUX-01 | HPT-UIUX-02
+FÍSICA,BASICO,Analisar fenômenos naturais e processos tecnológicos com base nos princípios da Física.,EM13CNT101 | EM13CNT301
+GEOGRAFIA,BASICO,Analisar a produção do espaço geográfico e as relações sociedade-natureza.,EM13CHS101 | EM13CHS201
+GESTÃO DE CONTEÚDO,EPT,,
+GESTÃO DE ESTOQUES,EPT,,
+HABILIDADES SOCIOEMOCIONAIS,EPT,,
+HISTÓRIA,BASICO,Compreender processos históricos e suas repercussões na atualidade.,EM13CHS102 | EM13CHS601
+INGLÊS TÉCNICO,EPT,,
+INTELIGÊNCIA ARTIFICIAL,BASICO,Compreender e utilizar tecnologias digitais de forma crítica e ética.,EM13CO24 | EM13CO25 | EM13CO01
+INTELIGÊNCIA ARTIFICIAL (FGB),EPT,,
+INTELIGÊNCIA ARTIFICIAL APLICADA A AUTOMAÇÃO,EPT,Desenvolver sistemas autónomos utilizando algoritmos de IA.,Implementar lógica de visão computacional básica. | Configurar agentes inteligentes para tarefas de automação.
+INTERNET DAS COISAS - IOT,EPT,,
+INTRODUÇÃO AO ECOSSISTEMA DEVops,EPT,Compreender o ciclo de vida de desenvolvimento e operações.,HPT-DEVOPS-01 | HPT-DEVOPS-02
+IOT - INTERNET DAS COISAS,EPT,Integrar hardware e software para coleta e transmissão de dados.,HPT-IOT-01 | HPT-IOT-02
+LINGUA ESTRANGEIRA INGLÊS,EPT,,
+LINGUA PORTUGUESA (APROFUNDAMENTO),EPT,,
+LOGÍSTICA INTEGRADA,EPT,,
+LÍNGUA ESTRANGEIRA ESPANHOL,EPT,,
+LÍNGUA INGLESA,BASICO,Utilizar a língua inglesa como ferramenta de comunicação global.,EM13LGG401 | EM13LGG402
+LÍNGUA PORTUGUESA,BASICO,Compreender o funcionamento das diferentes linguagens e práticas culturais.,EM13LGG101 | EM13LGG103 | EM13LGG701
+LÓGICA DE PROGRAMAÇÃO,EPT,,
+LÓGICA E PROGRAMAÇÃO ESTRUTURADA,EPT,,
+MANUTENÇÃO DE SISTEMAS,EPT,,
+MARKETING DIGITAL,EPT,,
+MATEMÁTICA,BASICO,"Utilizar estratégias, conceitos e procedimentos matemáticos para interpretar situações.",EM13MAT101 | EM13MAT302 | EM13MAT401
+MATEMÁTICA (APROFUNDAMENTO),EPT,,
+MENTORIAS TEC I,EPT,,
+MENTORIAS TEC II,EPT,Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa.,Planejar e gerenciar projetos integrados às áreas de conhecimento de forma colaborativa [7] | Identificar tecnologias digitais e suas formas de uso nas atividades no mundo do trabalho [8] | Expressar e partilhar informações e soluções computacionais de forma ética e criativa [9]
+MODELAGEM DE BANCO DE DADOS,EPT,,
+MONITORIA / HORÁRIO DE ESTUDO,EPT,,
+MÉTODOS ÁGEIS DE DESENVOLVIMENTO,EPT,,
+ORIENTAÇÃO PROFISSIONAL E EMPREENDEDORISMO,EPT,Desenvolver visão de negócio e planejamento de carreira na área de tecnologia.,HPT-EMP-01 | HPT-EMP-02
+PENSAMENTO COMPUTACIONAL I,EPT,,
+PENSAMENTO COMPUTACIONAL II,EPT,"Aprofundar estratégias cognitivas como decomposição, reconhecimento de padrões, abstração e algoritmos.",EM13CO11 | EM13CO13 | EM13CO18
+PROGRAMAÇÃO ESTRUTURADA,EPT,,
+PROGRAMAÇÃO ORIENTADA À OBJETOS - POO,EPT,Modelar sistemas computacionais utilizando o paradigma orientado a objetos.,"Identificar o paradigma da orientação a objetos e representação UML. | Realizar encapsulamento, sobrecarga e classes abstratas."
+PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS,EPT,,
+PROGRAMAÇÃO WEB BACK-END,EPT,,
+PROGRAMAÇÃO WEB FRONT-END,EPT,Desenvolver interfaces interativas e responsivas para web.,HPT-WEB-01 | HPT-WEB-02
+PROJETO DE VIDA,EPT,,
+PROJETO INTEGRADOR,EPT,Desenvolver um projeto completo de software aplicando todas as fases do ciclo de vida.,HPT-PI-01 | HPT-PI-02
+QUÍMICA,BASICO,Investigar as transformações da matéria e suas implicações energéticas.,EM13CNT101 | EM13CNT201
+ROBÓTICA,APROFUNDAMENTO,Projetar e construir sistemas robóticos para resolução de problemas.,EM13CNT301 | EM13CNT302
+SISTEMAS INTELIGENTES E AUTÔNOMOS,EPT,Desenvolver aplicações que utilizam lógica de agentes e modelos preditivos.,HPT-IA-01 | HPT-IA-02
+SOCIOLOGIA,BASICO,Analisar a organização social e os processos de interação humana.,EM13CHS102 | EM13CHS401
+TECNOLOGIA ASSISTIVA,EPT,,
+TECNOLOGIAS E AMBIENTES VIRTUAIS DE APRENDIZAGEM,EPT,,
+TESTE DE SISTEMAS E SEGURANÇA DE DADOS,EPT,"Garantir a qualidade, integridade e segurança de sistemas computacionais.",HPT-SEG-01 | HPT-SEG-02
+"ÉTICA, TRABALHO E CIDADANIA",EPT,,
