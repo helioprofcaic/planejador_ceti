@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import utils
+from datetime import date
 
 st.set_page_config(page_title="Ficha Qualitativa", layout="wide")
 
@@ -56,17 +57,20 @@ turma_sel = st.selectbox("Selecione a Turma", turmas_disponiveis if turmas_dispo
 comps_turma = mapa_componentes.get(turma_sel, [])
 if not comps_turma: comps_turma = ["Geral"]
 
-col_sel1, col_sel2 = st.columns(2)
+col_sel1, col_sel2, col_sel3 = st.columns(3)
 with col_sel1:
     comp_sel = st.selectbox("Componente Curricular", comps_turma)
 with col_sel2:
     contexto_sel = st.text_input("Contexto da Avaliação (Pode ser alterado)", value="1º Trimestre", placeholder="Ex: Projeto Robótica, Aula 15/03...", help="Você pode alterar este texto para criar avaliações específicas (ex: 'Projeto Robótica', 'Seminário').")
+with col_sel3:
+    data_avaliacao = st.date_input("Data da Avaliação", date.today())
 
-st.write(f"### Avaliação: {turma_sel} | {comp_sel}")
+st.write(f"### Avaliação: {turma_sel} | {comp_sel} | {data_avaliacao.strftime('%d/%m/%Y')}")
 
 # Caminho do arquivo para persistência
-safe_filename = f"{turma_sel}_{comp_sel}_{contexto_sel}".replace(" ", "_").replace("/", "-").replace("\\", "-")
-caminho_arquivo = os.path.join("data", f"qualitativo_{safe_filename}.json")
+data_str = data_avaliacao.strftime('%Y-%m-%d')
+safe_filename = f"{turma_sel}_{comp_sel}_{contexto_sel}_{data_str}".replace(" ", "_").replace("/", "-").replace("\\", "-")
+caminho_arquivo = os.path.join("data", "avaliacoes", f"qualitativo_{safe_filename}.json")
 
 # Tenta carregar dados salvos, senão cria um novo DataFrame
 df_qualitativo = utils.carregar_dados_json(caminho_arquivo)
@@ -115,7 +119,7 @@ with c1:
             st.warning("Não há dados para salvar.")
 
 with c2:
-    pdf_bytes = utils.gerar_pdf_qualitativo(escola, professor, turma_sel, df_editado, comp_sel, contexto_sel)
+    pdf_bytes = utils.gerar_pdf_qualitativo(escola, professor, turma_sel, df_editado, comp_sel, f"{contexto_sel} - {data_avaliacao.strftime('%d/%m/%Y')}")
     st.download_button(
         label="🖨️ Baixar Ficha Qualitativa (PDF)",
         data=pdf_bytes,

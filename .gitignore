@@ -33,6 +33,7 @@ data/aulas/*
 data/frequencia/*
 data/planejamento/*
 data/ementas/*
+data/avaliacoes/*
 
 docs/*
 !docs/DOCUMENTACAO_TECNICA.md

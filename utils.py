@@ -348,6 +348,8 @@ def salvar_dados_json(caminho_arquivo, dados_df):
             folder_path = ['data', 'perfis']
         elif 'frequencia' in path_parts:
             folder_path = ['data', 'frequencia']
+        elif 'avaliacoes' in path_parts:
+            folder_path = ['data', 'avaliacoes']
             
         google_storage.save_json(filename, dados_dict, folder_path=folder_path)
     else:
@@ -370,6 +372,8 @@ def carregar_dados_json(caminho_arquivo):
             folder_path = ['data', 'perfis']
         elif 'frequencia' in path_parts:
             folder_path = ['data', 'frequencia']
+        elif 'avaliacoes' in path_parts:
+            folder_path = ['data', 'avaliacoes']
             
         dados_dict = google_storage.load_json(filename, default_value=sentinela, folder_path=folder_path)
         
@@ -536,6 +540,11 @@ def gerar_docx_frequencia(turma, data_aula, df):
 
 def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio, lista_aulas=""):
     """Gera o PDF do planejamento escolar."""
+    # Função auxiliar para limpar caracteres não suportados pelo FPDF (Latin-1)
+    def clean_text(text):
+        if not text: return ""
+        return str(text).replace('\u2013', '-').replace('\u2014', '-').replace('\u201c', '"').replace('\u201d', '"').replace('\u2018', "'").replace('\u2019', "'").replace('…', '...')
+
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.set_auto_page_break(False)
     pdf.add_page()
@@ -543,15 +552,15 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
     pdf.cell(0, 10, "Planejamento Escolar", ln=True, align='C')
     
     pdf.set_font("Arial", size=12)
-    pdf.cell(0, 10, f"Escola: {escola}", ln=True)
-    pdf.cell(0, 10, f"Professor: {professor} | Turma: {turma}", ln=True)
-    pdf.multi_cell(0, 8, f"Componente: {componente}\nEscala: {escala} | Trimestre: {trimestre} | Município: {municipio}", align='L')
+    pdf.cell(0, 10, f"Escola: {clean_text(escola)}", ln=True)
+    pdf.cell(0, 10, f"Professor: {clean_text(professor)} | Turma: {clean_text(turma)}", ln=True)
+    pdf.multi_cell(0, 8, f"Componente: {clean_text(componente)}\nEscala: {clean_text(escala)} | Trimestre: {clean_text(trimestre)} | Município: {clean_text(municipio)}", align='L')
     pdf.ln(5)
     
     pdf.set_font("Arial", 'B', 12)
     pdf.cell(0, 10, "Competência Geral:", ln=True)
     pdf.set_font("Arial", size=10)
-    pdf.multi_cell(0, 5, comp_geral)
+    pdf.multi_cell(0, 5, clean_text(comp_geral))
     pdf.ln(5)
     
     # Lista de Aulas (Opcional)
@@ -559,7 +568,7 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
         pdf.set_font("Arial", 'B', 12)
         pdf.cell(0, 10, "Lista de Aulas / Conteúdos:", ln=True)
         pdf.set_font("Arial", size=10)
-        pdf.multi_cell(0, 5, lista_aulas)
+        pdf.multi_cell(0, 5, clean_text(lista_aulas))
         pdf.ln(5)
     
     # Tabela
@@ -638,7 +647,7 @@ def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_ge
 
             
             for col in df.columns:
-                text = str(row[col]).replace('\u2013', '-').replace('\u201c', '"').replace('\u201d', '"')
+                text = clean_text(str(row[col]))
                 w = col_widths[col]
                 x, y = pdf.get_x(), pdf.get_y()
                 pdf.rect(x, y, w, row_height) # Borda
@@ -1106,7 +1115,11 @@ def gerar_pdf_aula_ia(texto_markdown):
             
         if line.startswith('# '):
             pdf.set_font(font_family, 'B', 16)
-            pdf.multi_cell(0, 10, line.replace('# ', '').replace('**', ''), align='C')
+            # The combination of w=0 and align='C' can be problematic.
+            # Resetting X and using an explicit width is more robust.
+            pdf.set_x(pdf.l_margin)
+            page_width = pdf.w - pdf.l_margin - pdf.r_margin
+            pdf.multi_cell(page_width, 10, line.replace('# ', '').replace('**', ''), align='C')
             pdf.ln(5)
         elif line.startswith('## '):
             pdf.set_font(font_family, 'B', 14)
