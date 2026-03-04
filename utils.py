@@ -39,9 +39,16 @@ def aplicar_estilo():
     
     st.markdown(f"""
         <style>
-        html, body, [class*="st-"] {{
+        html, body {{
             font-size: {tamanho_fonte}px;
             font-family: {font_style};
+        }}
+        [class*="st-"] {{
+            font-size: {tamanho_fonte}px;
+        }}
+        /* Correção global para setas do st.expander aparecendo como texto */
+        [data-testid="stExpander"] summary::after, [data-testid="stExpander"] summary::before {{
+            content: "" !important;
         }}
         .main .block-container {{
             padding-top: {padding_top};

@@ -1,0 +1,67 @@
+[
+    {
+        "data": "2026-02-19",
+        "descricao": "Início do Ano Letivo",
+        "tipo": "Calendário Escolar"
+    },
+    {
+        "data": "2026-03-21",
+        "descricao": "Sábado Letivo",
+        "tipo": "Sábado Letivo"
+    },
+    {
+        "data": "2026-04-21",
+        "descricao": "Feriado de Tiradentes",
+        "tipo": "Feriado Nacional"
+    },
+    {
+        "data": "2026-05-01",
+        "descricao": "Dia do Trabalho",
+        "tipo": "Feriado Nacional"
+    },
+    {
+        "data": "2026-06-15",
+        "descricao": "Feira de Ciências - Apresentação dos Projetos",
+        "tipo": "Projeto Escolar"
+    },
+    {
+        "data": "2026-07-10",
+        "descricao": "Reunião Pedagógica - Fechamento do 1º Semestre",
+        "tipo": "Reunião Pedagógica"
+    },
+    {
+        "data": "2026-08-22",
+        "descricao": "Sábado Letivo - Reposição de Aula",
+        "tipo": "Sábado Letivo"
+    },
+    {
+        "data": "2026-09-07",
+        "descricao": "Independência do Brasil",
+        "tipo": "Feriado Nacional"
+    },
+    {
+        "data": "2026-10-12",
+        "descricao": "Nossa Senhora Aparecida",
+        "tipo": "Feriado Nacional"
+    },
+    {
+        "data": "2026-10-24",
+        "descricao": "Sábado Letivo",
+        "tipo": "Sábado Letivo"
+    },
+    {
+        "data": "2026-11-02",
+        "descricao": "Finados",
+        "tipo": "Feriado Nacional"
+    },
+    {
+        "data": "2026-12-04",
+        "descricao": "3º SIMULA+ POR ÁREA DO CONHECIMENTO",
+        "tipo": "Avaliação"
+    },
+    {
+        "data": "2026-12-18",
+        "descricao": "Encerramento do Ano Letivo",
+        "tipo": "Calendário Escolar"
+    }
+]

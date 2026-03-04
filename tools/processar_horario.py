@@ -2,12 +2,16 @@
 import re
 import json
 import os
+import datetime
 
 # --- CONFIGURAÇÃO ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARQUIVO_MD = os.path.join(BASE_DIR, "docs", "HORÁRIO - 2026ATUALIZADO.doc.md")
 PASTA_DADOS = os.path.join(BASE_DIR, "data")
 ARQUIVO_GLOBAL = os.path.join(PASTA_DADOS, "horario_global.json")
+ARQUIVO_HORARIOS_INDIVIDUAIS = os.path.join(PASTA_DADOS, "horarios_por_professor.json")
+ARQUIVO_CALENDARIO = os.path.join(BASE_DIR, "docs", "CALENDÁRIO PEDAGÓGICO_2026 - vf.md")
+ARQUIVO_EVENTOS = os.path.join(PASTA_DADOS, "eventos_anuais.json")
 PASTA_PROFESSORES = os.path.join(PASTA_DADOS, "perfis")
 PASTA_FREQUENCIA = os.path.join(PASTA_DADOS, "frequencia")
 
@@ -159,6 +163,11 @@ def processar_horario():
     with open(ARQUIVO_GLOBAL, "w", encoding="utf-8") as f:
         json.dump(horario_global, f, indent=4, ensure_ascii=False)
     print(f"✅ Horário Global salvo em: {ARQUIVO_GLOBAL}")
+
+    # Salvar horários individuais em um único arquivo
+    with open(ARQUIVO_HORARIOS_INDIVIDUAIS, "w", encoding="utf-8") as f:
+        json.dump(professores_detectados, f, indent=4, ensure_ascii=False)
+    print(f"✅ Horários individuais por professor salvos em: {ARQUIVO_HORARIOS_INDIVIDUAIS}")
 
     # Salvar Individuais
     if not os.path.exists(PASTA_PROFESSORES):

@@ -1,0 +1,2704 @@
+{
+    "Lourival": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Estud"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Arte"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Geo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Geog"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Arte"
+        }
+    ],
+    "Júlia": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Histór"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Histór"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Hist"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "P.Int"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "C.Afr"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Estudo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Cultura"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Estudo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Hist"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Hist"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "História"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Histó"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Estud"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Histór"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Histór"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "E.Rel"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Estu"
+        }
+    ],
+    "Ariana": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Aprof"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Quí"
+        }
+    ],
+    "Lucilene": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Leit"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "C.Leit"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "C.Leit"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Leit"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Leitu"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Reco"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Lei"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Leitur"
+        }
+    ],
+    "Edio": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Físi"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Físic"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Física"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Aprofund"
+        }
+    ],
+    "Elisangela": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Biolo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Biolo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Aprof"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Apr"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Est"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Biolog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Biolog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Bio"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Quí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Biolog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Biolog"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Biol"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Biolo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Biolo"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Aprof"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Físi"
+        }
+    ],
+    "Rosangela": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Espo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Espo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Esport"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "E.Físi"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "E.Fís"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "E.Fís"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "E.F"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "E.Físic"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Espo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Espo"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "E.Fí"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Estudo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Estud"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Estudo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Estudo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Est"
+        }
+    ],
+    "Adonias": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Reco"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Leit"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Reco"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Lei"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Leitu"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Port"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Po"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Por"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Portu"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Leitu"
+        }
+    ],
+    "Dulcinete": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "I.Ar"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Int.Art"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Int.Art"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "I.Arti"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "I.Arti"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Filos"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Filos"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Int.Art"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Filos"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Soci"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Filo"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Soc"
+        }
+    ],
+    "Ana Rosa": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Matem"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Matem"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Recom"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Recom"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Recom"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Recom"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Reco"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Reco"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "M.Fi"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Matem"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Matem"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Mate"
+        }
+    ],
+    "Aristeu": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Ingl"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Apro"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Aprof"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Est"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Est"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Apr"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Aprof."
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Inglês"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Inglês"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Ing"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Inglê"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Inglê"
+        }
+    ],
+    "Gilmar": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Ma"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "M.Fin"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "M.Finc"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "M.Fi"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Mat"
+        }
+    ],
+    "Victor": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T."
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Rob"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Rob"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "D.T."
+        }
+    ],
+    "Douglas": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "I.Arti"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "D.Té"
+        }
+    ],
+    "Bruno": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "A.P"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "A.P"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Ma"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Ma"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Mat"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Mate"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Mate"
+        }
+    ],
+    "Helio Lima": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Técn"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/8:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "I.Art"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Com"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "I.Ar"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Robótic"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Robótic"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Int.Artif"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "D.Té"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "D.Téc"
+        }
+    ],
+    "Muara": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "D.T"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "E.Trâ"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "E.Trâ"
+        }
+    ],
+    "Rayssa": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "15:40/16:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "Rec"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "M.Fi"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "M.F"
+        }
+    ],
+    "Introd.Logis": [
+        {
+            "Dia": "SEGUNDA- FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Geral"
+        }
+    ],
+    "Física": [
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Geral"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Geral"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Geral"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Geral"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Geral"
+        }
+    ],
+    "Suzana": [
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Espan"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Espa"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "Esp"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "Espa"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Espa"
+        },
+        {
+            "Dia": "TERÇA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Espa."
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Espan"
+        }
+    ],
+    "Jília": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Cultura"
+        }
+    ],
+    "Silvana": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "Art"
+        },
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Arte"
+        }
+    ],
+    "Ment.Tec.I": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "Geral"
+        }
+    ],
+    "Comu": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "Emp"
+        }
+    ],
+    "Silva": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "08 3ªA/DS",
+            "Disciplina": "C.Art"
+        }
+    ],
+    "Francisca": [
+        {
+            "Dia": "QUARTA-FEIRA",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "P.Vida"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "01 9ºano/A",
+            "Disciplina": "P.Vi"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "P.Vid"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "03 1ªD/DS",
+            "Disciplina": "P.Vida"
+        },
+        {
+            "Dia": "FEIRA",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "04 1ªB/ JD",
+            "Disciplina": "P.Vida"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "06 2ªA/Mark",
+            "Disciplina": "P.Vid"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "05 2ªB/DS",
+            "Disciplina": "P.Vida"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "07 2ªA/Prop",
+            "Disciplina": "P. Vida"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "8º",
+            "Horário": "15:40/16:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "P. Vida"
+        }
+    ],
+    "Jose Francisco": [
+        {
+            "Dia": "SEXT",
+            "Período": "1º",
+            "Horário": "07:20/08:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Química"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "2º",
+            "Horário": "08:20/09:20",
+            "Sala": "10   3ªB/Regular",
+            "Disciplina": "Químic"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "3º",
+            "Horário": "09:40/10:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Química"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "4º",
+            "Horário": "10:40/11:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Química"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "5º",
+            "Horário": "12:40/13:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "6º",
+            "Horário": "13:40/14:40",
+            "Sala": "02 1ªC/DS",
+            "Disciplina": "Quím"
+        },
+        {
+            "Dia": "SEXT",
+            "Período": "7º",
+            "Horário": "14:40/15:40",
+            "Sala": "09 3ªA/Regul",
+            "Disciplina": "Aprofund"
+        }
+    ]
+}

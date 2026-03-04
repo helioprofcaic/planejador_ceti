@@ -55,7 +55,7 @@ edited_df = st.data_editor(
             "Duração (Semanas)",
             help="Número de semanas para o planejamento trimestral.",
             min_value=1,
-            max_value=15,
+            max_value=40,
             step=1,
             format="%d",
             required=True,
@@ -126,7 +126,7 @@ with col1:
         st.write("**Padrão Geral (Ensino Regular)**")
         padrao_geral = config.get("PADRAO_GERAL", {})
         pg_tipo = st.text_input("Descrição do Padrão Geral", value=padrao_geral.get("tipo_curso", "Anual / Regular"), key="pg_tipo")
-        pg_duracao = st.number_input("Duração (Semanas)", value=padrao_geral.get("duracao_semanas", 13), min_value=1, max_value=15, step=1, key="pg_duracao")
+        pg_duracao = st.number_input("Duração (Semanas)", value=padrao_geral.get("duracao_semanas", 13), min_value=1, max_value=40, step=1, key="pg_duracao")
         pg_aulas = st.number_input("Aulas por Semana", value=padrao_geral.get("aulas_por_semana", 1), min_value=1, max_value=8, step=1, key="pg_aulas")
 
 with col2:
@@ -134,7 +134,7 @@ with col2:
         st.write("**Padrão Técnico Modular**")
         padrao_tecnico = config.get("PADRAO_TECNICO_MODULAR", {})
         pt_tipo = st.text_input("Descrição do Padrão Técnico", value=padrao_tecnico.get("tipo_curso", "Modular Mensal (40h)"), key="pt_tipo")
-        pt_duracao = st.number_input("Duração (Semanas)", value=padrao_tecnico.get("duracao_semanas", 4), min_value=1, max_value=15, step=1, key="pt_duracao")
+        pt_duracao = st.number_input("Duração (Semanas)", value=padrao_tecnico.get("duracao_semanas", 4), min_value=1, max_value=40, step=1, key="pt_duracao")
         pt_aulas = st.number_input("Aulas por Semana", value=padrao_tecnico.get("aulas_por_semana", 5), min_value=1, max_value=8, step=1, key="pt_aulas")
 
 st.divider()
