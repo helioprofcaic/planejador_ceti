@@ -7,32 +7,69 @@ import os
 st.set_page_config(page_title="Menu", layout="wide")
 
 # --- INICIALIZAÇÃO DE ESTADO (SESSION STATE) ---
-# Garante que as configurações persistam entre as páginas
-# Tenta carregar do arquivo primeiro para consistência
-utils.garantir_perfil_visitante()
-perfil_prof = utils.carregar_perfil_professor_db("Visitante")
-
-if 'escola' not in st.session_state:
-    st.session_state['escola'] = "CETI PROFESSOR RALDIR CAVALCANTE BASTOS"
+# Mantém o estado da sessão entre atualizações de página
+# Só executa se a sessão for nova (ex: F5, primeira visita)
 if 'professor' not in st.session_state:
-    st.session_state['professor'] = "Visitante"
-if 'tema' not in st.session_state:
-    st.session_state['tema'] = "Padrão"
-if 'tamanho_fonte' not in st.session_state:
-    st.session_state['tamanho_fonte'] = 14
-if 'municipio' not in st.session_state:
-    st.session_state['municipio'] = perfil_prof.get("municipio", "")
+    # 1. Tenta carregar o último perfil de professor logado
+    perfil = utils.carregar_perfil_professor()
+
+    # 2. Se não houver perfil, usa o de "Visitante" como padrão
+    if not perfil or not perfil.get("professor"):
+        utils.garantir_perfil_visitante()
+        # O perfil do visitante é um arquivo separado, então carregamos ele
+        perfil = utils.carregar_perfil_professor_db("Visitante")
+
+    # 3. Popula o st.session_state com os dados do perfil
+    st.session_state['professor'] = perfil.get("professor", "Visitante")
+    st.session_state['escola'] = perfil.get("escola", "CETI PROFESSOR RALDIR CAVALCANTE BASTOS")
+    st.session_state['municipio'] = perfil.get("municipio", "")
+    st.session_state['tema'] = perfil.get("tema", "Padrão")
+    st.session_state['tamanho_fonte'] = perfil.get("tamanho_fonte", 14)
 
 # --- BARRA LATERAL DE CONFIGURAÇÃO ---
 with st.sidebar:
     st.header("⚙️ Configuração Central")
     st.session_state['escola'] = st.text_input("Escola", st.session_state['escola'])
     
-    # Exibe os dados do perfil (Edição apenas na página de Configuração)
-    st.markdown(f"**Professor(a):** {st.session_state['professor']}")
-    st.markdown(f"**Município:** {st.session_state['municipio']}")
+    # --- LÓGICA DE LOGIN/LOGOUT ---
+    if st.session_state.get("professor", "Visitante") == "Visitante":
+        st.subheader("Login de Perfil")
+        professores = ["Visitante"] + utils.listar_professores_db()
+        professores = sorted(list(set(professores))) # Garante lista única e ordenada
+
+        perfil_selecionado = st.selectbox("Selecione seu perfil", options=professores)
+        senha = st.text_input("Senha", type="password", help="A senha de professor é definida pelo administrador.")
+
+        if st.button("➡️ Entrar"):
+            if perfil_selecionado == "Visitante":
+                perfil = utils.carregar_perfil_professor_db("Visitante")
+                utils.salvar_perfil_professor(perfil)
+                st.session_state['professor'] = "Visitante"
+                st.session_state['municipio'] = ""
+                st.rerun()
+            elif utils.verificar_senha(senha, tipo="professor"):
+                perfil = utils.carregar_perfil_professor_db(perfil_selecionado)
+                utils.salvar_perfil_professor(perfil) # Salva como último perfil logado
+                # Atualiza a sessão com os dados do perfil
+                st.session_state['professor'] = perfil.get("professor", "Visitante")
+                st.session_state['municipio'] = perfil.get("municipio", "")
+                st.session_state['tema'] = perfil.get("tema", "Padrão")
+                st.session_state['tamanho_fonte'] = perfil.get("tamanho_fonte", 14)
+                st.rerun()
+            else:
+                st.error("Senha incorreta. Tente novamente.")
+    else:
+        # Usuário já logado
+        st.markdown(f"**Professor(a):** `{st.session_state['professor']}`")
+        st.markdown(f"**Município:** `{st.session_state.get('municipio', '')}`")
+        if st.button("⬅️ Sair (Logout)"):
+            perfil_visitante = utils.carregar_perfil_professor_db("Visitante")
+            utils.salvar_perfil_professor(perfil_visitante)
+            st.session_state['professor'] = "Visitante"
+            st.session_state['municipio'] = ""
+            st.rerun()
     
-    st.info("Para alterar Professor ou Município, acesse a página **⚙️ Configuração**.")
+    st.info("Para criar um novo perfil ou editar vínculos, acesse a página **⚙️ Configuração de Perfil**.")
     
     st.divider()
     st.header("🎨 Aparência Global")

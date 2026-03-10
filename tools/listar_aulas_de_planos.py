@@ -94,12 +94,45 @@ def parse_aulas_from_md(filepath, base_dir):
     caminho_relativo = os.path.relpath(filepath, base_dir)
     componente_rotulado = rotular_componente_por_caminho(caminho_relativo)
 
+    # --- NOVO: Extrair Objetivos ---
+    objetivos = ""
+    # Estratégia em duas partes para mais robustez
+    # 1. Encontrar o início da seção de Objetivos
+    match_inicio = re.search(r'^(##\s*.*Objetivos.*|\*\*Objetivos:?\*\*)$', content, re.MULTILINE | re.IGNORECASE)
+
+    if match_inicio:
+        # Pega todo o conteúdo a partir do início da seção de objetivos
+        conteudo_a_partir_dos_objetivos = content[match_inicio.end():]
+
+        # 2. Encontrar o início da PRÓXIMA seção (## ou ---)
+        match_fim = re.search(r'^\s*(##|---)', conteudo_a_partir_dos_objetivos, re.MULTILINE)
+
+        objetivos_bruto = ""
+        if match_fim:
+            # Se encontrou o fim, pega o texto entre os dois
+            objetivos_bruto = conteudo_a_partir_dos_objetivos[:match_fim.start()].strip()
+        else:
+            # Se não, pega tudo até o final do arquivo
+            objetivos_bruto = conteudo_a_partir_dos_objetivos.strip()
+
+        if objetivos_bruto:
+            # Remove frases introdutórias comuns (ex: "Ao final desta aula...")
+            objetivos_bruto = re.sub(r'^.*?Ao final desta aula.*?(?::|\n)', '', objetivos_bruto, flags=re.IGNORECASE | re.DOTALL).strip()
+
+            # Substitui marcadores de lista (*, -) por pipes
+            objetivos = re.sub(r'(?:\n|^)\s*[\*\-]\s+', ' | ', objetivos_bruto)
+
+            # Limpeza geral de quebras de linha e espaços
+            objetivos = objetivos.replace('\n', ' ')
+            objetivos = re.sub(r'\s+', ' ', objetivos)
+            objetivos = re.sub(r'\s*\|\s*', ' | ', objetivos)
+            objetivos = objetivos.strip(' |').strip()
+
     # Regex para capturar o nome completo da aula em linhas que contenham a palavra "Aula"
     # Suporta listas (*, -) e títulos (#)
     padrao_aula = re.compile(r'^(?:[\*\-]\s+|#+\s+)(.*?(?:Aula(?:s)?\s*.*))', re.MULTILINE | re.IGNORECASE)
 
     matches = padrao_aula.findall(content)
-
     if matches:
         for nome in matches:
             nome_limpo = nome.strip().replace('**', '')
@@ -109,7 +142,8 @@ def parse_aulas_from_md(filepath, base_dir):
                 aulas_encontradas.append({
                     'Componente': componente_rotulado,
                     'Nome da Aula': nome_limpo,
-                    'Arquivo': caminho_relativo
+                    'Objetivos': objetivos,
+                    'Arquivo': caminho_relativo,
                 })
     else:
         # Fallback: Tenta pegar o título principal se não achar "Aula" explícito
@@ -124,7 +158,8 @@ def parse_aulas_from_md(filepath, base_dir):
                 aulas_encontradas.append({
                 'Componente': componente_rotulado,
                 'Nome da Aula': tema_principal_limpo,
-                'Arquivo': caminho_relativo
+                'Objetivos': objetivos,
+                'Arquivo': caminho_relativo,
             })
         else:
             # Último recurso: usa o nome do arquivo se não achar título
@@ -132,7 +167,8 @@ def parse_aulas_from_md(filepath, base_dir):
             aulas_encontradas.append({
                 'Componente': componente_rotulado,
                 'Nome da Aula': nome_arquivo,
-                'Arquivo': caminho_relativo
+                'Objetivos': objetivos,
+                'Arquivo': caminho_relativo,
             })
 
     return aulas_encontradas
@@ -170,7 +206,7 @@ def main():
 
     df = pd.DataFrame(all_aulas_data)
     # Organiza as colunas
-    df = df[['Componente', 'Nome da Aula']]
+    df = df[['Componente', 'Nome da Aula', 'Objetivos']]
     df.to_csv(output_csv_path, index=False, encoding='utf-8-sig')
 
     print(f"\n✅ Processo concluído! {len(all_aulas_data)} aulas foram compiladas.")

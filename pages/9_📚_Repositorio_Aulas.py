@@ -9,58 +9,79 @@ st.title("📚 Repositório de Planos de Aula")
 st.markdown("Gerencie e visualize os roteiros de aula salvos no sistema.")
 
 # --- FUNÇÃO DE FORMATAÇÃO ---
-def formatar_nome_aula(filepath):
-    """Formata o caminho de um arquivo de aula para uma exibição mais amigável."""
+def formatar_nome_aula(filename):
+    """Formata o nome de um arquivo de aula para uma exibição mais amigável."""
     try:
-        # Normaliza as barras para o SO atual e divide o caminho
-        filepath = os.path.normpath(filepath)
-        parts = filepath.split(os.sep)
-
         # Limpa o nome do arquivo para ser o título da aula
-        filename = parts[-1]
-        filename = filename.replace(".md", "")
-        if filename.startswith("Plano_Aula_"):
-            filename = filename.replace("Plano_Aula_", "", 1)
+        nome_formatado = filename.replace(".md", "")
+        if nome_formatado.startswith("Plano_Aula_"):
+            nome_formatado = nome_formatado.replace("Plano_Aula_", "", 1)
 
         # Substituições para legibilidade
-        filename = filename.replace("__", ": ").replace("_-_", " - ").replace("_", " ")
+        nome_formatado = nome_formatado.replace("__", ": ").replace("_-_", " - ").replace("_", " ")
 
-        # Monta a string final com a estrutura de pastas (Turma/Componente)
-        if len(parts) > 1:
-            caminho_formatado = " | ".join(parts[:-1])
-            return f"[{caminho_formatado}] {filename}"
-        return filename
+        return nome_formatado
     except Exception:
-        return filepath  # Fallback para o caminho original em caso de erro
+        return filename  # Fallback para o nome original em caso de erro
 
-# --- BARRA LATERAL: LISTAGEM ---
+# --- BARRA LATERAL: NAVEGAÇÃO ---
 pasta_aulas = os.path.join("data", "aulas")
-if not os.path.exists(pasta_aulas):
-    os.makedirs(pasta_aulas, exist_ok=True)
-
-arquivos = []
-for root, dirs, files in os.walk(pasta_aulas):
-    for file in files:
-        if file.endswith(".md"):
-            arquivos.append(os.path.relpath(os.path.join(root, file), pasta_aulas))
-arquivos.sort()
+arquivo_selecionado = None
 
 with st.sidebar:
-    st.header("🗂️ Arquivos Disponíveis")
-    if not arquivos:
-        st.warning("Nenhum plano de aula encontrado.")
-        st.info("Execute o script `gerar_aulas_iniciais.py` para criar os modelos iniciais.")
+    st.header("🗂️ Navegar no Repositório")
     
-    # Filtros
-    filtro_turma = st.text_input("Filtrar por Turma/Ano", placeholder="Ex: 2ano")
+    if not os.path.exists(pasta_aulas):
+        os.makedirs(pasta_aulas, exist_ok=True)
+        st.warning("Pasta 'data/aulas' não encontrada. Ela foi criada agora.")
+        st.info("Crie subpastas para Turmas e Disciplinas para organizar seus planos.")
+        st.stop()
+
+    # 1. Selecionar Turma
+    try:
+        turmas = sorted([d for d in os.listdir(pasta_aulas) if os.path.isdir(os.path.join(pasta_aulas, d))])
+    except FileNotFoundError:
+        turmas = []
+
+    if not turmas:
+        st.warning("Nenhuma pasta de turma encontrada em 'data/aulas'.")
+        st.stop()
+
+    turma_selecionada = st.selectbox("Selecione a Turma:", ["Selecione..."] + turmas)
+
+    # 2. Selecionar Disciplina
+    disciplinas = []
+    if turma_selecionada and turma_selecionada != "Selecione...":
+        caminho_turma = os.path.join(pasta_aulas, turma_selecionada)
+        try:
+            disciplinas = sorted([d for d in os.listdir(caminho_turma) if os.path.isdir(os.path.join(caminho_turma, d))])
+        except FileNotFoundError:
+            disciplinas = []
     
-    arquivos_filtrados = [f for f in arquivos if filtro_turma.lower() in f.lower()]
-    
-    arquivo_selecionado = st.radio(
-        "Selecione uma aula:",
-        arquivos_filtrados,
-        format_func=formatar_nome_aula
-    )
+    disciplina_selecionada = st.selectbox("Selecione a Disciplina:", ["Selecione..."] + disciplinas, disabled=(not disciplinas))
+
+    # 3. Listar Aulas
+    if disciplina_selecionada and disciplina_selecionada != "Selecione...":
+        caminho_disciplina = os.path.join(pasta_aulas, turma_selecionada, disciplina_selecionada)
+        try:
+            aulas_arquivos = sorted([f for f in os.listdir(caminho_disciplina) if f.endswith(".md")])
+            
+            if aulas_arquivos:
+                # O radio retorna o nome do arquivo, não o nome formatado
+                aula_escolhida = st.radio(
+                    "Selecione uma aula:",
+                    aulas_arquivos,
+                    format_func=formatar_nome_aula
+                )
+                
+                # Reconstroi o caminho relativo para o resto do script
+                if aula_escolhida:
+                    arquivo_selecionado = os.path.join(turma_selecionada, disciplina_selecionada, aula_escolhida)
+            else:
+                st.info("Nenhum plano de aula (.md) encontrado nesta disciplina.")
+
+        except FileNotFoundError:
+            st.error("Pasta da disciplina não encontrada.")
 
 # --- ÁREA PRINCIPAL ---
 if arquivo_selecionado:
@@ -97,10 +118,16 @@ if arquivo_selecionado:
             st.rerun()
 
 else:
-    st.info("👈 Selecione um plano de aula no menu lateral para visualizar.")
+    st.info("👈 Selecione uma turma e disciplina no menu lateral para listar e visualizar as aulas.")
     
     # Estatísticas
     st.divider()
-    col1, col2 = st.columns(2)
-    col1.metric("Total de Aulas", len(arquivos))
-    col2.metric("Disciplinas Identificadas", len(set([os.path.basename(f).split('_')[1] for f in arquivos if '_' in os.path.basename(f)])))
+    # Recalcular total de arquivos para estatísticas
+    total_arquivos = 0
+    if os.path.exists(pasta_aulas):
+        for root, dirs, files in os.walk(pasta_aulas):
+            for file in files:
+                if file.endswith(".md"):
+                    total_arquivos += 1
+    
+    st.metric("Total de Aulas no Repositório", total_arquivos)
