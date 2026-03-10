@@ -4,7 +4,7 @@ import io
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
-from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 
 # Escopos necessários para ler e escrever no Drive
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -156,6 +156,52 @@ def load_json(filename, default_value=None, silent=False, folder_path=None):
         print(f"Erro ao carregar {filename} do Drive: {e}")
         return default_value or {}
 
+def load_text(filename, default_value=None, folder_path=None):
+    """Carrega um arquivo de texto (.md, .txt) de uma subpasta específica."""
+    if folder_path is None:
+        folder_path = ['data']
+        
+    service = get_drive_service()
+    root_id = get_folder_id()
+    
+    try:
+        if not service or not root_id:
+            return default_value
+
+        target_folder_id = get_nested_folder_id(service, root_id, folder_path)
+        file_id = None
+        if target_folder_id:
+            file_id = find_file(service, filename, target_folder_id)
+
+        if not file_id:
+            return default_value
+
+        content = service.files().get_media(fileId=file_id).execute()
+        
+        # Tenta decodificar com diferentes codificações
+        encodings = ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252']
+        for encoding in encodings:
+            try:
+                return content.decode(encoding)
+            except UnicodeDecodeError:
+                continue
+        
+        # Fallback
+        try:
+            return content.decode('latin-1', errors='ignore')
+        except Exception as decode_err:
+            print(f"Falha final na decodificação do arquivo de texto {filename}: {decode_err}")
+            return default_value
+
+    except HttpError as e:
+        # Não mostrar erro se o arquivo simplesmente não for encontrado
+        if e.resp.status != 404:
+            print(f"Erro HTTP ao carregar arquivo de texto {filename} do Drive: {e}")
+        return default_value
+    except Exception as e:
+        print(f"Erro ao carregar arquivo de texto {filename} do Drive: {e}")
+        return default_value
+
 def save_json(filename, data, folder_path=None):
     """Salva um arquivo JSON em uma subpasta específica (default: ['data'])."""
     if folder_path is None:
@@ -192,6 +238,41 @@ def save_json(filename, data, folder_path=None):
             st.error(f"❌ **Erro de Permissão (Cota Zero)**")
             st.warning(f"A Conta de Serviço não pode criar o arquivo `{filename}` porque não possui cota de armazenamento própria (comum em contas @gmail.com).")
             st.info(f"👉 **Solução:** Vá até a pasta `data` no Google Drive e crie manualmente um arquivo vazio (pode ser um arquivo de texto renomeado) com o nome exato **`{filename}`**. O sistema conseguirá atualizá-lo.")
+        else:
+            st.error(f"Erro ao salvar {filename} no Drive: {e}")
+        return False
+
+def save_text(filename, data, folder_path=None, mime_type='text/markdown'):
+    """Salva um arquivo de texto (.md, .txt) em uma subpasta específica."""
+    if folder_path is None:
+        folder_path = ['data']
+        
+    service = get_drive_service()
+    root_id = get_folder_id()
+    
+    if not service or not root_id:
+        return False
+
+    target_folder_id = get_nested_folder_id(service, root_id, folder_path)
+    if not target_folder_id:
+        return False
+
+    file_id = find_file(service, filename, target_folder_id)
+    
+    media = MediaIoBaseUpload(io.BytesIO(data.encode('utf-8')), mimetype=mime_type, resumable=True)
+
+    try:
+        if file_id:
+            service.files().update(fileId=file_id, media_body=media).execute()
+        else:
+            file_metadata = {'name': filename, 'parents': [target_folder_id]}
+            service.files().create(body=file_metadata, media_body=media).execute()
+        return True
+    except Exception as e:
+        error_str = str(e)
+        if "storageQuotaExceeded" in error_str or "Service Accounts do not have storage quota" in error_str:
+            st.error(f"❌ **Erro de Permissão (Cota Zero)** para o arquivo `{filename}`.")
+            st.info(f"👉 **Solução:** Crie manualmente um arquivo vazio com o nome exato **`{filename}`** na pasta de destino do Drive.")
         else:
             st.error(f"Erro ao salvar {filename} no Drive: {e}")
         return False

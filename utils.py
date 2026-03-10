@@ -425,6 +425,57 @@ def listar_arquivos_dados(prefixo, subfolder=None):
             
     return arquivos
 
+def listar_subpastas(caminho_relativo_list):
+    """Lista subpastas de um caminho (local ou nuvem)."""
+    if USE_CLOUD_STORAGE:
+        # list_files_in_path retorna uma lista de dicts [{'id': ..., 'name': ...}]
+        folders = google_storage.list_files_in_path(caminho_relativo_list, mime_type='application/vnd.google-apps.folder')
+        return sorted([f['name'] for f in folders])
+    else:
+        # Modo Local
+        caminho_completo = os.path.join(*caminho_relativo_list)
+        if not os.path.exists(caminho_completo):
+            return []
+        return sorted([d for d in os.listdir(caminho_completo) if os.path.isdir(os.path.join(caminho_completo, d))])
+
+def listar_arquivos_md(caminho_relativo_list):
+    """Lista arquivos .md de um caminho (local ou nuvem)."""
+    if USE_CLOUD_STORAGE:
+        files = google_storage.list_files_in_path(caminho_relativo_list)
+        # Filtra por nome, pois o mime type pode variar (text/markdown, application/octet-stream)
+        return sorted([f['name'] for f in files if f['name'].lower().endswith('.md')])
+    else:
+        caminho_completo = os.path.join(*caminho_relativo_list)
+        if not os.path.exists(caminho_completo):
+            return []
+        return sorted([f for f in os.listdir(caminho_completo) if f.endswith(".md")])
+
+def carregar_arquivo_texto(caminho_relativo):
+    """Carrega um arquivo de texto (como .md) do local ou da nuvem."""
+    if USE_CLOUD_STORAGE:
+        filename = os.path.basename(caminho_relativo)
+        # 'data/aulas/turma/disciplina/arquivo.md' -> ['data', 'aulas', 'turma', 'disciplina']
+        folder_path_parts = os.path.normpath(os.path.dirname(caminho_relativo)).split(os.sep)
+        return google_storage.load_text(filename, folder_path=folder_path_parts, default_value="")
+    else:
+        if os.path.exists(caminho_relativo):
+            with open(caminho_relativo, "r", encoding="utf-8") as f:
+                return f.read()
+    return ""
+
+def salvar_arquivo_texto(caminho_relativo, conteudo):
+    """Salva um arquivo de texto (como .md) no local ou na nuvem."""
+    if USE_CLOUD_STORAGE:
+        filename = os.path.basename(caminho_relativo)
+        folder_path_parts = os.path.normpath(os.path.dirname(caminho_relativo)).split(os.sep)
+        return google_storage.save_text(filename, conteudo, folder_path=folder_path_parts)
+    else:
+        # Salva localmente
+        os.makedirs(os.path.dirname(caminho_relativo), exist_ok=True)
+        with open(caminho_relativo, "w", encoding="utf-8") as f:
+            f.write(conteudo)
+        return True
+
 def listar_pdfs_referencia():
     """Lista PDFs disponíveis na pasta 'pdf' (Nuvem) ou 'data/pdf' (Local)."""
     if USE_CLOUD_STORAGE:
