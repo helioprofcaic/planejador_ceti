@@ -3,7 +3,7 @@ import json
 import io
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.http import MediaIoBaseUpload, HttpError
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 
 # Escopos necessários para ler e escrever no Drive
@@ -45,25 +45,34 @@ def get_folder_id():
 def get_or_create_subfolder(service, parent_id, folder_name):
     """Verifica se uma subpasta existe. Se não, cria e retorna o ID."""
     query = f"mimeType = 'application/vnd.google-apps.folder' and name = '{folder_name}' and '{parent_id}' in parents and trashed = false"
-    results = service.files().list(q=query, fields="files(id, name)").execute()
-    files = results.get('files', [])
-    
-    if files:
-        return files[0]['id']
-    else:
-        # Cria a pasta se não existir
-        file_metadata = {
-            'name': folder_name,
-            'mimeType': 'application/vnd.google-apps.folder',
-            'parents': [parent_id]
-        }
-        try:
-            folder = service.files().create(body=file_metadata, fields='id').execute()
-            return folder.get('id')
-        except Exception as e:
-            if "storageQuotaExceeded" in str(e):
-                st.error(f"❌ Erro de Cota: Não foi possível criar a pasta `{folder_name}`. Por favor, crie-a manualmente no Google Drive.")
-            return None
+    try:
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        if results:
+            files = results.get('files', [])
+            if files:
+                return files[0]['id']
+    except HttpError as error:
+        print(f"Erro HTTP ao buscar subpasta '{folder_name}': {error}")
+        return None
+
+    # Cria a pasta se não existir
+    file_metadata = {
+        'name': folder_name,
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [parent_id]
+    }
+    try:
+        folder = service.files().create(body=file_metadata, fields='id').execute()
+        return folder.get('id')
+    except HttpError as e: # Capturar HttpError especificamente
+        if "storageQuotaExceeded" in str(e):
+            st.error(f"❌ Erro de Cota: Não foi possível criar a pasta `{folder_name}`. Por favor, crie-a manualmente no Google Drive.")
+        else:
+            print(f"Erro HTTP ao criar subpasta '{folder_name}': {e}")
+        return None
+    except Exception as e:
+        print(f"Erro inesperado ao criar subpasta '{folder_name}': {e}")
+        return None
 
 def get_nested_folder_id(service, root_id, folder_path):
     """Navega ou cria uma estrutura de pastas e retorna o ID da última."""
@@ -79,9 +88,12 @@ def find_file(service, filename, folder_id):
     query = f"name = '{filename}' and '{folder_id}' in parents and trashed = false"
     try:
         results = service.files().list(q=query, fields="files(id, name)").execute()
-        files = results.get('files', [])
-        if files:
-            return files[0]['id']
+        if results:
+            files = results.get('files', [])
+            if files:
+                return files[0]['id']
+    except HttpError as e:
+        print(f"Erro HTTP na busca exata (find_file): {e}")
     except Exception as e:
         print(f"Erro na busca exata (find_file): {e}")
         
@@ -89,9 +101,12 @@ def find_file(service, filename, folder_id):
     try:
         query_all = f"'{folder_id}' in parents and trashed = false"
         results_all = service.files().list(q=query_all, fields="files(id, name)").execute()
-        for f in results_all.get('files', []):
-            if f['name'].lower() == filename.lower():
-                return f['id']
+        if results_all:
+            for f in results_all.get('files', []):
+                if f['name'].lower() == filename.lower():
+                    return f['id']
+    except HttpError as e:
+        print(f"Erro HTTP na busca fallback (find_file): {e}")
     except Exception as e:
         print(f"Erro na busca fallback (find_file): {e}")
             
@@ -150,6 +165,10 @@ def load_json(filename, default_value=None, silent=False, folder_path=None):
                 st.code(snippet, language="text")
             except:
                 st.write("Não foi possível exibir o conteúdo do arquivo.")
+        return default_value or {}
+    except HttpError as e: # Capturar HttpError
+        if not silent:
+            print(f"Erro HTTP ao carregar {filename} do Drive: {e}")
         return default_value or {}
     except Exception as e:
         # Loga o erro no console para debug, mas não exibe erro visual para não travar o fluxo se for algo temporário
@@ -232,7 +251,7 @@ def save_json(filename, data, folder_path=None):
             file_metadata = {'name': filename, 'parents': [target_folder_id]}
             service.files().create(body=file_metadata, media_body=media).execute()
         return True
-    except Exception as e:
+    except HttpError as e: # Capturar HttpError
         error_str = str(e)
         if "storageQuotaExceeded" in error_str or "Service Accounts do not have storage quota" in error_str:
             st.error(f"❌ **Erro de Permissão (Cota Zero)**")
@@ -240,6 +259,9 @@ def save_json(filename, data, folder_path=None):
             st.info(f"👉 **Solução:** Vá até a pasta `data` no Google Drive e crie manualmente um arquivo vazio (pode ser um arquivo de texto renomeado) com o nome exato **`{filename}`**. O sistema conseguirá atualizá-lo.")
         else:
             st.error(f"Erro ao salvar {filename} no Drive: {e}")
+        return False
+    except Exception as e:
+        st.error(f"Erro inesperado ao salvar {filename} no Drive: {e}")
         return False
 
 def save_text(filename, data, folder_path=None, mime_type='text/markdown'):
@@ -268,13 +290,16 @@ def save_text(filename, data, folder_path=None, mime_type='text/markdown'):
             file_metadata = {'name': filename, 'parents': [target_folder_id]}
             service.files().create(body=file_metadata, media_body=media).execute()
         return True
-    except Exception as e:
+    except HttpError as e: # Capturar HttpError
         error_str = str(e)
         if "storageQuotaExceeded" in error_str or "Service Accounts do not have storage quota" in error_str:
             st.error(f"❌ **Erro de Permissão (Cota Zero)** para o arquivo `{filename}`.")
             st.info(f"👉 **Solução:** Crie manualmente um arquivo vazio com o nome exato **`{filename}`** na pasta de destino do Drive.")
         else:
             st.error(f"Erro ao salvar {filename} no Drive: {e}")
+        return False
+    except Exception as e:
+        st.error(f"Erro inesperado ao salvar {filename} no Drive: {e}")
         return False
 
 def list_files_in_subfolder(subfolder_name, mime_type=None):
@@ -286,13 +311,22 @@ def list_files_in_subfolder(subfolder_name, mime_type=None):
         return []
         
     target_folder_id = get_or_create_subfolder(service, root_id, subfolder_name)
+    if not target_folder_id: # Adicionar verificação
+        return []
     
     query = f"'{target_folder_id}' in parents and trashed = false"
     if mime_type:
         query += f" and mimeType = '{mime_type}'"
         
-    results = service.files().list(q=query, fields="files(id, name)").execute()
-    return results.get('files', [])
+    try:
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        return results.get('files', []) if results else []
+    except HttpError as e:
+        print(f"Erro HTTP ao listar arquivos em '{subfolder_name}': {e}")
+        return []
+    except Exception as e:
+        print(f"Erro ao listar arquivos em '{subfolder_name}': {e}")
+        return []
 
 def list_files_in_path(folder_path, mime_type=None):
     """Lista arquivos dentro de uma estrutura de pastas (ex: ['data', 'frequencia'])."""
@@ -310,21 +344,32 @@ def list_files_in_path(folder_path, mime_type=None):
     if mime_type:
         query += f" and mimeType = '{mime_type}'"
         
-    results = service.files().list(q=query, fields="files(id, name)").execute()
-    return results.get('files', [])
+    try:
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        return results.get('files', []) if results else []
+    except HttpError as e:
+        print(f"Erro HTTP ao listar caminho '{'/'.join(folder_path)}': {e}")
+        return []
+    except Exception as e:
+        print(f"Erro ao listar caminho '{'/'.join(folder_path)}': {e}")
+        return []
 
 def download_file_bytes(file_id):
     """Baixa o conteúdo de um arquivo do Drive como bytes."""
     service = get_drive_service()
     if not service: return None
     
-    request = service.files().get_media(fileId=file_id)
-    file_io = io.BytesIO()
-    downloader = MediaIoBaseDownload(file_io, request)
-    
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
+    try:
+        request = service.files().get_media(fileId=file_id)
+        file_io = io.BytesIO()
+        downloader = MediaIoBaseDownload(file_io, request)
         
-    file_io.seek(0)
-    return file_io
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            
+        file_io.seek(0)
+        return file_io
+    except HttpError as e:
+        st.error(f"Erro ao baixar arquivo do Drive (ID: {file_id}): {e}")
+        return None
