@@ -5,7 +5,14 @@ import sys
 
 # Adiciona o diretório raiz do projeto (onde este utils.py está) ao sys.path
 # Isso garante que módulos em pastas como 'tools' possam ser importados de qualquer lugar.
+# --- NOVA ABORDAGEM DE PATH ---
+# Adiciona o diretório raiz E o diretório de storage diretamente ao path
+# para resolver problemas de importação em ambientes como o Streamlit Cloud.
 project_root = os.path.dirname(os.path.abspath(__file__))
+storage_path = os.path.join(project_root, 'tools', 'storage')
+
+if storage_path not in sys.path:
+    sys.path.insert(0, storage_path)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
