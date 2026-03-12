@@ -26,7 +26,7 @@ def run_seeder():
     st.secrets = MockSecrets()
 
     # Agora que o ambiente está configurado, podemos importar o módulo de banco de dados
-    from tools.storage import database as db
+    from tools import database as db
 
     if not db.is_db_connected():
         print("ERRO: Conexão com o banco de dados falhou.")

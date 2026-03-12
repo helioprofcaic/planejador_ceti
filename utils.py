@@ -4,15 +4,8 @@ import os
 import sys
 
 # Adiciona o diretório raiz do projeto (onde este utils.py está) ao sys.path
-# Isso garante que módulos em pastas como 'tools' possam ser importados de qualquer lugar.
-# --- NOVA ABORDAGEM DE PATH ---
-# Adiciona o diretório raiz E o diretório de storage diretamente ao path
-# para resolver problemas de importação em ambientes como o Streamlit Cloud.
+# Isso garante que módulos em pastas como 'tools' possam ser importados de forma absoluta.
 project_root = os.path.dirname(os.path.abspath(__file__))
-tools_path = os.path.join(project_root, 'tools')
-
-if tools_path not in sys.path:
-    sys.path.insert(0, tools_path)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -45,16 +38,12 @@ except ImportError:
     
 # --- Integração com Supabase ---
 try:
-    import tools.database as db
+    # Com o project_root no path, podemos fazer um import absoluto
+    from tools import database as db
     HAS_SUPABASE = True
 except (ImportError, ModuleNotFoundError) as e:
-    # Tenta fallback para importação relativa ou falha silenciosamente
-    try:
-        from tools import database as db
-        HAS_SUPABASE = True
-    except (ImportError, ModuleNotFoundError):
-        print(f"Debug: Falha na importação do Supabase: {e}")
-        HAS_SUPABASE = False
+    print(f"Debug: Falha na importação do Supabase (utils.py): {e}")
+    HAS_SUPABASE = False
 
 # Prioridade: Supabase > Cloud > Local
 USE_SUPABASE = False

@@ -7,7 +7,7 @@ if utils.HAS_GOOGLE_STORAGE:
     from googleapiclient.errors import HttpError
     from google.auth.exceptions import RefreshError
 if utils.HAS_SUPABASE:
-    import tools.database as db
+    from tools import database as db
 
 st.set_page_config(page_title="Status da Nuvem", layout="wide")
 utils.aplicar_estilo()

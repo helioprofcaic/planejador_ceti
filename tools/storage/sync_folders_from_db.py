@@ -32,7 +32,7 @@ def run_sync():
     import streamlit as st
     st.secrets = MockSecrets()
 
-    from tools.storage import database as db
+    from tools import database as db
 
     if not db.is_db_connected():
         print("❌ ERRO: Conexão com o banco de dados falhou.")
