@@ -1,33 +1,43 @@
-# services/database.py
+"""
+Módulo de serviço para interação com o banco de dados Supabase.
+
+Este arquivo gerencia a conexão e fornece um conjunto de funções para
+manipular os dados da aplicação (usuários, aulas, fórum, etc.).
+Ele é projetado para ser usado em um ambiente Streamlit, utilizando
+st.cache_resource para manter uma conexão singleton e st.secrets para
+gerenciamento de credenciais.
+"""
 from supabase import create_client, Client
 import streamlit as st
 import httpx
 import re
 import os
 
+# Variável global para armazenar a mensagem de erro da conexão.
 DB_CONNECTION_ERROR = None
 
 @st.cache_resource
 def init_connection():
     """Inicializa e armazena em cache a conexão com o Supabase."""
     global DB_CONNECTION_ERROR
-    DB_CONNECTION_ERROR = None # Limpa o erro em cada tentativa
+    DB_CONNECTION_ERROR = None  # Limpa o erro em cada nova tentativa de conexão
+    url, key = None, None
     try:
         # Prioriza a seção [supabase] no secrets.toml
         if "supabase" in st.secrets:
             supabase_config = st.secrets["supabase"]
-            supabase_url = supabase_config.get("url")
-            supabase_key = supabase_config.get("key")
-
-            if supabase_url and supabase_key:
-                return create_client(supabase_url, supabase_key)
+            url = supabase_config.get("url")
+            key = supabase_config.get("key")
 
         # Fallback para variáveis de ambiente (para outros cenários de deploy)
-        env_url = os.environ.get("SUPABASE_URL")
-        env_key = os.environ.get("SUPABASE_KEY")
-        if env_url and env_key:
-            return create_client(env_url, env_key)
+        if not (url and key):
+            url = os.environ.get("SUPABASE_URL")
+            key = os.environ.get("SUPABASE_KEY")
 
+        if url and key:
+            return create_client(url, key)
+
+        DB_CONNECTION_ERROR = "Credenciais do Supabase (URL e Key) não encontradas. Verifique o 'secrets.toml' ou as variáveis de ambiente."
         return None
     except Exception as e:
         DB_CONNECTION_ERROR = str(e)
@@ -52,7 +62,9 @@ def check_db_structure():
         # head=True faz uma requisição leve apenas para verificar a existência da tabela
         supabase.table("app_users").select("username", head=True).execute()
         return True
-    except Exception:
+    except Exception as e:
+        global DB_CONNECTION_ERROR
+        DB_CONNECTION_ERROR = f"Conexão com o banco bem-sucedida, mas a estrutura parece inválida. A tabela 'app_users' não foi encontrada. Detalhes: {e}"
         return False
 
 # --- Funções de Usuário ---
