@@ -45,10 +45,16 @@ except ImportError:
     
 # --- Integração com Supabase ---
 try:
-    from tools.storage import database as db
+    import database as db
     HAS_SUPABASE = True
-except (ImportError, ModuleNotFoundError):
-    HAS_SUPABASE = False
+except (ImportError, ModuleNotFoundError) as e:
+    # Tenta fallback para importação relativa ou falha silenciosamente
+    try:
+        from tools.storage import database as db
+        HAS_SUPABASE = True
+    except (ImportError, ModuleNotFoundError):
+        print(f"Debug: Falha na importação do Supabase: {e}")
+        HAS_SUPABASE = False
 
 # Prioridade: Supabase > Cloud > Local
 USE_SUPABASE = False
