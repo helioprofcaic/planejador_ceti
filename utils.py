@@ -9,6 +9,17 @@ from docx import Document
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import date
+import re
+
+# --- ReportLab Imports ---
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import letter, landscape, A4
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 # --- Integração com Google Drive ---
 try:
@@ -16,18 +27,38 @@ try:
     HAS_GOOGLE_STORAGE = True
 except ImportError:
     HAS_GOOGLE_STORAGE = False
-
+    
+# --- Integração com Supabase ---
 try:
-    # Se a variável de ambiente estiver definida (pelo run.bat), força local
-    if os.environ.get("FORCE_LOCAL_MODE") == "1":
-        USE_CLOUD_STORAGE = False
-    else:
-        USE_CLOUD_STORAGE = (
-            HAS_GOOGLE_STORAGE and
-            st.secrets.get("drive", {}).get("usar_nuvem", False)
+    from tools.storage import database as db
+    HAS_SUPABASE = True
+except (ImportError, ModuleNotFoundError):
+    HAS_SUPABASE = False
+
+# Prioridade: Supabase > Cloud > Local
+USE_SUPABASE = False
+if HAS_SUPABASE:
+    try:
+        USE_SUPABASE = (
+            st.secrets.get("supabase", {}).get("usar_supabase", False) and
+            db.is_db_connected()
         )
-except Exception:
-    USE_CLOUD_STORAGE = False
+    except Exception:
+        USE_SUPABASE = False
+
+# Se Supabase estiver ativo, desativa o Cloud Storage para evitar conflitos
+USE_CLOUD_STORAGE = False
+if not USE_SUPABASE:
+    try:
+        if os.environ.get("FORCE_LOCAL_MODE") == "1":
+            USE_CLOUD_STORAGE = False
+        else:
+            USE_CLOUD_STORAGE = (
+                HAS_GOOGLE_STORAGE and
+                st.secrets.get("drive", {}).get("usar_nuvem", False)
+            )
+    except Exception:
+        USE_CLOUD_STORAGE = False
 
 def aplicar_estilo():
     """Aplica o CSS global baseado nas configurações de sessão."""
@@ -596,165 +627,157 @@ def gerar_docx_frequencia(turma, data_aula, df):
     buffer.seek(0)
     return buffer
 
-def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio, lista_aulas=""):
-    """Gera o PDF do planejamento escolar."""
-    # Função auxiliar para limpar caracteres não suportados pelo FPDF (Latin-1)
-    def clean_text(text):
-        if not text: return ""
-        return str(text).replace('\u2013', '-').replace('\u2014', '-').replace('\u201c', '"').replace('\u201d', '"').replace('\u2018', "'").replace('\u2019', "'").replace('…', '...')
+def _registrar_fontes_reportlab():
+    """Garante que as fontes DejaVu existam e as registra no ReportLab."""
+    font_dir = os.path.join("data", "fonts")
+    font_regular = os.path.join(font_dir, "DejaVuSans.ttf")
+    font_bold = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
+    font_italic = os.path.join(font_dir, "DejaVuSans-Oblique.ttf")
+    font_bold_italic = os.path.join(font_dir, "DejaVuSans-BoldOblique.ttf")
 
-    pdf = FPDF(orientation='L', unit='mm', format='A4')
-    pdf.set_auto_page_break(False)
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, "Planejamento Escolar", ln=True, align='C')
+    # --- Download automático das fontes se não existirem ---
+    try:
+        if not os.path.exists(font_regular) or not os.path.exists(font_bold) or not os.path.exists(font_italic) or not os.path.exists(font_bold_italic):
+            import urllib.request
+            os.makedirs(font_dir, exist_ok=True)
+            base_url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/ttf/"
+            
+            font_files_to_download = {
+                "DejaVuSans.ttf": font_regular,
+                "DejaVuSans-Bold.ttf": font_bold,
+                "DejaVuSans-Oblique.ttf": font_italic,
+                "DejaVuSans-BoldOblique.ttf": font_bold_italic
+            }
+
+            for filename, filepath in font_files_to_download.items():
+                if not os.path.exists(filepath):
+                    print(f"Baixando {filename}...")
+                    urllib.request.urlretrieve(base_url + filename, filepath)
+    except Exception as e:
+        print(f"Aviso: Não foi possível baixar as fontes automaticamente: {e}")
+
+    # --- Registro das fontes no ReportLab ---
+    font_family = "Helvetica"
+    if os.path.exists(font_regular) and os.path.exists(font_bold) and os.path.exists(font_italic) and os.path.exists(font_bold_italic):
+        try:
+            pdfmetrics.registerFont(TTFont('DejaVu', font_regular))
+            pdfmetrics.registerFont(TTFont('DejaVu-Bold', font_bold))
+            pdfmetrics.registerFont(TTFont('DejaVu-Italic', font_italic))
+            pdfmetrics.registerFont(TTFont('DejaVu-BoldItalic', font_bold_italic))
+            pdfmetrics.registerFontFamily('DejaVu', normal='DejaVu', bold='DejaVu-Bold', italic='DejaVu-Italic', boldItalic='DejaVu-BoldItalic')
+            font_family = "DejaVu"
+        except Exception as e:
+            print(f"Erro ao registrar fonte DejaVu para ReportLab: {e}")
     
-    pdf.set_font("Arial", size=12)
-    pdf.cell(0, 10, f"Escola: {clean_text(escola)}", ln=True)
-    pdf.cell(0, 10, f"Professor: {clean_text(professor)} | Turma: {clean_text(turma)}", ln=True)
-    pdf.multi_cell(0, 8, f"Componente: {clean_text(componente)}\nEscala: {clean_text(escala)} | Trimestre: {clean_text(trimestre)} | Município: {clean_text(municipio)}", align='L')
-    pdf.ln(5)
-    
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, "Competência Geral:", ln=True)
-    pdf.set_font("Arial", size=10)
-    pdf.multi_cell(0, 5, clean_text(comp_geral))
-    pdf.ln(5)
-    
-    # Lista de Aulas (Opcional)
+    return font_family
+
+def gerar_pdf_planejamento(escola, professor, turma, componente, escala, comp_geral, df, trimestre, municipio, lista_aulas=""):
+    """Gera o PDF do planejamento escolar usando ReportLab."""
+    buffer = io.BytesIO()
+    font_family = _registrar_fontes_reportlab()
+
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=15*mm, leftMargin=15*mm, topMargin=15*mm, bottomMargin=15*mm)
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=10, leading=12))
+    styles.add(ParagraphStyle(name='BodyBold', fontName=f"{font_family}-Bold", fontSize=10, leading=12))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=16, alignment=TA_CENTER, spaceAfter=6))
+    styles.add(ParagraphStyle(name='H2', fontName=f"{font_family}-Bold", fontSize=12, spaceBefore=10, spaceAfter=4))
+    styles.add(ParagraphStyle(name='TableHeader', fontName=f"{font_family}-Bold", fontSize=8, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='TableCell', fontName=font_family, fontSize=8))
+
+    story = []
+    story.append(Paragraph("Planejamento Escolar", styles['H1']))
+    story.append(Spacer(1, 6*mm))
+    story.append(Paragraph(f"<b>Escola:</b> {escola}", styles['Body']))
+    story.append(Paragraph(f"<b>Professor:</b> {professor} | <b>Turma:</b> {turma}", styles['Body']))
+    story.append(Paragraph(f"<b>Componente:</b> {componente} | <b>Escala:</b> {escala} | <b>Trimestre:</b> {trimestre} | <b>Município:</b> {municipio}", styles['Body']))
+    story.append(Spacer(1, 6*mm))
+
+    story.append(Paragraph("Competência Geral:", styles['H2']))
+    story.append(Paragraph(comp_geral.replace('\n', '<br/>'), styles['Body']))
+
     if lista_aulas:
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "Lista de Aulas / Conteúdos:", ln=True)
-        pdf.set_font("Arial", size=10)
-        pdf.multi_cell(0, 5, clean_text(lista_aulas))
-        pdf.ln(5)
-    
-    # Tabela
+        story.append(Paragraph("Lista de Aulas / Conteúdos:", styles['H2']))
+        story.append(Paragraph(lista_aulas.replace('\n', '<br/>'), styles['Body']))
+
     if not df.empty:
-        pdf.set_font("Arial", 'B', 8)
+        story.append(Spacer(1, 6*mm))
         
-        # Pesos para distribuição inteligente de largura
+        # --- Tabela ---
+        header = [Paragraph(str(col), styles['TableHeader']) for col in df.columns]
+        data = [header]
+
+        for _, row in df.iterrows():
+            data_row = [Paragraph(str(row[col]), styles['TableCell']) for col in df.columns]
+            data.append(data_row)
+
+        # Pesos para distribuição de largura
         pesos = {
-            "Nº": 0.5,
-            "Mês": 0.8,
-            "Semana": 0.8,
-            "Aula": 0.6,
-            "Período": 1.2,
-            "Habilidade": 2.0,
-            "Habilidades Integradas": 2.0,
-            "Objetivos": 2.5,
-            "Objetivos de Aprendizagem": 2.5,
-            "Conteúdo": 2.5,
-            "Objeto do Conhecimento": 2.5,
-            "Metodologia": 1.5,
-            "Material de Apoio": 1.5,
-            "Avaliação": 1.5,
+            "Nº": 0.5, "Mês": 0.8, "Semana": 1.2, "Aula": 0.6, "Período": 1.2,
+            "Habilidade": 3.0, "Habilidades Integradas": 2.0, "Objetivos de Aprendizagem": 2.5,
+            "Objeto do Conhecimento": 2.5, "Metodologia": 1.5, "Material de Apoio": 1.5,
             "Estratégia de Avaliação": 1.5
         }
-        
-        page_width = 277
         total_peso = sum(pesos.get(col, 1.5) for col in df.columns)
-        col_widths = {col: (pesos.get(col, 1.5) / total_peso) * page_width for col in df.columns}
-    
-        # --- HEADER COM MULTI-CELL (Para evitar invasão de coluna) ---
-        # Calcula altura máxima do cabeçalho
-        header_max_lines = 1
-        for col in df.columns:
-            # Subtrai margem extra para compensar fonte Bold no cálculo
-            lines = split_into_lines(pdf, str(col), col_widths[col] - 4, 8)
-            header_max_lines = max(header_max_lines, len(lines))
-        
-        header_height = header_max_lines * 5 # 5mm por linha
+        available_width = doc.width
+        col_widths = [(pesos.get(col, 1.5) / total_peso) * available_width for col in df.columns]
 
-        # Desenha cabeçalho
-        pdf.set_font("Arial", 'B', 8)
-        for col in df.columns:
-            w = col_widths[col]
-            x, y = pdf.get_x(), pdf.get_y()
-            pdf.rect(x, y, w, header_height)
-            pdf.multi_cell(w, 5, str(col), border=0, align='C')
-            pdf.set_xy(x + w, y)
-        pdf.ln(header_height)
+        table = Table(data, colWidths=col_widths, repeatRows=1)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME', (0, 0), (-1, 0), f"{font_family}-Bold"),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ]))
+        story.append(table)
 
-        pdf.set_font("Arial", size=9)
-        line_height = 5
-        
-        for _, row in df.iterrows():
-            # Calcula altura máxima da linha
-            max_lines = 1
-            for col in df.columns:
-                text = str(row[col])
-                lines = split_into_lines(pdf, text, col_widths[col] - 2, 9)
-                max_lines = max(max_lines, len(lines))
-            
-            row_height = max_lines * line_height
-            
-            # Checa se a linha cabe na página, se não, adiciona uma nova e redesenha o cabeçalho
-            if pdf.get_y() + row_height > 190:
-                pdf.add_page(orientation='L')
-                pdf.set_font("Arial", 'B', 8)
-                # Redesenha cabeçalho na nova página
-                for col in df.columns:
-                    w = col_widths[col]
-                    x, y = pdf.get_x(), pdf.get_y()
-                    pdf.rect(x, y, w, header_height)
-                    pdf.multi_cell(w, 5, str(col), border=0, align='C')
-                    pdf.set_xy(x + w, y)
-                pdf.ln(header_height)
-                pdf.set_font("Arial", size=9)
-
-            
-            for col in df.columns:
-                text = clean_text(str(row[col]))
-                w = col_widths[col]
-                x, y = pdf.get_x(), pdf.get_y()
-                pdf.rect(x, y, w, row_height) # Borda
-                pdf.multi_cell(w, line_height, text, border=0, align='L') # Texto
-                pdf.set_xy(x + w, y) # Próxima célula
-            
-            pdf.ln(row_height)
-    return bytes(pdf.output())
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def gerar_capa_resumo(lista_planos):
-    """Gera uma página de capa com o resumo dos planos na cesta."""
-    pdf = FPDF(orientation='L', unit='mm', format='A4')
-    pdf.add_page()
-    
+    """Gera uma página de capa com o resumo dos planos na cesta usando ReportLab."""
+    buffer = io.BytesIO()
     if not lista_planos:
-        return pdf.output(dest='S').encode('latin-1', 'replace')
+        return buffer.getvalue()
 
-    # Dados gerais (pega do primeiro plano)
+    font_family = _registrar_fontes_reportlab()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=20*mm)
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=12, leading=14))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=16, alignment=TA_CENTER, spaceAfter=8))
+    styles.add(ParagraphStyle(name='H2', fontName=f"{font_family}-Bold", fontSize=12, spaceBefore=12, spaceAfter=6))
+    styles.add(ParagraphStyle(name='TableHeader', fontName=f"{font_family}-Bold", fontSize=10, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='TableCell', fontName=font_family, fontSize=9))
+
+    story = []
     primeiro = lista_planos[0]
     escola = primeiro.get('escola', '')
     professor = primeiro.get('professor', '')
-    
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 15, "Resumo do Planejamento Integrado", ln=True, align='C')
-    pdf.ln(5)
-    
-    pdf.set_font("Arial", size=12)
-    pdf.cell(0, 8, f"Escola: {escola}", ln=True)
-    pdf.cell(0, 8, f"Professor: {professor}", ln=True)
-    pdf.cell(0, 8, "Início do Ano Letivo: 19/02/2026", ln=True)
-    pdf.ln(10)
-    
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, "Componentes Curriculares Listados:", ln=True)
-    
-    # Configuração de datas (Via Bússola do Tempo)
+
+    story.append(Paragraph("Resumo do Planejamento Integrado", styles['H1']))
+    story.append(Spacer(1, 6*mm))
+    story.append(Paragraph(f"<b>Escola:</b> {escola}", styles['Body']))
+    story.append(Paragraph(f"<b>Professor:</b> {professor}", styles['Body']))
+    story.append(Paragraph("<b>Início do Ano Letivo:</b> 19/02/2026", styles['Body']))
+    story.append(Spacer(1, 8*mm))
+    story.append(Paragraph("Componentes Curriculares Listados:", styles['H2']))
+
+    # --- Tabela de Resumo ---
+    header = [
+        Paragraph("Componente", styles['TableHeader']),
+        Paragraph("Turma", styles['TableHeader']),
+        Paragraph("Trimestre", styles['TableHeader']),
+        Paragraph("Previsão Início", styles['TableHeader'])
+    ]
+    data = [header]
+
     calendario = carregar_calendario_letivo()
     trimestres_data = calendario.get("trimestres", {})
-    
-    pdf.set_font("Arial", 'B', 10)
-    # Cabeçalho da tabela
-    pdf.cell(80, 8, "Componente", border=1)
-    pdf.cell(50, 8, "Turma", border=1)
-    pdf.cell(20, 8, "Trim.", border=1, align='C')
-    pdf.cell(40, 8, "Previsão Início", border=1, align='C')
-    pdf.ln()
-    
-    pdf.set_font("Arial", size=9)
-    
+
     for plano in lista_planos:
         comp = str(plano.get('componente', ''))
         turma = str(plano.get('turma', ''))
@@ -765,46 +788,27 @@ def gerar_capa_resumo(lista_planos):
             data_str = date.fromisoformat(data_inicio_str).strftime('%d/%m/%Y')
         except ValueError:
             data_str = "19/02/2026"
-        
-        # Calcula altura da linha baseado no texto (wrap)
-        lines_comp = split_into_lines(pdf, comp, 78, 9)
-        lines_turma = split_into_lines(pdf, turma, 48, 9)
-        max_lines = max(len(lines_comp), len(lines_turma), 1)
-        h_line = 6
-        h_row = max_lines * h_line
-        
-        # Verifica quebra de página
-        if pdf.get_y() + h_row > 190:
-            pdf.add_page(orientation='L')
-            pdf.set_font("Arial", 'B', 10)
-            pdf.cell(80, 8, "Componente", border=1)
-            pdf.cell(50, 8, "Turma", border=1)
-            pdf.cell(20, 8, "Trim.", border=1, align='C')
-            pdf.cell(40, 8, "Previsão Início", border=1, align='C')
-            pdf.ln()
-            pdf.set_font("Arial", size=9)
-        
-        x, y = pdf.get_x(), pdf.get_y()
-        
-        # Desenha bordas (retângulos) com a altura total da linha
-        pdf.rect(x, y, 80, h_row)
-        pdf.rect(x+80, y, 50, h_row)
-        pdf.rect(x+130, y, 20, h_row)
-        pdf.rect(x+150, y, 40, h_row)
-        
-        # Preenche conteúdo
-        pdf.multi_cell(80, h_line, comp, border=0, align='L')
-        pdf.set_xy(x + 80, y)
-        pdf.multi_cell(50, h_line, turma, border=0, align='L')
-        pdf.set_xy(x + 130, y)
-        pdf.cell(20, h_row, trim, border=0, align='C')
-        pdf.set_xy(x + 150, y)
-        pdf.cell(40, h_row, data_str, border=0, align='C')
-        
-        pdf.set_xy(x, y + h_row) # Move para próxima linha
-        
-    return bytes(pdf.output())
-    
+
+        data.append([
+            Paragraph(comp, styles['TableCell']),
+            Paragraph(turma, styles['TableCell']),
+            Paragraph(trim, styles['TableCell']),
+            Paragraph(data_str, styles['TableCell']),
+        ])
+
+    table = Table(data, colWidths=[100*mm, 70*mm, 30*mm, 40*mm], repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+    story.append(table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
+
 def consolidar_planos(lista_planos):
     """
     Recebe uma lista de dicionários com dados dos planos e gera um único PDF.
@@ -815,7 +819,7 @@ def consolidar_planos(lista_planos):
     # Adiciona capa com resumo
     if lista_planos:
         capa_bytes = gerar_capa_resumo(lista_planos)
-        merger.append(io.BytesIO(capa_bytes))
+        if capa_bytes: merger.append(io.BytesIO(capa_bytes))
     
     for plano in lista_planos: #itera sobre os planos da cesta
         escola = plano['escola']
@@ -846,91 +850,109 @@ def consolidar_planos(lista_planos):
     return output_buffer
 
 def gerar_pdf_frequencia(escola, professor, turma, data_aula, df):
-    """Gera o PDF da lista de frequência com status digital e cabeçalho completo."""
-    pdf = FPDF()
-    pdf.set_margins(8, 8, 8) # Margens reduzidas para aproveitar a página
-    pdf.set_auto_page_break(auto=True, margin=8)
-    pdf.add_page()
+    """Gera o PDF da lista de frequência usando ReportLab."""
+    buffer = io.BytesIO()
+    font_family = _registrar_fontes_reportlab()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=15*mm, leftMargin=15*mm, topMargin=15*mm, bottomMargin=15*mm)
     
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 8, f"Lista de Frequência - {escola}", ln=True, align='C')
-    pdf.ln(2)
-    
-    pdf.set_font("Arial", size=10)
-    # pdf.cell(0, 5, f"Escola: {escola}", ln=True) # Removido pois já está no título
-    pdf.cell(0, 5, f"Professor: {professor} | Turma: {turma}", ln=True)
-    pdf.cell(0, 5, f"Data: {data_aula.strftime('%d/%m/%Y')}", ln=True)
-    pdf.ln(3)
-    
-    pdf.set_font("Arial", 'B', 9)
-    pdf.cell(10, 6, "Nº", border=1, align='C')
-    pdf.cell(80, 6, "Nome do Aluno", border=1, align='C')
-    pdf.cell(20, 6, "Status", border=1, align='C')
-    pdf.cell(50, 6, "Assinatura", border=1, align='C')
-    pdf.ln()
-    
-    pdf.set_font("Arial", size=8)
-    num_alunos = len(df)
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=10, leading=12))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=14, alignment=TA_CENTER, spaceAfter=6))
+    styles.add(ParagraphStyle(name='TableHeader', fontName=f"{font_family}-Bold", fontSize=9, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='TableCell', fontName=font_family, fontSize=8))
+    styles.add(ParagraphStyle(name='TableCellCenter', parent=styles['TableCell'], alignment=TA_CENTER))
+
+    story = []
+    story.append(Paragraph(f"Lista de Frequência - {escola}", styles['H1']))
+    story.append(Spacer(1, 4*mm))
+    story.append(Paragraph(f"<b>Professor:</b> {professor} | <b>Turma:</b> {turma}", styles['Body']))
+    story.append(Paragraph(f"<b>Data:</b> {data_aula.strftime('%d/%m/%Y')}", styles['Body']))
+    story.append(Spacer(1, 6*mm))
+
+    # --- Tabela de Frequência ---
+    header = [
+        Paragraph("Nº", styles['TableHeader']),
+        Paragraph("Nome do Aluno", styles['TableHeader']),
+        Paragraph("Status", styles['TableHeader']),
+        Paragraph("Assinatura", styles['TableHeader']),
+    ]
+    data = [header]
+
     for _, row in df.iterrows():
         status = "P" if row.get('Presença', False) else "F"
-        pdf.cell(10, 6, str(row['Nº']), border=1, align='C')
-        pdf.cell(80, 6, str(row['Nome do Aluno']).strip()[:50], border=1)
-        pdf.cell(20, 6, status, border=1, align='C')
-        pdf.cell(50, 6, "", border=1)  # Adiciona a célula para a assinatura
-        pdf.ln()
-        
-    return bytes(pdf.output())
+        data.append([
+            Paragraph(str(row['Nº']), styles['TableCellCenter']),
+            Paragraph(str(row['Nome do Aluno']), styles['TableCell']),
+            Paragraph(status, styles['TableCellCenter']),
+            "" # Espaço para assinatura
+        ])
 
+    table = Table(data, colWidths=[15*mm, 95*mm, 20*mm, 50*mm], repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+    story.append(table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def gerar_pdf_qualitativo(escola, professor, turma, df, componente="", contexto=""):
-    """Gera o PDF da ficha qualitativa."""
-    pdf = FPDF(orientation='L', unit='mm', format='A4')
-    pdf.set_margins(7, 7, 7)
-    pdf.set_auto_page_break(auto=True, margin=8)
-    pdf.add_page()
-    
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 8, "Ficha de Acompanhamento Qualitativo", ln=True, align='C')
-    pdf.ln(1)
-    
-    pdf.set_font("Arial", size=9)
-    pdf.cell(0, 5, f"Escola: {escola}", ln=True)
-    pdf.cell(0, 5, f"Professor: {professor} | Turma: {turma}", ln=True)
-    if componente or contexto:
-        pdf.cell(0, 5, f"Componente: {componente} | Contexto: {contexto}", ln=True)
-    pdf.ln(1)
-    
-    pdf.set_font("Arial", 'B', 7)
-    pdf.cell(10, 5, "Nº", border=1, align='C')
-    pdf.cell(90, 5, "Nome do Estudante", border=1, align='C')
-    pdf.cell(18, 5, "Particip.", border=1, align='C')
-    pdf.cell(18, 5, "Entrega", border=1, align='C')
-    pdf.cell(18, 5, "Autonomia", border=1, align='C')
-    pdf.cell(12, 5, "NM1", border=1, align='C')
-    pdf.cell(12, 5, "NM2", border=1, align='C')
-    pdf.cell(12, 5, "NM3", border=1, align='C')
-    pdf.cell(12, 5, "MT", border=1, align='C')
-    pdf.cell(12, 5, "Rec.", border=1, align='C')
-    pdf.cell(15, 5, "Final", border=1, align='C')
-    pdf.ln()
-    
-    pdf.set_font("Arial", size=5)
-    for _, row in df.iterrows():
-        pdf.cell(10, 5, str(row['Nº']), border=1, align='C')
-        pdf.cell(90, 5, str(row['Nome do Estudante'])[:50], border=1)
-        pdf.cell(18, 5, str(row.get('Participação', ''))[:15], border=1, align='C')
-        pdf.cell(18, 5, str(row.get('Entrega', ''))[:15], border=1, align='C')
-        pdf.cell(18, 5, str(row.get('Autonomia', ''))[:15], border=1, align='C')
-        pdf.cell(12, 5, str(row.get('NM1', '')) if pd.notna(row.get('NM1')) else "", border=1, align='C')
-        pdf.cell(12, 5, str(row.get('NM2', '')) if pd.notna(row.get('NM2')) else "", border=1, align='C')
-        pdf.cell(12, 5, str(row.get('NM3', '')) if pd.notna(row.get('NM3')) else "", border=1, align='C')
-        pdf.cell(12, 5, str(row.get('MT', '')) if pd.notna(row.get('MT')) else "", border=1, align='C')
-        pdf.cell(12, 5, str(row.get('Recuperação', '')) if pd.notna(row.get('Recuperação')) else "", border=1, align='C')
-        pdf.cell(15, 5, str(row.get('Nota Final', '')) if pd.notna(row.get('Nota Final')) else "", border=1, align='C')
-        pdf.ln()
-        
-    return bytes(pdf.output())
+    """Gera o PDF da ficha qualitativa usando ReportLab."""
+    buffer = io.BytesIO()
+    font_family = _registrar_fontes_reportlab()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=10*mm, leftMargin=10*mm, topMargin=10*mm, bottomMargin=10*mm)
 
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=9, leading=11))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=12, alignment=TA_CENTER, spaceAfter=4))
+    styles.add(ParagraphStyle(name='TableHeader', fontName=f"{font_family}-Bold", fontSize=7, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='TableCell', fontName=font_family, fontSize=7, alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='TableCellLeft', parent=styles['TableCell'], alignment=TA_LEFT))
+
+    story = []
+    story.append(Paragraph("Ficha de Acompanhamento Qualitativo", styles['H1']))
+    story.append(Spacer(1, 2*mm))
+    story.append(Paragraph(f"<b>Escola:</b> {escola}", styles['Body']))
+    story.append(Paragraph(f"<b>Professor:</b> {professor} | <b>Turma:</b> {turma}", styles['Body']))
+    if componente or contexto:
+        story.append(Paragraph(f"<b>Componente:</b> {componente} | <b>Contexto:</b> {contexto}", styles['Body']))
+    story.append(Spacer(1, 4*mm))
+
+    # --- Tabela ---
+    header = [Paragraph(h, styles['TableHeader']) for h in ["Nº", "Nome do Estudante", "Particip.", "Entrega", "Autonomia", "NM1", "NM2", "NM3", "MT", "Rec.", "Final"]]
+    data = [header]
+
+    for _, row in df.iterrows():
+        data.append([
+            Paragraph(str(row['Nº']), styles['TableCell']),
+            Paragraph(str(row['Nome do Estudante']), styles['TableCellLeft']),
+            Paragraph(str(row.get('Participação', '')), styles['TableCell']),
+            Paragraph(str(row.get('Entrega', '')), styles['TableCell']),
+            Paragraph(str(row.get('Autonomia', '')), styles['TableCell']),
+            Paragraph(str(row.get('NM1', '')) if pd.notna(row.get('NM1')) else "", styles['TableCell']),
+            Paragraph(str(row.get('NM2', '')) if pd.notna(row.get('NM2')) else "", styles['TableCell']),
+            Paragraph(str(row.get('NM3', '')) if pd.notna(row.get('NM3')) else "", styles['TableCell']),
+            Paragraph(str(row.get('MT', '')) if pd.notna(row.get('MT')) else "", styles['TableCell']),
+            Paragraph(str(row.get('Recuperação', '')) if pd.notna(row.get('Recuperação')) else "", styles['TableCell']),
+            Paragraph(str(row.get('Nota Final', '')) if pd.notna(row.get('Nota Final')) else "", styles['TableCell']),
+        ])
+
+    col_widths = [10*mm, 90*mm, 18*mm, 18*mm, 18*mm, 12*mm, 12*mm, 12*mm, 12*mm, 12*mm, 15*mm]
+    table = Table(data, colWidths=col_widths, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+    story.append(table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def init_db():
     """[DEPRECATED] Função mantida apenas para compatibilidade, não faz nada."""
@@ -1089,142 +1111,116 @@ def carregar_perfil_professor_db(nome_professor):
             return {}
     return {}
 
-def split_into_lines(pdf, text, width, font_size):
-    """Splits text into multiple lines based on the available width."""
-    pdf.set_font("Arial", size=font_size)
-    words = text.split()
-    lines = []
-    current_line = ""
-    for word in words:
-        test_line = f"{current_line} {word}".strip()
-        if pdf.get_string_width(test_line) < width:
-            current_line = test_line
-        else:
-            lines.append(current_line)
-            current_line = word
-    lines.append(current_line.strip())
-    return lines
-
-def cell_with_textwrap(pdf, w, h, text, border=0, align='L'):
-    """Wrap text within a cell."""
-    x = pdf.get_x()
-    y = pdf.get_y()
-    pdf.multi_cell(w, h, str(text), border=border, align=align)
-    pdf.set_xy(x + w, y)
-
-def gerar_pdf_aula_ia(texto_markdown):
-    """Gera um PDF a partir do texto Markdown gerado pela IA."""
-    pdf = FPDF(orientation='P', unit='mm', format='A4')
+def _parse_markdown_to_story(texto_markdown, styles):
+    """Converte um texto em markdown simples para uma lista de 'flowables' do ReportLab."""
+    story = []
     
-    # --- SUPORTE A FONTE EXTERNA (TTF) ---
-    font_dir = os.path.join("data", "fonts")
-    font_regular = os.path.join(font_dir, "DejaVuSans.ttf")
-    font_bold = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
-    font_italic = os.path.join(font_dir, "DejaVuSans-Oblique.ttf")
-    
-    # Download automático da fonte se não existir
-    try:
-        if not os.path.exists(font_regular) or not os.path.exists(font_bold) or not os.path.exists(font_italic):
-            import urllib.request
-            os.makedirs(font_dir, exist_ok=True)
-            base_url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/ttf/"
-            
-            if not os.path.exists(font_regular):
-                print(f"Baixando {font_regular}...")
-                urllib.request.urlretrieve(base_url + "DejaVuSans.ttf", font_regular)
-            if not os.path.exists(font_bold):
-                print(f"Baixando {font_bold}...")
-                urllib.request.urlretrieve(base_url + "DejaVuSans-Bold.ttf", font_bold)
-            if not os.path.exists(font_italic):
-                print(f"Baixando {font_italic}...")
-                urllib.request.urlretrieve(base_url + "DejaVuSans-Oblique.ttf", font_italic)
-    except Exception as e:
-        print(f"Aviso: Não foi possível baixar as fontes automaticamente: {e}")
-
-    font_family = "Arial"
-    
-    if os.path.exists(font_regular):
-        try:
-            pdf.add_font('DejaVu', '', font_regular)
-            if os.path.exists(font_bold):
-                pdf.add_font('DejaVu', 'B', font_bold)
-            else:
-                pdf.add_font('DejaVu', 'B', font_regular)
-            
-            if os.path.exists(font_italic):
-                pdf.add_font('DejaVu', 'I', font_italic)
-            else:
-                pdf.add_font('DejaVu', 'I', font_regular)
-                
-            font_family = "DejaVu"
-        except Exception as e:
-            print(f"Erro ao carregar fonte externa, usando Arial: {e}")
-
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    
+    # Pré-processa o texto para lidar com blocos de código e listas
     lines = texto_markdown.split('\n')
+    in_code_block = False
     
     for line in lines:
-        line = line.strip()
-        if not line:
-            pdf.ln(2)
-            continue
-            
-        if line.startswith('# '):
-            pdf.set_font(font_family, 'B', 16)
-            # The combination of w=0 and align='C' can be problematic.
-            # Resetting X and using an explicit width is more robust.
-            pdf.set_x(pdf.l_margin)
-            page_width = pdf.w - pdf.l_margin - pdf.r_margin
-            pdf.multi_cell(page_width, 10, line.replace('# ', '').replace('**', ''), align='C')
-            pdf.ln(5)
-        elif line.startswith('## '):
-            pdf.set_font(font_family, 'B', 14)
-            pdf.ln(3)
-            pdf.multi_cell(0, 8, line.replace('## ', '').replace('**', ''), align='L')
-            pdf.ln(2)
-        elif line.startswith('### '):
-            pdf.set_font(font_family, 'B', 12)
-            pdf.ln(2)
-            pdf.multi_cell(0, 7, line.replace('### ', '').replace('**', ''), align='L')
-            pdf.ln(1)
-        elif line.startswith('> '):
-            pdf.set_font(font_family, 'I', 10)
-            pdf.set_text_color(80, 80, 80)
-            pdf.set_x(20)
-            pdf.multi_cell(0, 6, line.replace('> ', '').replace('**', ''))
-            pdf.set_text_color(0, 0, 0)
-            pdf.ln(2)
-        elif line.startswith('---'):
-            y = pdf.get_y()
-            pdf.line(10, y, 200, y)
-            pdf.ln(5)
-        elif line.startswith('**') and ':**' in line:
-            parts = line.split(':**', 1)
-            if len(parts) == 2:
-                key = parts[0].replace('**', '') + ':'
-                val = parts[1].strip().replace('**', '')
-                pdf.set_font(font_family, 'B', 11)
-                pdf.write(6, key + ' ')
-                pdf.set_font(font_family, '', 11)
-                pdf.write(6, val)
-                pdf.ln(6)
-            else:
-                pdf.set_font(font_family, '', 11)
-                pdf.multi_cell(0, 6, line.replace('**', ''))
-        elif line.startswith('- ') or line.startswith('* '):
-            pdf.set_font(font_family, '', 11)
-                # Indentação para lista usando cell em vez de write para evitar erros de cursor
-            pdf.set_x(pdf.l_margin + 5)
-            pdf.cell(5, 6, '-', align='C')
-            pdf.multi_cell(0, 6, line[2:].replace('**', ''))
+        stripped_line = line.strip()
+
+        # Títulos
+        if stripped_line.startswith('# '):
+            story.append(Paragraph(stripped_line.replace('# ', ''), styles['H1']))
+        elif stripped_line.startswith('## '):
+            story.append(Paragraph(stripped_line.replace('## ', ''), styles['H2']))
+        elif stripped_line.startswith('### '):
+            story.append(Paragraph(stripped_line.replace('### ', ''), styles['H3']))
+        
+        # Linha horizontal
+        elif stripped_line == '---':
+            story.append(Spacer(1, 4*mm))
+            # Para uma linha visual, precisaríamos de um Flowable customizado ou um Drawing.
+            # Por simplicidade, usamos um parágrafo com sublinhados.
+            story.append(Paragraph('_' * 80, styles['Body']))
+            story.append(Spacer(1, 4*mm))
+
+        # Citação
+        elif stripped_line.startswith('> '):
+            story.append(Paragraph(stripped_line.replace('> ', ''), styles['Quote']))
+
+        # Itens de lista
+        elif stripped_line.startswith(('- ', '* ')):
+            # Usando um parágrafo com um marcador de emoji para melhor compatibilidade
+            story.append(Paragraph(f"• {stripped_line[2:]}", styles['ListItem']))
+
+        # Linhas com negrito e chave-valor (Ex: **Professor:** Helio)
+        elif stripped_line.startswith('**') and ':**' in stripped_line:
+            # Converte para <b> e deixa o Paragraph renderizar
+            formatted_line = stripped_line.replace('**', '<b>', 1).replace(':**', '</b>:', 1)
+            story.append(Paragraph(formatted_line, styles['Body']))
+
+        # Parágrafo normal (com suporte a negrito no meio do texto)
         else:
-            pdf.set_font(font_family, '', 11)
-            pdf.set_x(pdf.l_margin) # Garante que começa na margem esquerda
-            pdf.multi_cell(0, 6, line.replace('**', ''))
+            # Substitui **texto** por <b>texto</b>
+            formatted_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+            story.append(Paragraph(formatted_line, styles['Body']))
             
-    return bytes(pdf.output())
+    return story
+
+def gerar_pdf_aula_ia(texto_markdown):
+    """Gera um PDF a partir do texto Markdown gerado pela IA, usando ReportLab."""
+    buffer = io.BytesIO()
+    font_family = _registrar_fontes_reportlab()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=20*mm)
+
+    # Estilos
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=10, leading=14, alignment=TA_JUSTIFY))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=18, alignment=TA_CENTER, spaceAfter=6))
+    styles.add(ParagraphStyle(name='H2', fontName=f"{font_family}-Bold", fontSize=14, spaceBefore=8, spaceAfter=4))
+    styles.add(ParagraphStyle(name='H3', fontName=f"{font_family}-Bold", fontSize=12, spaceBefore=6, spaceAfter=3))
+    styles.add(ParagraphStyle(name='Quote', parent=styles['Body'], fontName=f"{font_family}-Italic", leftIndent=15, rightIndent=15, textColor=colors.darkslategray))
+    styles.add(ParagraphStyle(name='ListItem', parent=styles['Body'], leftIndent=10, firstLineIndent=-5))
+
+    # Converte o markdown para uma lista de flowables
+    story = _parse_markdown_to_story(texto_markdown, styles)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+def gerar_pdf_simulado(disciplina_nome, turma_nome, professor_nome, questoes):
+    """Gera um PDF de um simulado com questões e gabarito usando ReportLab."""
+    buffer = io.BytesIO()
+    font_family = _registrar_fontes_reportlab()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20*mm, leftMargin=20*mm, topMargin=20*mm, bottomMargin=20*mm)
+
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Body', fontName=font_family, fontSize=10, leading=12))
+    styles.add(ParagraphStyle(name='H1', fontName=f"{font_family}-Bold", fontSize=16, alignment=TA_CENTER, spaceAfter=4))
+    styles.add(ParagraphStyle(name='H2', fontName=f"{font_family}-Bold", fontSize=12, alignment=TA_CENTER, spaceAfter=8))
+    styles.add(ParagraphStyle(name='Question', fontName=f"{font_family}-Bold", fontSize=11, spaceBefore=8, spaceAfter=4))
+    styles.add(ParagraphStyle(name='Option', parent=styles['Body'], leftIndent=10))
+    styles.add(ParagraphStyle(name='GabaritoTitle', fontName=f"{font_family}-Bold", fontSize=14, alignment=TA_CENTER, spaceBefore=12, spaceAfter=6))
+    styles.add(ParagraphStyle(name='GabaritoItem', fontName=font_family, fontSize=12, alignment=TA_CENTER))
+
+    story = []
+    story.append(Paragraph("Simulado de Revisão", styles['H1']))
+    story.append(Paragraph(f"<b>Disciplina:</b> {disciplina_nome}", styles['H2']))
+    story.append(Paragraph(f"<b>Turma:</b> {turma_nome} | <b>Professor:</b> {professor_nome}", styles['H2']))
+    story.append(Spacer(1, 8*mm))
+
+    gabarito = {}
+    for i, q in enumerate(questoes, 1):
+        story.append(Paragraph(f"{i}. {q['question_text']}", styles['Question']))
+        opcoes = q.get('options', [])
+        for j, opt in enumerate(opcoes):
+            letra = chr(ord('a') + j)
+            story.append(Paragraph(f"{letra}) {opt}", styles['Option']))
+        gabarito[i] = chr(ord('A') + q['correct_option_index'])
+
+    story.append(PageBreak())
+    story.append(Paragraph("Gabarito", styles['GabaritoTitle']))
+    for num, resp in sorted(gabarito.items()):
+        story.append(Paragraph(f"<b>Questão {num}:</b> {resp.upper()}", styles['GabaritoItem']))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def carregar_horario_global():
     """Carrega o quadro de horários completo da escola."""

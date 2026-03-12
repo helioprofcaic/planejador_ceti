@@ -22,12 +22,14 @@ O projeto é construído em **Python** utilizando o framework **Streamlit**.
 *   `data/`: Armazenamento de dados (JSONs, CSVs).
     *   `escola/`: Dados institucionais (`escola_db.json`, `alunos.json`).
     *   `perfis/`: Configurações dos professores (`perfil_nome.json`).
-    *   `aulas/`: Roteiros gerados pela IA.
+    *   `aulas/`: Roteiros gerados pela IA (para modo local/arquivo).
+*   `Turmas/`: Estrutura de pastas contendo as aulas em `.md` para importação no banco de dados.
 *   `tools/`: Scripts de automação e manutenção.
+    *   `storage/`: Scripts para popular o banco de dados (`seed_data.py`, `seed_lessons.py`).
 
 ---
 
-## 2. Banco de Dados (JSON)
+## 2. Persistência de Dados
 
 O sistema não utiliza um SGBD tradicional (SQL), mas sim uma estrutura de arquivos JSON relacionais.
 
@@ -44,18 +46,70 @@ O sistema não utiliza um SGBD tradicional (SQL), mas sim uma estrutura de arqui
 
 ---
 
-## 3. Integração com Google Drive
+## 3. Modos de Operação (Banco de Dados vs. Arquivos)
 
-O sistema suporta dois modos de operação, definidos em `.streamlit/secrets.toml`:
+O sistema suporta três modos de persistência, com a seguinte prioridade:
 
-1.  **Modo Local (`usar_nuvem = false`):** Lê e grava diretamente na pasta `data/` do disco. Ideal para desenvolvimento.
-2.  **Modo Nuvem (`usar_nuvem = true`):** Utiliza a API do Google Drive para ler e gravar arquivos JSON.
+1.  **Supabase (`usar_supabase = true`):** Modo principal. Todas as operações de leitura e escrita são feitas no banco de dados PostgreSQL via Supabase. É o modo mais robusto e recomendado para produção.
+2.  **Google Drive (`usar_nuvem = true`):** Modo legado. Utiliza a API do Google Drive para ler e gravar arquivos JSON. Requer configuração de uma Service Account.
+3.  **Local (`usar_nuvem = false` e `usar_supabase = false`):** Lê e grava diretamente na pasta `data/` do disco. Ideal para desenvolvimento e testes rápidos sem conexão.
+
+A configuração é feita no arquivo `.streamlit/secrets.toml`.
+
+### Configuração do Supabase
+
+1.  Crie um projeto no Supabase.
+2.  Vá em `Project Settings > API`.
+3.  Copie a `URL` e a chave `anon` (public).
+4.  Adicione ao seu arquivo `.streamlit/secrets.toml`:
+    ```toml
+    [supabase]
+    usar_supabase = true
+    url = "SUA_URL_AQUI"
+    key = "SUA_CHAVE_ANON_AQUI"
+    ```
+5.  Execute o SQL de criação de tabelas, que pode ser encontrado em `tools/storage/database_schema.md`, no Editor de SQL do Supabase.
+
+### Configuração do Google Drive
+
+O sistema suporta um modo de operação legado com o Google Drive.
+
+*   **Modo Nuvem (`usar_nuvem = true`):** Utiliza a API do Google Drive para ler e gravar arquivos JSON.
     *   Requer uma **Service Account** (Conta de Serviço) do Google Cloud.
     *   A pasta alvo no Drive deve ser compartilhada com o e-mail da Service Account.
 
 ---
 
 ## 4. Scripts de Manutenção (`tools/`)
+
+### Populando o Banco de Dados (Seeding)
+
+Quando o modo Supabase está ativo, o banco de dados precisa ser populado com a estrutura da escola e as aulas.
+
+1.  **`tools/storage/seed_data.py`**
+    *   **O que faz:** Lê o arquivo `data/escola/Escola.txt` e cria a estrutura de Escola, Turmas e Disciplinas no banco de dados.
+    *   **Como usar:**
+        ```bash
+        python tools/storage/seed_data.py
+        ```
+
+2.  **`tools/storage/seed_lessons.py`**
+    *   **O que faz:** Varre a pasta `data/Turmas/` em busca de arquivos `.md` organizados por `Turma/Disciplina/Semana/` e os importa como aulas no banco de dados, incluindo o conteúdo do quiz.
+    *   **Como usar:**
+        ```bash
+        python tools/storage/seed_lessons.py
+        ```
+
+3.  **`tools/storage/sync_folders_from_db.py`**
+    *   **O que faz:** Sincroniza a estrutura de pastas local (`data/Turmas/`) com base nas turmas e disciplinas existentes no banco de dados. Útil para garantir que o ambiente local reflita a estrutura da nuvem antes de adicionar novos arquivos de aula. Este script **não altera** o banco de dados.
+    *   **Como usar:**
+        ```bash
+        python tools/storage/sync_folders_from_db.py
+        ```
+
+> **Importante:** Para rodar os scripts de seeding, você precisa ter um arquivo `.env` na raiz do projeto com as mesmas chaves `SUPABASE_URL` e `SUPABASE_KEY` do seu `secrets.toml`.
+
+### Scripts Legados
 
 ### `processar_horario.py`
 Lê o arquivo Markdown do horário escolar (`docs/HORÁRIO...md`), extrai as informações e gera:

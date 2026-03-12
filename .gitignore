@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 venv/
 .streamlit/secrets.toml
+.env
 
 # Dados Sensíveis (LGPD e Configurações Pessoais)
 data/alunos.json
@@ -34,7 +35,7 @@ data/frequencia/*
 data/planejamento/*
 data/ementas/*
 data/avaliacoes/*
-
+data/Turmas/*
 docs/*
 !docs/DOCUMENTACAO_TECNICA.md
 !docs/MANUAL_USUARIO.md
@@ -42,7 +43,7 @@ docs/*
 !docs/TUTORIAL_DADOS.md
 !docs/TUTORIAL_IA.md
 !docs/TUTORIAL_PROFESSOR.md
-
+lista_geral_de_aulas.ipynb
 
 
 

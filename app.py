@@ -92,6 +92,8 @@ st.title("🏠 Menu Principal")
 st.divider()
 if utils.USE_CLOUD_STORAGE:
     st.success("☁️ **Modo Nuvem Ativado:** Os dados estão sendo lidos e salvos no seu Google Drive.")
+elif utils.USE_SUPABASE:
+    st.success("🛰️ **Modo Banco de Dados Ativado:** Os dados estão sendo lidos e salvos via Supabase.")
 else:
     st.info("📂 **Modo Local Ativado:** Os dados estão sendo lidos e salvos na pasta `data/` do projeto.")
 st.divider()
@@ -121,10 +123,17 @@ st.info("As configurações definidas aqui (Escola, Professor, Tema) serão apli
 st.divider()
 st.subheader("📅 Grade Horária Semanal")
 
-caminho_horario = os.path.join("data", "horario_professor.json")
-df_horario = utils.carregar_dados_json(caminho_horario)
+# Carrega o perfil específico do professor logado
+professor_logado_nome = st.session_state.get('professor', 'Visitante')
+perfil_logado = utils.carregar_perfil_professor_db(professor_logado_nome)
 
-if df_horario is None:
+# Tenta carregar a grade horária do perfil
+grade_data = perfil_logado.get("grade_horaria", None)
+
+# Se a grade existir no perfil, converte para DataFrame. Senão, cria uma padrão.
+if grade_data is not None:
+    df_horario = pd.DataFrame(grade_data)
+else:
     horario_data = [
         {"Horário": "07:20 - 08:20", "Período": "1ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
         {"Horário": "08:20 - 09:20", "Período": "2ª Aula", "Segunda": "", "Terça": "", "Quarta": "", "Quinta": "", "Sexta": ""},
@@ -143,7 +152,7 @@ if df_horario is None:
 def highlight_aulas(val):
     """Destaca células que não estão vazias e não são '---'."""
     if isinstance(val, str) and val.strip() and val.strip() != '---':
-        return 'background-color: #60a5fa'  # Azul mais escuro
+        return 'background-color: #6495ed'  # Azul mais escuro #3381e2 #60a5fa #6495ed
     return ''
 
 # Calcula altura para remover barra de rolagem: (linhas + cabeçalho) * 35px
@@ -169,6 +178,25 @@ with st.expander(" ✏️ Editar Horário"):
     )
 
     if st.button("💾 Salvar Alterações do Horário"):
-        utils.salvar_dados_json(caminho_horario, df_editado)
-        st.success("✅ Grade horária salva com sucesso!")
-        st.rerun()
+        if professor_logado_nome != "Visitante":
+            # Carrega o perfil completo para não sobrescrever outros dados
+            perfil_completo = utils.carregar_perfil_professor_db(professor_logado_nome)
+
+            # Atualiza a grade horária no dicionário do perfil
+            perfil_completo['grade_horaria'] = df_editado.to_dict(orient='records')
+
+            # Salva no arquivo específico do professor (data/perfis/perfil_...json)
+            utils.salvar_professor_config_db(
+                professor_logado_nome,
+                perfil_completo.get('email', ''),
+                perfil_completo.get('municipio', ''),
+                perfil_completo
+            )
+
+            # Salva também no perfil ativo (data/professor_config.json)
+            utils.salvar_perfil_professor(perfil_completo)
+
+            st.success("✅ Grade horária salva com sucesso!")
+            st.rerun()
+        else:
+            st.warning("Não é possível salvar o horário para o perfil 'Visitante'.")

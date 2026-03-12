@@ -4,7 +4,7 @@
         "Período":"1ª Aula",
         "Segunda":"",
         "Terça":"",
-        "Quarta":"",
+        "Quarta":"Dis.Tec\/3A_DS",
         "Quinta":"",
         "Sexta":""
     },
@@ -13,7 +13,7 @@
         "Período":"2ª Aula",
         "Segunda":"",
         "Terça":"",
-        "Quarta":"",
+        "Quarta":"Dis.Tec\/3A_DS",
         "Quinta":"",
         "Sexta":""
     },
@@ -29,19 +29,19 @@
     {
         "Horário":"09:40 - 10:40",
         "Período":"3ª Aula",
-        "Segunda":"",
-        "Terça":"",
-        "Quarta":"",
-        "Quinta":"",
+        "Segunda":"Robótica\/3A_Reg",
+        "Terça":"Dis.Tec\/3A_DS",
+        "Quarta":"Dis.Tec\/2B_DS",
+        "Quinta":"Dis.Tec\/2B_DS",
         "Sexta":""
     },
     {
         "Horário":"10:40 - 11:40",
         "Período":"4ª Aula",
-        "Segunda":"",
-        "Terça":"",
-        "Quarta":"",
-        "Quinta":"",
+        "Segunda":"Robótica\/3A_Reg",
+        "Terça":"Dis.Tec\/3A_DS",
+        "Quarta":"Dis.Tec\/2B_DS",
+        "Quinta":"Dis.Tec\/2B_DS",
         "Sexta":""
     },
     {
@@ -56,20 +56,20 @@
     {
         "Horário":"12:40 - 13:40",
         "Período":"5ª Aula",
-        "Segunda":"",
-        "Terça":"",
-        "Quarta":"",
-        "Quinta":"",
-        "Sexta":""
+        "Segunda":"Dis.Tec\/3A_DS",
+        "Terça":"PC_II\/2B_DS",
+        "Quarta":"IA\/3A_DS",
+        "Quinta":"Dis.Tec\/3A_DS",
+        "Sexta":"Dis.Tec\/3A_DS"
     },
     {
         "Horário":"13:40 - 14:40",
         "Período":"6ª Aula",
-        "Segunda":"",
+        "Segunda":"Dis.Tec\/3A_DS",
         "Terça":"",
         "Quarta":"",
-        "Quinta":"",
-        "Sexta":""
+        "Quinta":"Dis.Tec\/3A_DS",
+        "Sexta":"Dis.Tec\/3A_DS"
     },
     {
         "Horário":"14:40 - 14:50",
@@ -83,19 +83,19 @@
     {
         "Horário":"14:50 - 15:50",
         "Período":"7ª Aula",
-        "Segunda":"",
+        "Segunda":"Dis.Tec\/2B_DS",
         "Terça":"",
-        "Quarta":"",
-        "Quinta":"",
-        "Sexta":""
+        "Quarta":"Comput\/9A",
+        "Quinta":"Men.Tec_II\/2B_DS",
+        "Sexta":"Dis.Tec\/2B_DS"
     },
     {
         "Horário":"15:50 - 16:50",
         "Período":"8ª Aula",
-        "Segunda":"",
+        "Segunda":"Dis.Tec\/2B_DS",
         "Terça":"",
-        "Quarta":"",
-        "Quinta":"",
-        "Sexta":""
+        "Quarta":"IA\/9A",
+        "Quinta":"IA\/3A_Reg",
+        "Sexta":"Dis.Tec\/2B_DS"
     }
 ]
