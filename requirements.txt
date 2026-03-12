@@ -1,9 +1,24 @@
-streamlit
-pandas
-fpdf2
-python-docx
-pypdf
-google-generativeai
-google-api-python-client
-google-auth
-reportlab
+# Arquivo de dependências do Python para o projeto Planejador CETI.
+# Use `uv pip install -r requirements.txt` para instalar.
+
+# Core do Streamlit e visualização
+streamlit==1.55.0
+altair==6.0.0
+
+# Manipulação de dados
+pandas==2.3.3
+
+# Conexão com Banco de Dados
+# Pacote principal para a integração com o Supabase.
+supabase
+
+# Geração de Documentos
+fpdf2==2.8.7
+pypdf==6.8.0
+python-docx==1.2.0
+reportlab==4.4.10
+
+# Integração com Google Drive
+google-api-python-client==2.192.0
+google-auth-httplib2==0.3.0
+google-auth>=2.49.0
