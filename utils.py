@@ -1,6 +1,14 @@
 import streamlit as st
 import json
 import os
+import sys
+
+# Adiciona o diretório raiz do projeto (onde este utils.py está) ao sys.path
+# Isso garante que módulos em pastas como 'tools' possam ser importados de qualquer lugar.
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from fpdf import FPDF
 import io
 from pypdf import PdfWriter, PdfReader
