@@ -5,7 +5,7 @@ import random
 
 # --- Integração com Supabase ---
 if utils.USE_SUPABASE:
-    import database as db
+    import tools.database as db
 
 st.set_page_config(page_title="Repositório de Aulas", layout="wide")
 utils.aplicar_estilo()

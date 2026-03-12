@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 def process_quiz_content(lesson_id: int, quiz_content: str, lesson_title: str):
     """Parseia o conteúdo de um quiz e o insere no banco de dados."""
-    from tools.storage import database as db
+    from tools import database as db
 
     # Tenta extrair um título para o Quiz
     quiz_title_match = re.search(r'^#+\s*(.*)', quiz_content, re.MULTILINE)
@@ -184,7 +184,7 @@ def run_lesson_seeder():
     import streamlit as st
     st.secrets = MockSecrets()
 
-    from tools.storage import database as db
+    from tools import database as db
 
     if not db.is_db_connected():
         print("ERRO: Conexão com o banco falhou. Verifique o arquivo .env")

@@ -9,10 +9,10 @@ import sys
 # Adiciona o diretório raiz E o diretório de storage diretamente ao path
 # para resolver problemas de importação em ambientes como o Streamlit Cloud.
 project_root = os.path.dirname(os.path.abspath(__file__))
-storage_path = os.path.join(project_root, 'tools', 'storage')
+tools_path = os.path.join(project_root, 'tools')
 
-if storage_path not in sys.path:
-    sys.path.insert(0, storage_path)
+if tools_path not in sys.path:
+    sys.path.insert(0, tools_path)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -45,12 +45,12 @@ except ImportError:
     
 # --- Integração com Supabase ---
 try:
-    import database as db
+    import tools.database as db
     HAS_SUPABASE = True
 except (ImportError, ModuleNotFoundError) as e:
     # Tenta fallback para importação relativa ou falha silenciosamente
     try:
-        from tools.storage import database as db
+        from tools import database as db
         HAS_SUPABASE = True
     except (ImportError, ModuleNotFoundError):
         print(f"Debug: Falha na importação do Supabase: {e}")
