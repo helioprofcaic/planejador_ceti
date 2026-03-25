@@ -9,7 +9,6 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from fpdf import FPDF
 import io
 from pypdf import PdfWriter, PdfReader
 import pandas as pd
@@ -650,7 +649,7 @@ def _registrar_fontes_reportlab():
         if not os.path.exists(font_regular) or not os.path.exists(font_bold) or not os.path.exists(font_italic) or not os.path.exists(font_bold_italic):
             import urllib.request
             os.makedirs(font_dir, exist_ok=True)
-            base_url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/master/ttf/"
+            base_url = "https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/"
             
             font_files_to_download = {
                 "DejaVuSans.ttf": font_regular,
@@ -1282,14 +1281,14 @@ def criar_botao_voltar():
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🏠 Voltar para o Menu Principal", use_container_width=True):
+        if st.button("🏠 Voltar para o Menu Principal", width="stretch"):
             st.switch_page("app.py")
 
 def exibir_menu_lateral():
     """Exibe um menu de navegação lateral padronizado e botões rápidos."""
     with st.sidebar:
         # Botão explícito para voltar ao início
-        st.page_link("app.py", label="Início / Menu Principal", icon="🏠", use_container_width=True)
+        st.page_link("app.py", label="Início / Menu Principal", icon="🏠", width="stretch")
         st.divider()
 
 # --- FUNÇÕES DE FREQUÊNCIA ACUMULADA (POR PROFESSOR) ---

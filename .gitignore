@@ -24,6 +24,9 @@ data/planejamentos.json
 data/frequencia_*.json
 data/qualitativo_*.json
 data/horario_global.json
+data/compromissos/*
+#!data/compromissos/*.json
+data/pdf/*
 
 data/escola/*
 data/perfil_*.json
