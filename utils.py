@@ -28,8 +28,53 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+def configurar_modo_armazenamento():
+    """Sincroniza as flags de armazenamento com a escolha do usuário ou segredos."""
+    global USE_SUPABASE, USE_CLOUD_STORAGE
+    
+    # Tenta pegar a escolha do usuário na sessão, padrão é "Automático"
+    escolha = st.session_state.get('storage_mode', "Automático")
+    
+    # Valores automáticos (baseados em secrets)
+    auto_supabase = False
+    if HAS_SUPABASE:
+        try:
+            auto_supabase = (
+                st.secrets.get("supabase", {}).get("usar_supabase", False) and
+                db.is_db_connected()
+            )
+        except Exception:
+            auto_supabase = False
+        
+    auto_cloud = False
+    if not auto_supabase:
+        try:
+            if os.environ.get("FORCE_LOCAL_MODE") == "1":
+                auto_cloud = False
+            else:
+                auto_cloud = (
+                    HAS_GOOGLE_STORAGE and
+                    st.secrets.get("drive", {}).get("usar_nuvem", False)
+                )
+        except Exception:
+            auto_cloud = False
+
+    if escolha == "Local (data/)":
+        USE_SUPABASE = False
+        USE_CLOUD_STORAGE = False
+    elif escolha == "Google Drive (Nuvem)":
+        USE_SUPABASE = False
+        USE_CLOUD_STORAGE = HAS_GOOGLE_STORAGE
+    elif escolha == "Supabase (Banco)":
+        USE_SUPABASE = HAS_SUPABASE
+        USE_CLOUD_STORAGE = False
+    else: # Automático
+        USE_SUPABASE = auto_supabase
+        USE_CLOUD_STORAGE = auto_cloud
+
 def aplicar_estilo():
     """Aplica o CSS global baseado nas configurações de sessão."""
+    configurar_modo_armazenamento()
     tema = st.session_state.get('tema', "Padrão")
     tamanho_fonte = st.session_state.get('tamanho_fonte', 16)
     
@@ -90,29 +135,7 @@ except (ImportError, ModuleNotFoundError) as e:
 
 # Prioridade: Supabase > Cloud > Local
 USE_SUPABASE = False
-if HAS_SUPABASE:
-    try:
-        USE_SUPABASE = (
-            st.secrets.get("supabase", {}).get("usar_supabase", False) and
-            db.is_db_connected()
-        )
-    except Exception:
-        USE_SUPABASE = False
-
-# Se Supabase estiver ativo, desativa o Cloud Storage para evitar conflitos
 USE_CLOUD_STORAGE = False
-if not USE_SUPABASE:
-    try:
-        if os.environ.get("FORCE_LOCAL_MODE") == "1":
-            USE_CLOUD_STORAGE = False
-        else:
-            USE_CLOUD_STORAGE = (
-                HAS_GOOGLE_STORAGE and
-                st.secrets.get("drive", {}).get("usar_nuvem", False)
-            )
-    except Exception:
-        USE_CLOUD_STORAGE = False
-
 def carregar_dados():
     """[DEPRECATED] Carrega o arquivo ementas.json da pasta data."""
     caminho = os.path.join("data", "ementas.json")
@@ -1336,3 +1359,6 @@ def salvar_frequencia_dia(professor, turma, data_obj, df_chamada):
     # 4. Salva
     caminho = obter_caminho_frequencia_professor(professor)
     salvar_dados_json(caminho, df_total)
+
+# Inicialização padrão das flags
+configurar_modo_armazenamento()

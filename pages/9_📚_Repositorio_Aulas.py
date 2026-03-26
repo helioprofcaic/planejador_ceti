@@ -3,12 +3,12 @@ import os
 import utils
 import random
 
-# --- Integração com Supabase ---
+st.set_page_config(page_title="Repositório de Aulas", layout="wide")
+utils.aplicar_estilo() # Isso sincroniza o modo de armazenamento
+
+# --- Integração com Supabase (Abaixo do aplicar_estilo) ---
 if utils.USE_SUPABASE:
     from tools import database as db
-
-st.set_page_config(page_title="Repositório de Aulas", layout="wide")
-utils.aplicar_estilo()
 
 st.title("📚 Repositório de Aulas")
 st.markdown("Gerencie e visualize os roteiros de aula salvos no sistema.")

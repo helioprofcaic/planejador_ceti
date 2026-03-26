@@ -6,6 +6,25 @@ import os
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(page_title="Menu", layout="wide")
 
+# --- SELETOR DE FONTE DE DADOS ---
+with st.sidebar:
+    st.header("💾 Fonte de Dados")
+    modo_atual = st.session_state.get('storage_mode', "Automático")
+    opcoes = ["Automático", "Local (data/)", "Google Drive (Nuvem)", "Supabase (Banco)"]
+    
+    modo_selecionado = st.selectbox(
+        "Carregar dados de:",
+        opcoes,
+        index=opcoes.index(modo_atual) if modo_atual in opcoes else 0,
+        help="Se os dados não carregarem na Nuvem, force o modo 'Local' para usar os arquivos do repositório."
+    )
+    if modo_selecionado != modo_atual:
+        st.session_state['storage_mode'] = modo_selecionado
+        utils.configurar_modo_armazenamento()
+        # Limpa o professor logado para forçar recarregamento do perfil da nova fonte
+        if 'professor' in st.session_state: del st.session_state['professor']
+        st.rerun()
+
 # --- INICIALIZAÇÃO DE ESTADO (SESSION STATE) ---
 # Mantém o estado da sessão entre atualizações de página
 # Só executa se a sessão for nova (ex: F5, primeira visita)
