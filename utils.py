@@ -28,6 +28,50 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+def aplicar_estilo():
+    """Aplica o CSS global baseado nas configurações de sessão."""
+    tema = st.session_state.get('tema', "Padrão")
+    tamanho_fonte = st.session_state.get('tamanho_fonte', 16)
+    
+    padding_top = "0rem" if tema == "Compacto" else "2rem"
+    font_style = "Arial Narrow" if tema == "Compacto" else "sans-serif"
+    
+    st.markdown(f"""
+        <style>
+        html, body {{
+            font-size: {tamanho_fonte}px;
+            font-family: {font_style};
+        }}
+        [class*="st-"] {{
+            font-size: {tamanho_fonte}px;
+        }}
+        /* Correção global para setas do st.expander aparecendo como texto */
+        [data-testid="stExpander"] summary::after, [data-testid="stExpander"] summary::before {{
+            content: "" !important;
+        }}
+        .main .block-container {{
+            padding_top: {padding_top};
+        }}
+        /* Ajuste para as tabelas não ficarem gigantes */
+        .stDataFrame div[data-testid="stTable"] {{
+            font-size: {tamanho_fonte - 2}px;
+        }}
+        
+        /* Ocultar elementos de UI do Streamlit que são em inglês */
+        /* #MainMenu {{visibility: hidden;}} */
+        footer {{visibility: hidden;}}
+        /* [data-testid="stToolbar"] {{visibility: hidden;}} */
+
+        /* Correção para Mobile: Forçar exibição do botão de menu */
+        @media (max-width: 768px) {{
+            [data-testid="stSidebarCollapsedControl"] {{
+                visibility: visible !important;
+                display: block !important;
+            }}
+        }}
+        </style>
+        """, unsafe_allow_html=True)
+
 # --- Integração com Google Drive ---
 try:
     import google_storage
@@ -68,50 +112,6 @@ if not USE_SUPABASE:
             )
     except Exception:
         USE_CLOUD_STORAGE = False
-
-def aplicar_estilo():
-    """Aplica o CSS global baseado nas configurações de sessão."""
-    tema = st.session_state.get('tema', "Padrão")
-    tamanho_fonte = st.session_state.get('tamanho_fonte', 16)
-    
-    padding_top = "0rem" if tema == "Compacto" else "2rem"
-    font_style = "Arial Narrow" if tema == "Compacto" else "sans-serif"
-    
-    st.markdown(f"""
-        <style>
-        html, body {{
-            font-size: {tamanho_fonte}px;
-            font-family: {font_style};
-        }}
-        [class*="st-"] {{
-            font-size: {tamanho_fonte}px;
-        }}
-        /* Correção global para setas do st.expander aparecendo como texto */
-        [data-testid="stExpander"] summary::after, [data-testid="stExpander"] summary::before {{
-            content: "" !important;
-        }}
-        .main .block-container {{
-            padding-top: {padding_top};
-        }}
-        /* Ajuste para as tabelas não ficarem gigantes */
-        .stDataFrame div[data-testid="stTable"] {{
-            font-size: {tamanho_fonte - 2}px;
-        }}
-        
-        /* Ocultar elementos de UI do Streamlit que são em inglês */
-        /* #MainMenu {{visibility: hidden;}} */
-        footer {{visibility: hidden;}}
-        /* [data-testid="stToolbar"] {{visibility: hidden;}} */
-
-        /* Correção para Mobile: Forçar exibição do botão de menu */
-        @media (max-width: 768px) {{
-            [data-testid="stSidebarCollapsedControl"] {{
-                visibility: visible !important;
-                display: block !important;
-            }}
-        }}
-        </style>
-        """, unsafe_allow_html=True)
 
 def carregar_dados():
     """[DEPRECATED] Carrega o arquivo ementas.json da pasta data."""
