@@ -111,7 +111,7 @@ def get_component_config(nome_comp, turma, config, curriculo_db=None):
     mapeamento = config.get("MAPEAMENTO_POR_CHAVE", {})
     for cfg in mapeamento.values():
         palavras_chave = [normalizar_texto(k) for k in cfg.get("palavras_chave", [])]
-        if any(k in nome_upper for k in palavras_chave):
+        if nome_upper and any(k in nome_upper for k in palavras_chave):
             cfg_copy = cfg.copy()
             # Para turmas DS, a carga horária semanal é fixa, então sobrescrevemos apenas este valor.
             # A duração em semanas vem da regra que o usuário criou.
@@ -122,7 +122,7 @@ def get_component_config(nome_comp, turma, config, curriculo_db=None):
             return cfg_copy
             
     # 3. Se nenhuma regra específica foi encontrada, usa um padrão.
-    if "DS" in turma:
+    if turma and "DS" in turma:
         padrao = config.get("PADRAO_TECNICO_MODULAR", {}).copy()
         padrao['aulas_por_semana'] = 8 if "2" in turma else 10
         return padrao
@@ -132,9 +132,11 @@ def get_component_config(nome_comp, turma, config, curriculo_db=None):
 def calcular_cronograma_turma(turma, componentes_ordenados, config_componentes, curriculo_db=None):
     """Calcula a semana de início e fim de cada componente, tratando DS de forma especial."""
     cronograma = {}
+    if not turma:
+        return cronograma
     acumulado_semanas_modular = 0
     
-    is_ds_turma = "DS" in turma
+    is_ds_turma = turma and "DS" in turma
 
     for comp in componentes_ordenados:
         cfg = get_component_config(comp, turma, config_componentes, curriculo_db)
@@ -230,7 +232,7 @@ if perfil_prof:
 
 # Se não achou no perfil (ou perfil vazio), usa o escola_db
 if not lista_para_calcular:
-    lista_para_calcular = escola_db.get("turmas", {}).get(turma_sel, {}).get("componentes", [])
+    lista_para_calcular = escola_db.get("turmas", {}).get(turma_sel, {}).get("componentes", []) if turma_sel else []
 
 # 3. Calculamos o cronograma com a lista ordenada e filtrada.
 cronograma_turma = calcular_cronograma_turma(turma_sel, lista_para_calcular, config_componentes, curriculo_db)

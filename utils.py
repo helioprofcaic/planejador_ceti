@@ -157,6 +157,10 @@ def carregar_escola_db():
                 st.warning(f"⚠️ Arquivo `{filename}` está mal formatado. Usando dados padrão.")
                 data = default_data
     
+    # Garante que a estrutura básica exista para evitar erros de None
+    if not isinstance(data, dict):
+        data = default_data
+
     # --- AUTO-CORREÇÃO: Sincronizar com alunos.json se não houver turmas ---
     # Se o escola_db não tiver turmas, tenta pegar do alunos.json
     if not data.get("turmas"):
