@@ -110,16 +110,70 @@ else:
     # Exibe gráfico de linha (Data no eixo X, Percentual no eixo Y)
     st.line_chart(df_evolucao.set_index("Data")["Percentual"], color="#28a745")
 
-    # Análise de Risco (Alunos)
-    if not df_alunos.empty:
-        st.divider()
-        st.subheader("👥 Situação dos Alunos (Frequência)")
-        aprovados = len(df_alunos[df_alunos['Percentual'] >= 75])
-        risco = len(df_alunos) - aprovados
+    # --- CONSOLIDAÇÃO AVALIATIVA (NOTAS) ---
+    st.divider()
+    st.subheader(f"🏆 Consolidação de Notas: {turma_filtro}")
+    st.markdown("Esta seção soma as notas **NM1, NM2 e NM3** de todos os registros qualitativos encontrados para esta turma.")
+
+    # 1. Buscar arquivos qualitativos usando o sanitizer (garante que encontre o arquivo salvo)
+    prefixo_busca = "qualitativo_" + utils.sanitizar_nome_arquivo(turma_filtro)
+    # Lista apenas os nomes dos arquivos
+    nomes_arquivos_qual = utils.listar_arquivos_dados(prefixo_busca, subfolder="avaliacoes")
+    
+    # Reconstrói o caminho completo para carregamento
+    arquivos_qual = [os.path.join("data", "avaliacoes", f) for f in nomes_arquivos_qual if f.endswith(".json")]
+
+    if not arquivos_qual:
+        st.info(f"Nenhum registro qualitativo (notas) encontrado para a turma {turma_filtro}.")
+        # Se não houver notas, mostra apenas a lista de frequência acumulada da turma
+        if not df_alunos.empty:
+            df_freq_turma = df_alunos[df_alunos['Turma'] == turma_filtro][['Nome do Aluno', 'total', 'presentes', 'Percentual']]
+            st.dataframe(
+                df_freq_turma.rename(columns={'total': 'Aulas', 'presentes': 'Presenças', 'Percentual': '% Freq.'})
+                .style.format({'% Freq.': '{:.1f}%'}),
+                use_container_width=True, hide_index=True
+            )
+    else:
+        lista_dfs_qual = []
+        for arq in arquivos_qual:
+            df_q = utils.carregar_dados_json(arq)
+            if df_q is not None and not df_q.empty:
+                lista_dfs_qual.append(df_q)
         
-        kpi1, kpi2 = st.columns(2)
-        kpi1.metric("Alunos com Frequência ≥ 75%", aprovados)
-        kpi2.metric("Alunos em Risco (< 75%)", risco, delta=f"-{risco}" if risco > 0 else "0", delta_color="inverse")
+        if lista_dfs_qual:
+            df_total_qual = pd.concat(lista_dfs_qual, ignore_index=True)
+            cols_notas = ["Nº de Ativ.", "NM1", "NM2", "NM3", "Recuperação", "Nota Final"]
+            
+            # Conversão segura para numérico e preenchimento de vazios para permitir a soma
+            for col in cols_notas:
+                if col in df_total_qual.columns:
+                    df_total_qual[col] = pd.to_numeric(df_total_qual[col], errors='coerce').fillna(0)
+                else:
+                    df_total_qual[col] = 0.0
+            
+            # Agrupar por estudante somando as notas de todas as atividades/fichas
+            df_notas_consolidado = df_total_qual.groupby("Nome do Estudante")[cols_notas].sum().reset_index()
+            
+            # Cruzamento opcional com Frequência Acumulada para relatório completo
+            df_freq_turma = df_alunos[df_alunos['Turma'] == turma_filtro][['Nome do Aluno', 'Percentual']]
+            df_final = pd.merge(df_notas_consolidado, df_freq_turma, left_on="Nome do Estudante", right_on="Nome do Aluno", how="left")
+            
+            # Limpeza e Organização das colunas
+            df_final = df_final.rename(columns={"Percentual": "% Freq."}).drop(columns=["Nome do Aluno"])
+            ordem_cols = ["Nome do Estudante", "% Freq.", "Nº de Ativ.", "NM1", "NM2", "NM3", "Recuperação", "Nota Final"]
+            df_final = df_final[[c for c in ordem_cols if c in df_final.columns]]
+
+            # Configura formatação: % para frequência, inteiro para atividades, 1 casa decimal para notas
+            formatos = {"% Freq.": "{:.1f}%", "Nº de Ativ.": "{:.0f}"}
+            for c in ["NM1", "NM2", "NM3", "Recuperação", "Nota Final"]:
+                if c in df_final.columns: formatos[c] = "{:.1f}"
+
+            st.dataframe(
+                df_final.style.format(formatos, na_rep="-"),
+                use_container_width=True,
+                hide_index=True
+            )
+            st.caption("💡 Valores calculados somando os registros de todos os arquivos qualitativos encontrados nesta turma.")
 
     st.divider()
 

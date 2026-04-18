@@ -28,6 +28,28 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+# --- Globais de Controle de Integração ---
+HAS_GOOGLE_STORAGE = False
+HAS_SUPABASE = False
+USE_SUPABASE = False
+USE_CLOUD_STORAGE = False
+
+# --- Integração com Google Drive ---
+try:
+    import google_storage
+    HAS_GOOGLE_STORAGE = True
+except ImportError:
+    HAS_GOOGLE_STORAGE = False
+    
+# --- Integração com Supabase ---
+try:
+    # Com o project_root no path, podemos fazer um import absoluto
+    from tools import database as db
+    HAS_SUPABASE = True
+except (ImportError, ModuleNotFoundError) as e:
+    print(f"Debug: Falha na importação do Supabase (utils.py): {e}")
+    HAS_SUPABASE = False
+
 def configurar_modo_armazenamento():
     """Sincroniza as flags de armazenamento com a escolha do usuário ou segredos."""
     global USE_SUPABASE, USE_CLOUD_STORAGE
@@ -117,25 +139,7 @@ def aplicar_estilo():
         </style>
         """, unsafe_allow_html=True)
 
-# --- Integração com Google Drive ---
-try:
-    import google_storage
-    HAS_GOOGLE_STORAGE = True
-except ImportError:
-    HAS_GOOGLE_STORAGE = False
-    
-# --- Integração com Supabase ---
-try:
-    # Com o project_root no path, podemos fazer um import absoluto
-    from tools import database as db
-    HAS_SUPABASE = True
-except (ImportError, ModuleNotFoundError) as e:
-    print(f"Debug: Falha na importação do Supabase (utils.py): {e}")
-    HAS_SUPABASE = False
-
 # Prioridade: Supabase > Cloud > Local
-USE_SUPABASE = False
-USE_CLOUD_STORAGE = False
 def carregar_dados():
     """[DEPRECATED] Carrega o arquivo ementas.json da pasta data."""
     caminho = os.path.join("data", "ementas.json")
@@ -406,9 +410,18 @@ def salvar_alunos(dados):
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=2, ensure_ascii=False)
         return True
+def sanitizar_nome_arquivo(nome):
+    """Remove caracteres inválidos para nomes de arquivos no Windows/Linux."""
+    for char in [' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|']:
+        nome = nome.replace(char, "_")
+    return nome
 
 def salvar_dados_json(caminho_arquivo, dados_df):
     """Salva um DataFrame em um arquivo JSON (local ou nuvem)."""
+    # Garante que o caminho sempre termine com .json
+    if not caminho_arquivo.lower().endswith('.json'):
+        caminho_arquivo += '.json'
+        
     filename = os.path.basename(caminho_arquivo)
     
     if USE_CLOUD_STORAGE:
@@ -429,7 +442,13 @@ def salvar_dados_json(caminho_arquivo, dados_df):
     else:
         # Salva localmente
         os.makedirs(os.path.dirname(caminho_arquivo), exist_ok=True)
-        dados_df.to_json(caminho_arquivo, orient='records', indent=4, force_ascii=False)
+        try:
+            # date_format='iso' e force_ascii=False garantem integridade dos dados
+            dados_df.to_json(caminho_arquivo, orient='records', indent=4, force_ascii=False, date_format='iso')
+        except Exception as e:
+            st.error(f"Erro ao salvar arquivo local: {e}")
+            return False
+    return True
 
 def carregar_dados_json(caminho_arquivo):
     """Carrega um DataFrame de um arquivo JSON (local ou nuvem)."""

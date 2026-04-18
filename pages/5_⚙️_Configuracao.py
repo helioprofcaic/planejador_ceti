@@ -1,219 +1,93 @@
 import streamlit as st
-import json
-import os
+import pandas as pd
 import utils
 
-st.set_page_config(page_title="Configuração do Perfil", layout="wide")
+st.set_page_config(page_title="Configuração", layout="wide")
 
-# --- ESTILO ---
+# --- CONFIGURAÇÕES GLOBAIS ---
 utils.aplicar_estilo()
 
-st.header("⚙️ Configuração de Perfil Docente")
-st.info("Selecione suas turmas e componentes para personalizar seu planejamento e diário.")
+st.title("⚙️ Configuração do Sistema")
 
-# Carregar dados globais do Novo Banco de Dados
-escola_db = utils.carregar_escola_db()
-turmas_db = escola_db.get("turmas", {})
+# Definição das abas para organizar as funcionalidades
+tab_perfil, tab_alunos = st.tabs(["👤 Perfil e Vínculos", "👥 Gerenciar Alunos"])
 
-# Definir a lista oficial de turmas
-todas_turmas = list(turmas_db.keys())
+with tab_perfil:
+    st.header("Configuração de Perfil")
+    st.info("Utilize esta aba para configurar seus dados pessoais e vínculos com disciplinas.")
+    # A lógica de perfil (como a que existe no sidebar do app.py) pode ser expandida aqui
 
-# --- SELEÇÃO DE PERFIL ---
-professores_db = utils.listar_professores_db()
-opcoes_perfis = ["Visitante", "➕ Novo Perfil"] + [p for p in professores_db if p != "Visitante"]
+with tab_alunos:
+    st.header("Gerenciamento de Alunos por Turma")
+    st.markdown("Nesta aba você pode adicionar novos alunos ou remover alunos existentes de cada turma.")
 
-# Identifica perfil ativo atual (do JSON local) para pré-selecionar
-perfil_ativo_local = utils.carregar_perfil_professor()
-nome_ativo_local = perfil_ativo_local.get("professor", "")
-
-index_sel = 0
-if nome_ativo_local in professores_db:
-    index_sel = professores_db.index(nome_ativo_local) + 1
-
-perfil_selecionado = st.selectbox("Selecione o Perfil para Editar", opcoes_perfis, index=index_sel)
-
-# --- PROTEÇÃO POR SENHA ---
-if perfil_selecionado != "Visitante":
-    st.info("🔒 Este perfil é protegido.")
-    senha_input = st.text_input("Digite a senha de administrador para acessar/trocar:", type="password")
+    # Carrega o banco de dados de alunos (alunos.json)
+    alunos_db = utils.carregar_alunos()
     
-    if not utils.verificar_senha(senha_input, "admin"):
-        st.warning("Senha incorreta ou não informada. Acesso restrito.")
-        st.stop()
-
-if perfil_selecionado == "➕ Novo Perfil":
-    config_atual = {}
-    nome_atual = ""
-    email_atual = ""
-    municipio_atual = ""
-    vinculos_atuais = []
-else:
-    config_atual = utils.carregar_perfil_professor_db(perfil_selecionado)
-    nome_atual = config_atual.get("professor", perfil_selecionado)
-    email_atual = config_atual.get("email", "")
-    municipio_atual = config_atual.get("municipio", "")
-    vinculos_atuais = config_atual.get("vinculos", [])
-
-# --- FORMULÁRIO DE PERFIL ---
-nome = st.text_input("Seu Nome Completo (Como sairá no Plano)", value=nome_atual, key=f"nome_{perfil_selecionado}")
-email = st.text_input("E-mail Institucional", value=email_atual, key=f"email_{perfil_selecionado}")
-municipio = st.text_input("Município", value=municipio_atual, key=f"mun_{perfil_selecionado}")
-
-st.write("---")
-st.subheader("Minha Carga Horária")
-
-# Pré-selecionar turmas se já houver configuração
-turmas_pre_sel = [v["turma"] for v in vinculos_atuais if v["turma"] in todas_turmas]
-
-# Seleção múltipla de turmas
-turmas_selecionadas = st.multiselect("Quais turmas você leciona?", todas_turmas, default=turmas_pre_sel, key=f"turmas_{perfil_selecionado}")
-
-config_vínculos = []
-
-for turma in turmas_selecionadas:
-    st.write(f"**Componentes para {turma}:**")
-    # Busca os componentes disponíveis no catálogo geral
-    opcoes_comp = turmas_db.get(turma, {}).get("componentes", [])
-    
-    if not opcoes_comp:
-        opcoes_comp = ["INTELIGÊNCIA ARTIFICIAL", "PROGRAMAÇÃO", "COMPUTAÇÃO", "OUTRO"]
-    
-    # Tentar recuperar seleção anterior
-    comps_pre_sel = []
-    for v in vinculos_atuais:
-        if v["turma"] == turma:
-            comps_pre_sel = [c for c in v["componentes"] if c in opcoes_comp]
-            break
-        
-    selecionados = st.multiselect(f"Disciplinas em {turma}", opcoes_comp, default=comps_pre_sel, key=f"sel_{turma}_{perfil_selecionado}")
-    config_vínculos.append({"turma": turma, "componentes": selecionados})
-
-    # --- ADIÇÃO MANUAL DE COMPONENTE ---
-    with st.container(border=True):
-        add_component = st.checkbox(f"➕ Adicionar Componente em {turma}", key=f"add_check_{turma}")
-
-        if add_component:
-            col_add1, col_add2 = st.columns([3, 1])
-            with col_add1:
-                novo_comp = st.text_input(f"Nome do Componente (Oficial)", key=f"new_{turma}", placeholder="Ex: Marketing Digital")
-            with col_add2:
-                st.write("")  # Espaçamento
-                st.write("")
-                if st.button("Adicionar", key=f"btn_{turma}"):
-                    if novo_comp:
-                        if turma in turmas_db:
-                            # Faz a verificação case-insensitive para evitar duplicatas
-                            if novo_comp.upper() not in [c.upper() for c in turmas_db[turma]["componentes"]]:
-                                turmas_db[turma]["componentes"].append(novo_comp)
-                                utils.salvar_escola_db(escola_db)
-                                st.success(f"Componente '{novo_comp}' adicionado com sucesso!")
-                                st.rerun()
+    # Verifica permissão: Visitantes são bloqueados por padrão na função carregar_alunos do utils
+    if st.session_state.get("professor") == "Visitante":
+        st.warning("⚠️ O perfil 'Visitante' não possui permissão para alterar a lista de alunos.")
+    else:
+        if not alunos_db:
+            st.info("Nenhuma turma com alunos encontrada no sistema.")
+            nova_turma_nome = st.text_input("Nome da nova turma (ex: 1º Ano A)")
+            if st.button("➕ Criar Turma"):
+                if nova_turma_nome:
+                    alunos_db[nova_turma_nome] = []
+                    utils.salvar_alunos(alunos_db)
+                    st.success(f"Turma '{nova_turma_nome}' criada com sucesso!")
+                    st.rerun()
+        else:
+            # Seleção da Turma para edição
+            turmas_disponiveis = sorted(list(alunos_db.keys()))
+            turma_selecionada = st.selectbox("Selecione a Turma para gerenciar", turmas_disponiveis)
+            
+            lista_alunos = alunos_db.get(turma_selecionada, [])
+            
+            # Layout em duas colunas para facilitar a visualização e ação
+            col_lista, col_acoes = st.columns([2, 1])
+            
+            with col_lista:
+                st.subheader(f"Lista de Alunos: {turma_selecionada}")
+                if lista_alunos:
+                    # Exibe os alunos em um DataFrame para conferência
+                    df_alunos = pd.DataFrame(lista_alunos)
+                    df_alunos.index = range(1, len(df_alunos) + 1)
+                    st.dataframe(df_alunos, use_container_width=True)
+                else:
+                    st.info("Esta turma ainda não possui alunos cadastrados.")
+            
+            with col_acoes:
+                st.subheader("Ações")
+                
+                # --- SEÇÃO ADICIONAR ALUNO ---
+                with st.expander("➕ Adicionar Aluno", expanded=True):
+                    novo_nome = st.text_input("Nome Completo do Estudante")
+                    if st.button("Confirmar Adição", use_container_width=True):
+                        if novo_nome.strip():
+                            # Evita duplicatas na mesma turma
+                            if any(a['nome'].lower() == novo_nome.strip().lower() for a in lista_alunos):
+                                st.error("Este aluno já está cadastrado nesta turma.")
                             else:
-                                st.warning(f"O componente '{novo_comp}' já existe para esta turma.")
-st.divider()
-if st.button("💾 Salvar Minha Configuração"):
-    # --- VALIDAÇÃO DE NOME DUPLICADO ---
-    nome_input = nome.strip()
-    
-    if not nome_input:
-        st.error("❌ O nome do professor é obrigatório.")
-        st.stop()
-
-    # Normaliza lista existente para comparação (maiúsculas)
-    nomes_existentes_upper = [p.upper() for p in professores_db]
-    
-    # Cenário 1: Criando Novo Perfil -> Nome não pode existir
-    if perfil_selecionado == "➕ Novo Perfil":
-        if nome_input.upper() in nomes_existentes_upper:
-            st.error(f"❌ Já existe um professor cadastrado com o nome '{nome_input}'. Por favor, diferencie (ex: adicione o sobrenome).")
-            st.stop()
-            
-    # Cenário 2: Editando Perfil -> Se mudou o nome, o novo nome não pode conflitar com outro
-    elif nome_input.upper() != perfil_selecionado.upper():
-        if nome_input.upper() in nomes_existentes_upper:
-            st.error(f"❌ O nome '{nome_input}' já está em uso por outro professor.")
-            st.stop()
-
-    perfil = {
-        "professor": nome_input,
-        "email": email,
-        "municipio": municipio,
-        "vinculos": config_vínculos
-    }
-    
-    # --- PRESERVAÇÃO DE DADOS EXTRAS (Senhas, API Key, etc.) ---
-    # Mantém campos que já existiam no perfil (config_atual) e não estão no formulário
-    for chave, valor in config_atual.items():
-        if chave not in perfil:
-            perfil[chave] = valor
-
-    utils.salvar_perfil_professor(perfil)
-    utils.salvar_professor_config_db(nome_input, email, municipio, perfil)
-    
-    # --- CORREÇÃO: Atualizar a lista geral de professores no escola_db ---
-    utils.atualizar_lista_professores_db(nome_input)
-    
-    # Atualizar estado da sessão para refletir mudanças imediatamente
-    st.session_state['professor'] = nome_input
-    st.session_state['municipio'] = municipio
-    st.success("Configuração salva com sucesso! Agora o sistema está personalizado para você.")
-
-# --- GERENCIAMENTO DE SENHAS (Apenas para Helio Lima) ---
-if perfil_selecionado == "Helio Lima":
-    st.divider()
-    st.subheader("🔐 Gerenciamento de Senhas")
-    with st.expander("Alterar Senhas de Acesso (Admin/Usuário/Professor)"):
-        st.info("Aqui você pode redefinir as senhas utilizadas para proteger perfis e contextos do sistema.")
-        
-        c_pwd1, c_pwd2 = st.columns(2)
-        with c_pwd1:
-            tipo_senha = st.selectbox("Qual senha deseja alterar?", ["admin", "usuario", "professor"], format_func=lambda x: x.capitalize())
-            senha_atual_admin = st.text_input("Senha Atual de Admin", type="password", help="Necessária para autorizar a alteração.")
-        
-        with c_pwd2:
-            nova_senha = st.text_input(f"Nova Senha ({tipo_senha})", type="password")
-            confirma_senha = st.text_input("Confirme a Nova Senha", type="password")
-            
-        if st.button("🔄 Atualizar Senha"):
-            if not utils.verificar_senha(senha_atual_admin, "admin"):
-                st.error("❌ A senha atual de administrador está incorreta.")
-            elif nova_senha != confirma_senha:
-                st.error("❌ A nova senha e a confirmação não coincidem.")
-            elif not nova_senha.strip():
-                st.warning("⚠️ A nova senha não pode estar vazia.")
-            else:
-                # Recarrega o perfil para garantir dados frescos
-                perfil_admin = utils.carregar_perfil_professor_db("Helio Lima")
+                                lista_alunos.append({"nome": novo_nome.strip()})
+                                # Ordena a lista alfabeticamente para manter o padrão
+                                lista_alunos = sorted(lista_alunos, key=lambda x: x['nome'])
+                                alunos_db[turma_selecionada] = lista_alunos
+                                if utils.salvar_alunos(alunos_db):
+                                    st.success(f"Aluno {novo_nome} adicionado!")
+                                    st.rerun()
+                        else:
+                            st.error("O nome não pode estar vazio.")
                 
-                if "senhas" not in perfil_admin:
-                    perfil_admin["senhas"] = {}
-                
-                perfil_admin["senhas"][tipo_senha] = nova_senha
-                
-                # Salva no banco de dados (perfil_helio_lima.json) e no perfil ativo local
-                utils.salvar_perfil_professor(perfil_admin)
-                utils.salvar_professor_config_db("Helio Lima", perfil_admin.get("email",""), perfil_admin.get("municipio",""), perfil_admin)
-                
-                st.success(f"✅ Senha de **{tipo_senha}** atualizada com sucesso!")
+                # --- SEÇÃO REMOVER ALUNO ---
+                if lista_alunos:
+                    with st.expander("🗑️ Remover Aluno"):
+                        aluno_para_remover = st.selectbox("Selecione o aluno para excluir", [a['nome'] for a in lista_alunos])
+                        if st.button("🗑️ Confirmar Remoção", type="secondary", use_container_width=True):
+                            lista_alunos = [a for a in lista_alunos if a['nome'] != aluno_para_remover]
+                            alunos_db[turma_selecionada] = lista_alunos
+                            if utils.salvar_alunos(alunos_db):
+                                st.warning(f"Aluno {aluno_para_remover} removido da turma.")
+                                st.rerun()
 
-st.divider()
-
-if st.session_state.get("professor") != "Visitante":
-    st.subheader("🛠️ Manutenção de Dados")
-    st.caption("Ferramentas para ajuste e correção do banco de dados.")
-
-    if st.button("🔄 Corrigir Terminologia (Neurodivergência)"):
-        caminho_alunos = os.path.join("data", "escola", "alunos.json")
-        if os.path.exists(caminho_alunos):
-            with open(caminho_alunos, "r", encoding="utf-8-sig") as f:
-                dados = json.load(f)
-            
-            for turma, lista in dados.items():
-                for aluno in lista:
-                    if "deficiencia" in aluno:
-                        aluno["neurodivergencia"] = aluno.pop("deficiencia")
-            
-            with open(caminho_alunos, "w", encoding="utf-8") as f:
-                json.dump(dados, f, indent=2, ensure_ascii=False)
-            
-            st.success("✅ Banco de dados atualizado! Termo ajustado para 'neurodivergencia'.")
+utils.criar_botao_voltar()

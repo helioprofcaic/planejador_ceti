@@ -69,7 +69,14 @@ st.write(f"### Avaliação: {turma_sel} | {comp_sel} | {data_avaliacao.strftime(
 
 # Caminho do arquivo para persistência
 data_str = data_avaliacao.strftime('%Y-%m-%d')
-safe_filename = f"{turma_sel}_{comp_sel}_{contexto_sel}_{data_str}".replace(" ", "_").replace("/", "-").replace("\\", "-")
+
+# Usa a função centralizada do utils para garantir consistência
+safe_filename = utils.sanitizar_nome_arquivo(f"{turma_sel}_{comp_sel}_{contexto_sel}_{data_str}")
+
+# Garante que a pasta de avaliações exista localmente antes de salvar
+if not os.path.exists(os.path.join("data", "avaliacoes")):
+    os.makedirs(os.path.join("data", "avaliacoes"), exist_ok=True)
+
 caminho_arquivo = os.path.join("data", "avaliacoes", f"qualitativo_{safe_filename}.json")
 
 # Tenta carregar dados salvos, senão cria um novo DataFrame
@@ -83,6 +90,7 @@ if df_qualitativo is None or df_qualitativo.empty:
         "Participação": [""] * len(lista_alunos),
         "Entrega": [""] * len(lista_alunos),
         "Autonomia": [""] * len(lista_alunos),
+        "Nº de Ativ.": [0] * len(lista_alunos),
         "NM1": [None] * len(lista_alunos),
         "NM2": [None] * len(lista_alunos),
         "NM3": [None] * len(lista_alunos),
@@ -90,12 +98,17 @@ if df_qualitativo is None or df_qualitativo.empty:
         "Recuperação": [None] * len(lista_alunos),
         "Nota Final": [None] * len(lista_alunos)
     })
+else:
+    # Garante que a coluna de quantidade de atividades exista para arquivos antigos
+    if "Nº de Ativ." not in df_qualitativo.columns:
+        df_qualitativo.insert(5, "Nº de Ativ.", 0)
 
 # Configuração das colunas com Selectbox
 column_config = {
     "Participação": st.column_config.SelectboxColumn(options=["Ótimo", "Bom", "Regular", "Insuficiente"], required=True),
     "Entrega": st.column_config.SelectboxColumn(options=["Em dia", "Atrasada", "Não entregou"], required=True),
     "Autonomia": st.column_config.SelectboxColumn(options=["Sim", "Não", "Em desenvolvimento"], required=True),
+    "Nº de Ativ.": st.column_config.NumberColumn("Nº de Ativ.", min_value=0, max_value=50, step=1, format="%d", help="Quantidade de atividades realizadas no laboratório/aula."),
     "NM1": st.column_config.NumberColumn(min_value=0, max_value=10, step=0.1, format="%.1f"),
     "NM2": st.column_config.NumberColumn(min_value=0, max_value=10, step=0.1, format="%.1f"),
     "NM3": st.column_config.NumberColumn(min_value=0, max_value=10, step=0.1, format="%.1f"),
